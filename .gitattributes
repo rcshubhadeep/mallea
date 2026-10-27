@@ -1,0 +1,2 @@
+# Preserve snapshot bytes across Windows, Linux, and macOS checkouts.
+docs/PROJECT_PLAN.v*.md -text

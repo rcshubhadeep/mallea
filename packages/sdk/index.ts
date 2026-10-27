@@ -1,0 +1,9 @@
+export type AppKind = 'board' | 'notebook';
+export type Review = {status:'clear'|'warning'|'blocked';label:string};
+export type Manifest = {id:string;title:string;version:string;permissions:string[]};
+export type Observation = {id:string;title:string;revision:number;text:string;screenshot:string};
+export type Task = {id:string;title:string;critical:boolean;reviewedRevision:number;evidence:{appId:string;observationId:string};observation:Observation|null;availability:string;review:Review|null};
+export type AppDefinition = {id:string;kind:AppKind;title:string;purpose:string;initialRequest:string;workspaceId:string;online?:boolean;allowed?:boolean};
+export type WorkspaceInfo = {name:string;app:AppDefinition;extension:Manifest|null;tasks:Task[];versions:string[];instances:AppDefinition[]};
+export type Panel = {channel:string;html:string;framePath:string;manifest:Manifest;policy:string;snapshot:{task:{id:string;title:string;reviewedRevision:number};observation:Observation;review:Review;canAcknowledge:boolean}};
+export type Job = {id:string;phase:string;attempt:number;diagnostics:{attempt:number;message:string}[];error?:string;unsupported?:{reason:string;alternative:string}};

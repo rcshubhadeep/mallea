@@ -1,0 +1,6 @@
+{
+  "manifest": { "id": "evidence-review", "title": "Reference review panel", "version": "1.0.0", "sdkVersion": "0.2", "permissions": ["observations.read", "reviews.write"], "slot": "task.details" },
+  "source": "export function review(task, observation) { const status = task.reviewedRevision >= observation.revision ? 'clear' : task.critical ? 'blocked' : 'warning'; return {status, label: status === 'clear' ? 'Evidence reviewed' : status === 'blocked' ? 'Release review needed' : 'Evidence changed'}; }",
+  "policy": "critical-only",
+  "ui": {"tag":"section","children":[{"tag":"h2","text":"Reference review panel"},{"tag":"img","bind":"observation.screenshot"},{"tag":"p","bind":"observation.text"},{"tag":"strong","bind":"review.label"},{"tag":"p","children":[{"tag":"button","text":"Acknowledge this revision","action":"review.acknowledge"}]}]}
+}

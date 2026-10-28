@@ -1,5 +1,7 @@
 # Progress review after user acceptance of Slice 002
 
+Historical review. Subsequent recommendations below are superseded by PROJECT_PLAN.v012.md, FOUNDATION_PLAN.md, DEMO_PLAN.md and SLICES.md: 003 first working Surface, 004 Observer/feedback, 005 Automation/runnable handoff, 006 submission. Existing mechanisms remain reusable; no new runtime support is claimed.
+
 Date: 2026-10-27. Active overarching plan: PROJECT_PLAN.v007.md.
 
 ## Evidence and current position
@@ -46,5 +48,7 @@ Corrected by the user's subsequent clarification: the intended MVP limit is a sm
 Proposed Slice 003 now targets a persistent live app model for a meaningful mutable working surface, a shared renderer/binder over a small vocabulary, registered resource/action schemas, and real model-authored recomposition in both hosts. Local and remote actions use the same invocation boundary under explicit permissions. Current review-specific code is a compatibility input to that work, not proof the generalized model already exists.
 
 The demo should show the browser and native apps each change shape during use, then exercise their authored controls in both directions. A retest flow remains only one possible example, not a subsystem to build instead of the framework. A tiny unrelated contract fixture should test reuse without adding a third polished product.
+
+The Observer is the sole predefined agent type and a target framework feature, still unimplemented. The always-present builder is a capability, not a second resident agent. It should create runnable user agents with bounded execution and view outputs, in addition to composing interfaces. Future classic-app adapters may supply approved data/actions through the same contracts; no such integration is implemented. Spreadsheet and word-processor examples illustrate that architecture and do not expand the products being built.
 
 The actual component/layout vocabulary is fixed in the contract spike. Preserve the guided try path, honest saved-artifact replay, and the final two full days for rehearsal/recording/submission. The observer can later inspect this same environment and suggest a composition change; it should not require a separate bespoke product flow.

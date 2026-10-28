@@ -1,14 +1,18 @@
 # Mallea's foundation
 
-This records the user's clarified product philosophy. It is the decision guide alongside PROJECT_PLAN.v009.md. It describes the intended foundation, not a claim that all of it is implemented.
+Accepted hackathon scope: desktop visual scratchpad and differently styled local web asset-review board. Muse Observer proposes a useful color-control Surface; builder also authors saved-image/note publishing Automation and feedback-return Surface. Contributions can supply a Surface, an Automation or both. Details: FOUNDATION_PLAN.md, DEMO_PLAN.md and SLICES.md. Reuse fitting libraries behind small adapters without forcing Mallea contracts around their APIs. Hosted HTTPS, base-app upgrades, broad provenance/state tracking, background scheduling and signed installer parity are deferred. Runnable source delivery and honest Windows/macOS/Linux instructions/evidence are mandatory.
+
+This records the user's clarified product philosophy. It is the decision guide alongside PROJECT_PLAN.v012.md and FOUNDATION_PLAN.md. It describes the intended foundation, not a claim that all of it is implemented.
 
 ## The idea
 
 Explore how application development and software behavior change when agents participate natively in the environment. Users should be able to reshape software while using it, with their current data, task, and permitted capabilities available to the authoring process.
 
-A running app should have an inspectable, persistent model of its views, bindings, interaction state, behavior, capabilities, and participating agents. Its interface is a presentation of that model. The authoring agent can propose changes to the model; the framework validates, previews, and activates them while preserving authoritative data.
+A running app should have an inspectable, persistent model of its views, bindings, interaction state, behavior, capabilities, and participating agents. Its interface is a presentation of that model. The model-backed builder can propose changes to it; the framework validates, previews, and activates them while preserving authoritative data.
 
 Communication and modification fuel each other. Another app's registered resource or action becomes something a view/behavior can bind to. A user can change what their app displays or does using those capabilities, and can make changes in either direction. The product promise is the ability to compose and reshape software in context.
+
+Apps exchange typed data, state updates, events, and permitted action requests/results through the existing protocol approach. Each app renders that information using its own UI and modifies its own local app model. Transferring, embedding, mirroring, or synchronizing another app's visual elements or view/component tree is out of scope for the MVP. Sharing framework code and treating screenshots/images as data resources remain separate, supported concepts.
 
 The long-term ambition includes rethinking an OS from these primitives. The current hackathon deliverable remains an application framework running on existing browser/native hosts. React and Tauri provide rendering and hosting; they need not dictate the application model exposed to humans and agents.
 
@@ -20,11 +24,25 @@ Within that language, let the model compose different useful structures and beha
 
 Domain apps still need trusted adapters for their data and actions. Generality means the shared composition/binding/action machinery can consume those registrations without knowing domain field names or workflow names. It does not mean any imaginable capability is available, or that permissions and domain invariants disappear.
 
-## First-class agents
+## Observer, builder, and user-created agents
 
-The built-in authoring agent must be able to inspect the current app model and compose it using the same registered resources/actions available under its authority. User-created agent definitions should be explicit app entities with identity, purpose, permissions, behavior/trigger, and observable state when those features are implemented.
+The Observer is the only predefined agent type supplied by the framework, with app-scoped observation. It observes permitted usage patterns within each app and suggests something that could help that user: a shortcut, a new control, a different view, or a user-created agent. It is available in every app; observation activity remains explicitly controllable under the existing scoped collection policy. It proposes improvements grounded in actual activity and available capabilities, rather than installing changes automatically or repeatedly offering a canned workflow.
 
-Do not call a metadata record autonomous execution. Keep model authoring/reasoning, deterministic reactions, and proposed future autonomous behaviors distinguishable. The observer should eventually notice useful opportunities in the current environment and propose a model change through the same authoring path.
+The agent builder is an always-present framework capability. It can be invoked directly or from an accepted Observer suggestion. Its model calls are authoring operations, not evidence of a second preinstalled resident Builder agent. It must inspect the live app model and registered capabilities, create/revise user agents, and change interface structure, layout, bindings, behavior, and appearance within the supported vocabulary.
+
+User-created agents are explicit app entities with identity, purpose/instructions, authorized inputs/tools, trigger, outputs/UI contributions, enabled state, and observable execution state as implemented. The MVP supports model-authored Surface and/or Automation contributions with declared inputs/actions and bounded working execution. Execution may be deterministic after authoring; inference on each run is optional. A metadata record without working execution is insufficient. Arbitrary schedules, long-running loops, and broad autonomy can remain future work.
+
+The spreadsheet/current-month-folder example illustrates the Observer recognizing repeated navigation and proposing a dynamic shortcut such as Open Current Month Folder. We are not building a spreadsheet app. Its filesystem/navigation capabilities would need to be exposed and permitted before such a proposal could execute.
+
+A future Mallea word processor illustrates user-created agents: the user creates an agent that reads authorized document content, summarizes it, and displays the result in a panel, then changes that panel's layout or color. We are not building a word processor now. The reusable mechanism is agent inputs/execution/outputs coupled to live app composition, rather than a preinstalled summary agent.
+
+Keep model authoring, model execution by a created agent, and deterministic reactions distinguishable. The Observer should use the same builder and composition mechanisms; it should not require a separate bespoke authoring product.
+
+## Classic applications and connectors
+
+Trusted adapters may eventually expose data/actions from classic apps using existing connector or MCP interfaces, under the same resource schemas and grants. Mallea views and user-created agents can use approved external data inside the app. This avoids requiring every data source to be a Mallea app.
+
+Keep that compatibility boundary in the design; do not claim current support for an unimplemented connector or imply that an external app's own UI becomes malleable. No classic-app connector is currently implemented. Credentials stay in the trusted service/adapter, and connector data retains its source identity and access limits.
 
 ## Two outcomes guide the build
 
@@ -37,7 +55,9 @@ Foundation work belongs on the critical path when it enables those outcomes. A c
 
 Slices 001-002 establish working runtime pieces: authoring, validation, preview, isolation, versioned persistence, native/browser hosts, and scoped cross-app evidence. The SDK still fixes a review slot, known field paths, acknowledgement, and two policies; the host body and gateway retain domain branches. We must bridge that gap before describing Mallea as this live application-model framework.
 
-The next proposed slice therefore targets model-driven main-surface composition and schema-driven local/remote actions together. A tiny unrelated fixture should test that the shared engine does not rely on the game's domain, without adding another polished product.
+The next slice delivers a first model-authored native workspace/color Surface in two distinctly styled apps. Later slices add Observer/feedback return, publishing Automation/try delivery and submission. A tiny alternate-schema fixture checks shared bindings/actions without a third polished product. See SLICES.md.
+
+The Observer and runnable user-created agent model are target framework features that remain unimplemented. The builder already performs bounded package authoring, but it does not yet provide the full live-model/user-agent foundation described here.
 
 ## Evidence required
 

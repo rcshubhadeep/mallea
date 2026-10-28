@@ -1,10 +1,18 @@
 # Mallea
 
-Software that takes your shape. A shared foundation for desktop and web apps that users can extend with agents.
+Software that takes your shape.
+
+Mallea is an application framework for humans and agents. Users reshape software while using it: an Observer suggests improvements, and a built-in builder creates persistent interfaces (Surfaces) and task Automations. Apps exchange permitted data and actions while keeping their own interfaces. The long-term ambition is to rethink software foundations for the agent era, starting with this framework.
+
+## Hackathon demo scope
+
+Two distinctly designed apps: a desktop visual scratchpad and a local web asset-review board. Muse powers the Observer and builder: bring a frequently used color control beside the canvas, automate publishing saved images and notes, and bring review feedback back to the desktop. Changes persist across reloads.
+
+**Status:** this demo is planned. The working evidence-review prototype runs below. Delivery includes a runnable project with Windows, macOS and Linux instructions; platform verification is recorded separately. See the [demo plan](docs/DEMO_PLAN.md).
 
 ## See it running
 
-Create and revise a review panel inside the running app. The model writes its layout and behavior; you preview it, approve its access, and install it without restarting. Installed versions and acknowledgements survive reload and service restart.
+The current prototype lets you create and revise a review panel inside the running app. The model writes its layout and behavior; you preview it, approve its access, and install it without restarting. Installed versions and acknowledgements survive reload and service restart.
 
 You need Node.js 24 and this checkout. Run commands from the repository root. Install dependencies once with `npm.cmd ci` (Windows PowerShell) or `npm ci` (Linux/macOS). Skip installation when dependencies are already present. Stop this project's previews before reinstalling dependencies.
 
@@ -89,7 +97,17 @@ The notebook owns observations and revisions; the board owns linked tasks and ac
 
 ### Where this is going
 
-Every app will include a builder for creating and revising its own capabilities. A planned, optional built-in observer will notice repeated in-app work, suggest a useful improvement, and send an accepted suggestion to the builder. It will suggest changes rather than install them automatically. This proactive feature is not implemented yet.
+The approved next PoC is a **desktop visual scratchpad** and a differently styled **local web asset-review board**. Muse Observer will propose a working color-control Surface; builder will create a publishing Automation and feedback Surface connecting both directions. These are planned, not available in the legacy walkthrough above. See [demo plan](docs/DEMO_PLAN.md), [foundation plan](docs/FOUNDATION_PLAN.md) and [slices](docs/SLICES.md).
+
+Runnable source delivery is required alongside the video, with Windows/macOS/Linux setup, simple local startup, labelled real-artifact keyless try mode and actual platform evidence. Native installers may reuse Tauri tooling; signed installer parity is optional. Reuse libraries where supported APIs fit behind small adapters; Mallea keeps its own application model and capability contract.
+
+The target framework supplies **one default agent: the Observer**. It notices permitted app-usage patterns, suggests a useful shortcut, view, or agent, and sends an accepted suggestion into the builder. Its activity is controllable; suggestions do not install changes automatically. **The Observer is not implemented yet.**
+
+Every app also includes the **agent-builder capability**. It creates user-specific agents and changes the app's structure, data/action bindings, behavior, layout, and appearance within a published vocabulary. It is not a second preinstalled resident agent. Today the builder authors bounded review packages; live app-model composition and runnable user-created agents remain planned.
+
+Future trusted connector adapters can expose classic-app data/actions for use in Mallea views and agents, under explicit access. No classic-app connector is currently implemented. Spreadsheet/current-month-folder shortcuts and word-processor summary panels are illustrative examples of the vision, not apps included in this MVP. See [the foundation](docs/FOUNDATION.md) for the distinction between working features and the target model.
+
+Apps communicate through data, state updates, events, and permitted actions. Each app renders its own interface from that information. Transferring or embedding another app's visual components or view tree is out of scope; shared framework components and screenshots carried as data are separate concepts.
 
 See the [project plan](docs/README.md) and [implementation status](docs/STATUS.md).
 

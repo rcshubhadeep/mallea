@@ -2,9 +2,9 @@
 
 ## Active slice
 
-- Slice: 002 — a capability built from another app's evidence; breakdown in SLICE_002.md.
-- State: complete for the bounded functional acceptance surface. User confirms the native-edit/board-acknowledgement flow works.
-- Current work unit: W7 complete. W1-W7 passed their scoped checks. No subsequent slice has started.
+- Last completed slice: 002, bounded evidence flow. Next: 003, M1, distinct apps and first working model-authored native Surface; see SLICE_003.md and SLICES.md.
+- State: Slice 002 functional flow user-confirmed. New planning/handoff complete; Slice 003 implementation not started.
+- Current work unit: no active build unit. Slice 003 W1 (library fit/canvas) is next only when implementation starts; baseline/status/goal review required then.
 - Plan alignment: bounded Days 3-5 identity/ownership/communication path; progress toward Days 6-7 capability-aware authoring and revision. Full agent lifecycle and final demo gate remain incomplete.
 - Baseline at start: 19 tests and TypeScript checking passed. Final: 21 tests, TypeScript, both frontend builds, and Windows native release build pass.
 - User confirmation: Slice 001 planned flow worked; Slice 002 native edit makes the board acknowledgement available and the flow works. Other failure/recovery gates retain agent-operated and automated evidence rather than being attributed to the user.
@@ -24,9 +24,9 @@
 ## Next actions
 
 1. Native-edit/board-acknowledgement walkthrough is user-confirmed. Record any further user feedback separately from automated checks.
-2. Before the next slice, re-read this status, FOUNDATION.md, and the overarching goal/detailed plan v009; inspect source and revalidate the accepted baseline.
+2. Before the next slice, re-read this status, FOUNDATION.md, and the overarching goal/detailed plan v012 and FOUNDATION_PLAN.md/DEMO_PLAN.md; inspect source and revalidate the accepted baseline.
 3. Submission target: November 4, 2026, morning Eastern Time, supplied by the user with roughly nine days remaining. Reserve the final two full days for freeze/rehearsal/recording/submission; exact cutoff hour remains unspecified.
-4. Corrected proposed next slice: SLICE_003.md — a versioned live app model, a small shared UI/layout vocabulary, schema-driven binding/actions, and point-of-use composition in both hosts with bidirectional effects. Domain workflows are examples, not the engine's fixed menu. Earlier lifecycle/communication proposals are archived. No Slice 003 implementation has started.
+4. Approved scenario: visual scratchpad and differently styled local asset-review board. 003 delivers working Surface; 004 Muse Observer/feedback return; 005 publishing Automation/receipt/try delivery; 006 validation/video/submission. Previous broad 003 archived byte-for-byte. No new implementation started.
 5. No further production calls are required for Slice 002. Final submission still needs an actual native/browser rehearsal and recording with the target Meta configuration.
 
 ## Pending facts
@@ -38,6 +38,36 @@
 - Linux/macOS platform verification and final target-model/native demo recording; Windows native interaction now passes.
 
 ## Evidence log
+
+### Complete judging rubric supplied - 2026-10-28
+
+- Read attached rubric image: Impact 30%, Use of Meta AI Tooling 25%, Technical Depth & Execution 20%, Demo 25%. Replaced missing-table note in DEMO_PLAN.md with accurate weights and a concrete evidence mapping; no feature/scope expansion or plan snapshot needed.
+- Largest competitive risk is making the demo look like a color shortcut plus synchronization rather than a useful agent-authored working environment. Show the connected designer workflow and real Muse reasoning/authoring. Exact track/problem statements and competitor quality remain unknown; no invented scores or win odds.
+- README opening already updated with brief idea/demo scope. Reviewed again; no further README changes needed for judging detail, which belongs in demo docs. Documentation acceptance passed; M1-M4 remain incomplete and Slice 003 implementation has not started. No runtime changes or fresh tests/model calls required.
+
+### README opening and supplied judging excerpt - 2026-10-28
+
+- README now starts with brief ambition and demo scope, explicitly distinguishing planned scratchpad/review-board features from the working legacy prototype. No setup commands or runtime behavior changed.
+- Read supplied judging stages; recorded Stage One eligibility evidence and Stage Three top-five-per-track video importance in DEMO_PLAN.md. Actual Stage Two criteria/weights were omitted as a table placeholder, so no numerical assessment or invented rubric mapping is claimed.
+- Acceptance passed for this documentation task: concise opening and judging evidence/uncertainty recorded. M1-M4 implementation remains incomplete; Slice 003 not started. README reviewed/updated; no runtime tests needed for prose-only change. Latest 21-test/TypeScript baseline remains the preceding planning verification, not a fresh test run here.
+
+### Approved demo and bounded slice planning - 2026-10-28
+
+- User accepts scenario and review with explicit hackathon cuts. Hosted HTTPS and base-app upgrades deferred; Muse Observer is central; another-machine runnable delivery required.
+- FOUNDATION_PLAN.md, DEMO_PLAN.md, SLICES.md and 003-006 define minimum foundation, <=180-second story, milestones and numbered work units. Prior broad 003 archived unchanged.
+- Library reuse must fit behind small adapters without dictating Mallea contracts. Fabric.js is timeboxed candidate, not installed dependency; native color input/existing stack preferred.
+- Fresh Windows planning baseline: 21 tests with loopback access and TypeScript checking pass. Inspected SDK/runtime/registry/desktop scripts. No runtime/dependency changes or inference calls; native/build and other-platform evidence remain historical/untested.
+- Plan v012: 15 localized changes, unchanged v011 and reverse reconstruction verified. Updated foundation/architecture/progress pointers and standing scope rules.
+- Planning acceptance passed: approved foundation/demo, runnable-delivery gates, slices and first-slice units recorded. M1-M4 implementation incomplete; no active build work unit.
+- README reviewed/updated to distinguish planned new apps from working legacy flow; reproduction commands unchanged. Shared portability/credential and diff checks required before final handoff.
+
+### Expanded foundation review - 2026-10-28
+
+- Read the user's full expanded direction and linked Gemini brief through the browser; checked Chrome's official Local Network Access guidance. FOUNDATION_REVIEW.md records requirements, recommendations, implementation gaps, and the requested foundation -> demo -> slices -> build sequence.
+- This is a pre-implementation review, not completion or expansion of Slice 003. Plan v011 remains active; the next foundation snapshot and demo-app selection remain pending. Existing notebook/board apps are not assumed to be the final demo choice.
+- Fresh Windows baseline: 21 tests passed with loopback access and TypeScript checking passed. Initial restricted test run had three EACCES loopback failures; the permitted rerun passed. No model calls, dependency changes, or runtime modifications.
+- Milestone advanced: foundation decision review. Review acceptance passed: linked brief read, current code compared with the expanded goal, and technical issues recorded with reasons. Implementation acceptance for hosted-site pairing, resource identities/version ledger, local customization lifecycle, generic live model, created agents, and Observer remains incomplete.
+- README reviewed; no run/setup changes needed for this review-only step. Existing commands remain the reproduction path. No new platform or feature support is claimed. Shared review uses portable paths and no credentials.
 
 Record completed milestone, commands or manual checks, result, provider/model if applicable, token usage or cost when returned, and remaining limitations. Never include keys, private prompts, or raw sensitive traces.
 
@@ -167,3 +197,18 @@ Record completed milestone, commands or manual checks, result, provider/model if
 - Plan v009 makes ten localized corrections with reverse-reconstruction/byte-preservation verification. v008 remains historical and unchanged.
 - Replaced the proposed Slice 003 with the live-model/shared-renderer/schema-driven-capabilities bridge. Archived its communication-first predecessor byte-for-byte. No implementation started; current runtime still has the review-specific limits recorded above.
 - Updated standing guidance and progress-review recommendations to prevent the same scope drift. No runtime changes, tests, or inference calls were needed for this planning correction.
+
+### Observer, builder, created agents, and README gate clarified
+
+- User specifies the Observer as the ONLY predefined agent type supplied by the framework. It observes permitted per-app usage patterns and suggests useful changes. Default availability and observation activity controls are distinct; the Observer remains unimplemented.
+- The agent builder is a permanent framework capability, not a second preinstalled resident agent. It creates user agents and reshapes app interface/layout/appearance/behavior. A minimal execution model may use an explicit trigger and bounded model call over approved inputs with typed output bound to a view; metadata alone is insufficient.
+- Classic-app connector adapters are a future resource/action extension point. No legacy-app integration, spreadsheet, or word processor is implemented or newly in scope. The examples illustrate the architecture.
+- Plan v010 contains ten localized changes and verified unchanged-byte preservation from v009. FOUNDATION.md and proposed Slice 003 carry the clarified roles. Slice 003 is still not started.
+- README reviewed and updated: current bounded package authoring is distinguished from the planned default Observer, live model/user-agent foundation, and future connectors. Added a mandatory end-of-slice README review/update rule to AGENTS.md, the plan, and slice handoff. If no edit is needed, future slices must record that review explicitly.
+- Documentation-only clarification: no runtime changes, inference calls, or new execution claims. Existing test/build evidence remains the last recorded baseline.
+
+### Cross-app visual scope boundary - 2026-10-28
+
+- User explicitly keeps data/state exchange through the existing protocol approach and excludes communication of visual elements for now.
+- Plan v011 adds one byte-preserving section-9 insertion: data/state/events and permitted action requests/results may cross app boundaries; visual components, rendered UI, and view trees do not. Each app renders its own UI and edits its local model. Shared framework code and evidence images as data remain distinct.
+- Updated foundation, proposed Slice 003, standing guidance, and README to carry this boundary. No runtime changes or tests/inference calls required for this documentation-only clarification.

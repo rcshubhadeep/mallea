@@ -1,11 +1,18 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v009.md](PROJECT_PLAN.v009.md).
+Active project plan: [PROJECT_PLAN.v012.md](PROJECT_PLAN.v012.md).
 
 This is the implementation guide for the hackathon project. Read the active plan before starting work. The initial plan records the conversation's direction and identifies assumptions that still need validation.
 
 - [FOUNDATION.md](FOUNDATION.md): clarified product philosophy and the decision guide for malleability, agents, and bidirectional capabilities.
+- [FOUNDATION_REVIEW.md](FOUNDATION_REVIEW.md): expanded hosted-web/local-companion vision, technical-brief review, proposed identity/provenance/locality boundaries, and code gaps before revising the foundation.
 
+- [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md): accepted minimal PoC contracts, reuse boundaries, deferrals and runnable delivery.
+- [DEMO_PLAN.md](DEMO_PLAN.md): approved scratchpad/review-board storyboard and acceptance.
+- [SLICES.md](SLICES.md): bounded M1-M4 sequence.
+- [SLICE_004.md](SLICE_004.md): Observer and feedback return, defined/not started.
+- [SLICE_005.md](SLICE_005.md): publishing Automation and try delivery, defined/not started.
+- [SLICE_006.md](SLICE_006.md): platform evidence, video and submission, defined/not started.
 - [STATUS.md](STATUS.md): mutable implementation progress, next actions, and verification evidence.
 - [CHANGELOG.md](CHANGELOG.md): append-only record of plan revisions.
 - [SLICE_001.md](SLICE_001.md): completed browser authoring slice.
@@ -14,7 +21,7 @@ This is the implementation guide for the hackathon project. Read the active plan
 - [ARCHITECTURE.md](ARCHITECTURE.md): implemented ownership, routing, MCP, and execution boundaries.
 - [REHEARSAL_002.md](REHEARSAL_002.md): observed native/browser rehearsal and model timing evidence.
 - [PROGRESS_REVIEW.md](PROGRESS_REVIEW.md): goal comparison, reusable mechanisms, domain assumptions, and recommended next work.
-- [SLICE_003.md](SLICE_003.md): proposed live application-model composition and schema-driven capabilities slice; not started.
+- [SLICE_003.md](SLICE_003.md): M1, distinct apps and first model-authored working native Surface; defined, not started.
 - [IDEAS.md](IDEAS.md): uncommitted candidates with explicit admission gates; these do not expand active slice scope.
 - `PROJECT_PLAN.vNNN.md`: immutable plan snapshots, numbered consecutively.
 

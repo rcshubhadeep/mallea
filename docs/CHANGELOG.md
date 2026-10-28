@@ -72,3 +72,27 @@
 - Previous SHA-256: 555a8db6a713fa3a53ea03b97a33f7b80337efc4e2ab9ee262f0724807fb2ad3.
 - New SHA-256: eed51865f771930851c05719279a7566cf02725a8646b74436acfeb5f0263682.
 - Updated FOUNDATION.md and standing guidance; the mutable Slice 003 proposal now follows the live-model foundation. Its preceding communication-first proposal is retained byte-for-byte in docs/archive/SLICE_003.communication-proposal.md.
+
+## v010 - 2026-10-27
+
+- Clarified the Observer as the sole default agent, distinguished the always-present builder capability and user-created agents, and recorded bounded execution plus future classic-app adapter compatibility. Spreadsheet/month-folder and word-processor examples remain illustrative, not products to build.
+- Added a mandatory README review/update gate at every slice handoff.
+- Applied 10 localized replacements/insertions. Previous snapshot: PROJECT_PLAN.v009.md; new: PROJECT_PLAN.v010.md. Every unaffected segment verified; reversing changes reconstructs v009 byte-for-byte. v009 unchanged.
+- Previous SHA-256: eed51865f771930851c05719279a7566cf02725a8646b74436acfeb5f0263682.
+- New SHA-256: 4636795545595642b04cd6d634fa1cbec1aa5136ca4bacf359aad47789adf813.
+
+## v011 - 2026-10-28
+
+- One insertion in section 9 records the user's boundary: exchange data/state/events and permitted actions via the existing protocol approach; each app renders its own UI. Cross-app visual-element/view-tree transfer is out of scope. Shared framework components and images carried as data remain distinct from remote UI transfer.
+- Previous: PROJECT_PLAN.v010.md; new: PROJECT_PLAN.v011.md. Every unaffected byte verified identical; v010 unchanged.
+- Previous SHA-256: 4636795545595642b04cd6d634fa1cbec1aa5136ca4bacf359aad47789adf813.
+- New SHA-256: 3107f18f059086edb4fa4ca05bb255e5a4f45cc1413d7c136d1be3530f05990a.
+
+
+## v012 - 2026-10-28
+
+- Accepted scratchpad/local asset-review demo, Surface/Automation contributions, minimal provenance, local activation and source-run delivery; deferred hosted HTTPS, schema-upgrade handling and broad infrastructure. Library reuse must fit Mallea contracts through small adapters, not force API workarounds.
+- Replaced demo/video and execution sections, updated behavior/deliverables/Observer examples, inserted minimal architecture boundary and clarified historical investigations. Active details in FOUNDATION_PLAN.md, DEMO_PLAN.md, SLICES.md and SLICE_003.md through SLICE_006.md. Former broad 003 archived byte-for-byte. No runtime changes.
+- Previous PROJECT_PLAN.v011.md unchanged; new PROJECT_PLAN.v012.md created by byte copy and 15 localized edits. Reversing edits reconstructs every previous byte, including whitespace/line endings.
+- Previous SHA-256: 3107f18f059086edb4fa4ca05bb255e5a4f45cc1413d7c136d1be3530f05990a.
+- New SHA-256: bfbfcf9ccc5714a09df955d2c2d4a776e2e95ce8e5f8dfe4a7b1e074539b3ea0.

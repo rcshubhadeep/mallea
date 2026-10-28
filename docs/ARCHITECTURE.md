@@ -1,5 +1,7 @@
 # Slice 002 architecture
 
+Historical implemented baseline. Current accepted target: PROJECT_PLAN.v012.md and FOUNDATION_PLAN.md (scratchpad/review-board apps, small live model, Surface/Automation contributions and reused local service/MCP/storage/isolation). New targets are not implemented by this planning update; the diagram below describes the legacy evidence demo.
+
 This describes the implemented local demo boundary. Follow PROJECT_PLAN.v006.md for goals and deferred work.
 
 ```mermaid

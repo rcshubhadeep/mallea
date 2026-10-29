@@ -1,6 +1,6 @@
 # Three-minute demo: software that adapts where you work
 
-State: approved scenario, planned implementation. Governed by PROJECT_PLAN.v012.md and FOUNDATION_PLAN.md. Exact timings must be rehearsed. Scratchpad and Review Board are working app labels, not a naming exercise.
+State: approved scenario, planned implementation. Governed by PROJECT_PLAN.v016.md and FOUNDATION_PLAN.md. Exact timings must be rehearsed. Scratchpad and Review Board are working app labels, not a naming exercise.
 
 ## Promise
 

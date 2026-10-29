@@ -1,6 +1,6 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v012.md](PROJECT_PLAN.v012.md).
+Active project plan: [PROJECT_PLAN.v016.md](PROJECT_PLAN.v016.md).
 
 This is the implementation guide for the hackathon project. Read the active plan before starting work. The initial plan records the conversation's direction and identifies assumptions that still need validation.
 
@@ -10,6 +10,11 @@ This is the implementation guide for the hackathon project. Read the active plan
 - [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md): accepted minimal PoC contracts, reuse boundaries, deferrals and runnable delivery.
 - [DEMO_PLAN.md](DEMO_PLAN.md): approved scratchpad/review-board storyboard and acceptance.
 - [SLICES.md](SLICES.md): bounded M1-M4 sequence.
+- [SURFACE_SDK.md](SURFACE_SDK.md): implemented SDK 0.3 vocabulary, data-only rendering, preview and app-adapter boundary.
+- [SLICE_003A.md](SLICE_003A.md): correction for new persistent Surface-local fields in web and desktop.
+- [SLICE_003C.md](SLICE_003C.md): next foundation slice, ordinary apps with targeted additions, choices and feedback return; defined, not implemented.
+- [REHEARSAL_003A.md](REHEARSAL_003A.md): new-field, preview, refinement, persistence and consolidated-workspace evidence.
+- [LEGACY_REVIEW.md](LEGACY_REVIEW.md): retained evidence-review experience for Slices 001-002.
 - [SLICE_004.md](SLICE_004.md): Observer and feedback return, defined/not started.
 - [SLICE_005.md](SLICE_005.md): publishing Automation and try delivery, defined/not started.
 - [SLICE_006.md](SLICE_006.md): platform evidence, video and submission, defined/not started.
@@ -20,8 +25,9 @@ This is the implementation guide for the hackathon project. Read the active plan
 - [SLICE_002.md](SLICE_002.md): completed cross-app slice, work units, and acceptance gates.
 - [ARCHITECTURE.md](ARCHITECTURE.md): implemented ownership, routing, MCP, and execution boundaries.
 - [REHEARSAL_002.md](REHEARSAL_002.md): observed native/browser rehearsal and model timing evidence.
+- [REHEARSAL_003.md](REHEARSAL_003.md): actual Surface authoring/native/browser results, model usage and scoped acceptance.
 - [PROGRESS_REVIEW.md](PROGRESS_REVIEW.md): goal comparison, reusable mechanisms, domain assumptions, and recommended next work.
-- [SLICE_003.md](SLICE_003.md): M1, distinct apps and first model-authored working native Surface; defined, not started.
+- [SLICE_003.md](SLICE_003.md): M1 implemented and agent-verified; user confirms demo flow and changing panel side.
 - [IDEAS.md](IDEAS.md): uncommitted candidates with explicit admission gates; these do not expand active slice scope.
 - `PROJECT_PLAN.vNNN.md`: immutable plan snapshots, numbered consecutively.
 

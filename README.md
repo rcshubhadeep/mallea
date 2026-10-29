@@ -8,110 +8,103 @@ Mallea is an application framework for humans and agents. Users reshape software
 
 Two distinctly designed apps: a desktop visual scratchpad and a local web asset-review board. Muse powers the Observer and builder: bring a frequently used color control beside the canvas, automate publishing saved images and notes, and bring review feedback back to the desktop. Changes persist across reloads.
 
-**Status:** this demo is planned. The working evidence-review prototype runs below. Delivery includes a runnable project with Windows, macOS and Linux instructions; platform verification is recorded separately. See the [demo plan](docs/DEMO_PLAN.md).
+**Available now:** image annotation, model-authored Surfaces with new local fields in either app, and manual saved-design transfer. Observer, publishing Automations and feedback return are not yet available. Windows is the reference platform; macOS/Linux await testing. See the [demo plan](docs/DEMO_PLAN.md).
+
+## Builder vocabulary
+
+- **Layouts:** vertical stack, two-column split, grid.
+- **Components:** text, image, single-line input, multiline text area, color picker/hex field, action button, repeated text list, and app-provided components such as the canvas.
+- **Data:** existing permitted app fields, plus up to 16 new app-local text/color fields per Surface. Text fields hold up to 2000 characters.
+
+These can be composed into additional panels in either app. For example: "Add a new notes panel above the current content, with a multiline text box. Keep the existing content." This creates a new local field; it does not need to edit the asset note or desktop revision note. See the [Surface contract](docs/SURFACE_SDK.md) for limits.
+
+The color control accepts any six-digit hex color. A fixed set of clickable swatches or a restricted palette is not yet supported; reference colors can be shown as text beside the picker.
 
 ## See it running
 
-The current prototype lets you create and revise a review panel inside the running app. The model writes its layout and behavior; you preview it, approve its access, and install it without restarting. Installed versions and acknowledgements survive reload and service restart.
+Run commands from the repository root. You need Node 24; native development also needs Rust and the [platform prerequisites](#preparing-for-the-application-scaffold). Install locked dependencies once: Windows PowerShell: `npm.cmd ci`; Linux/macOS: `npm ci`. Stop this project's previews/native app before installing dependencies, especially on Windows.
 
-You need Node.js 24 and this checkout. Run commands from the repository root. Install dependencies once with `npm.cmd ci` (Windows PowerShell) or `npm ci` (Linux/macOS). Skip installation when dependencies are already present. Stop this project's previews before reinstalling dependencies.
-
-**Terminal 1 — start authoring (same command in PowerShell, Bash, or Zsh):**
-
-Configure the development key, HTTPS API base, and model identifier in your ignored `.env`: `DEV_API_KEY`, `DEV_BASE_URL`, `DEV_MODEL`. Keep credentials server-side. See [Developer Setup](#developer-setup) for detailed prerequisites and configuration.
+**1. Start the local service** (PowerShell, Bash or Zsh):
 
 ```sh
-node --env-file=.env services/workspace/server.mjs
+node --env-file=.env services/workspace/server.mjs --studio
 ```
 
-If model selection is already in the optional ignored `docs/private/smoke.env`, use this command instead:
+Your ignored .env needs `DEV_API_KEY`, `DEV_BASE_URL` (HTTPS API base) and `DEV_MODEL` for live authoring. If model selection is in optional ignored `docs/private/smoke.env`, use `node --env-file=.env --env-file=docs/private/smoke.env services/workspace/server.mjs --studio`. Keys remain in this service. Without inference configuration, `node services/workspace/server.mjs --studio` runs the starting apps; fresh Surface generation needs configuration. Keyless replay of generated artifacts is not yet available.
 
-```sh
-node --env-file=.env --env-file=docs/private/smoke.env services/workspace/server.mjs
-```
+**2. Start the two frontends in separate terminals:**
 
-**Terminal 2 — start the browser app:**
+| App | Windows PowerShell | Linux / macOS |
+| --- | --- | --- |
+| Parcel web app | `npm.cmd --script-shell=cmd.exe run dev:web` | `npm run dev:web` |
+| Fieldnote frontend | `npm.cmd --script-shell=cmd.exe run dev:desktop-ui` | `npm run dev:desktop-ui` |
 
-| Windows / PowerShell | Linux / macOS |
-| --- | --- |
-| `npm.cmd --script-shell=cmd.exe run dev:web` | `npm run dev:web` |
+Open [Parcel](http://127.0.0.1:5173). [Fieldnote in the browser](http://127.0.0.1:5174) is a convenient preview; it does not replace native testing.
 
-Open **[the production board](http://127.0.0.1:5173)**. Stop each server with Ctrl+C when finished.
+**3. Launch the actual desktop** in another terminal:
 
-**Terminal 3 — run the notebook:**
-
-For the actual Windows desktop, build once using the commands under Developer Setup and launch:
-
-```powershell
-& .\apps\desktop\src-tauri\target\release\mallea-desktop.exe
-```
-
-For desktop development on Windows, Linux, or macOS, start the notebook frontend (`npm.cmd --script-shell=cmd.exe run dev:desktop-ui` / `npm run dev:desktop-ui`) and launch the native shell in another terminal (`npm.cmd --script-shell=cmd.exe run desktop -- dev` / `npm run desktop -- dev`). Linux/macOS native interaction remains unverified. Opening port 5174 in a browser is a frontend preview, not a native test.
-
-1. Keep the notebook and browser board open. They have distinct identities and own different data.
-2. In the board, click **Allow linked notebook evidence**. Discovery shows availability; this explicit action grants access to the board's linked observations. The notebook must be connected for cross-app reads.
-3. Click **Shape this app** and use the suggested request, or edit it. The model receives the app contract, linked source IDs, and descriptions discovered through MCP. Evidence contents are bound at runtime.
-4. Click **Create panel**. Generation has at most three attempts; inference can incur charges. A request outside the contract may return **Not supported yet**, with no draft. There is no automatic production fallback.
-5. Try the preview acknowledgement: preview becomes clear while the live task stays unreviewed. Approve the displayed access, then **Install panel**. Installation applies only to this app.
-6. Acknowledge evidence in the installed board panel. In the native notebook, edit the observation text and click **Save observation**. The notebook revision increases; the board updates without reloading and requires review of the new revision.
-7. Use **Refine this panel** to request: “Only block release-critical tasks when evidence changes; warn for the others. Keep the screenshot and acknowledgement button. Use the heading Release confidence.” Preview and install; the ordinary unreviewed task warns while prior acknowledgements remain.
-8. Close/reopen the notebook. The board reports an offline evidence owner, then refreshes authoritative evidence when it reconnects. Reload or restart the service: packages, grants, revisions, and acknowledgements persist. The app reconnects automatically; refreshing manually is also supported.
-9. Run the automated tests under Developer Setup to reproduce denied access, wrong-instance/cross-workspace calls, third-instance routing isolation, duplicate edits, stale acknowledgements, failed updates, and preview isolation without paid model calls.
-
-The built-in demo uses local synthetic screenshots and observations. Evidence reads use the official MCP SDK gateway; app presence, routed requests, and revision notifications use outbound WebSocket connections. The service remains a local development workspace, not a production identity service.
-
-**No model configuration yet?** Start with `node services/workspace/server.mjs examples/reference-extension.json` instead. This seeds a hand-authored reference panel into an empty workspace; it does not demonstrate model authoring. Starting without a package or configuration shows an empty app, but generation requires configuration.
-
-Data is stored in ignored `.mallea/workspace.sqlite`. For a fresh walkthrough, stop the service and choose a new database filename before restarting; keep the old file to retain its state:
-
-| Windows / PowerShell | Linux / macOS |
-| --- | --- |
-| `$env:MALLEA_DB='.mallea/my-walkthrough.sqlite'` | `export MALLEA_DB='.mallea/my-walkthrough.sqlite'` |
-
-Use a filename not previously used. On an existing migrated workspace, your installed panel appears on the board after source access is allowed; use Refine this panel rather than Create panel. Seeding a reference package never replaces an existing installed version. Do not delete credential files to reset the app.
-
-### See the notebook too
-
-Keep the service running. In another terminal:
-
-| Windows / PowerShell | Linux / macOS |
-| --- | --- |
-| `npm.cmd --script-shell=cmd.exe run dev:desktop-ui` | `npm run dev:desktop-ui` |
-
-Open **[the notebook frontend](http://127.0.0.1:5174)**. This previews the desktop app's frontend in a browser. To launch its native window, complete [desktop prerequisites](#preparing-for-the-application-scaffold), leave that frontend running, then use another terminal:
-
-| Windows / PowerShell | Linux / macOS |
+| Windows PowerShell | Linux / macOS |
 | --- | --- |
 | `npm.cmd --script-shell=cmd.exe run desktop -- dev` | `npm run desktop -- dev` |
 
-### What works today
+Or build the release once: `npm.cmd --script-shell=cmd.exe run build` then `npm.cmd --script-shell=cmd.exe run desktop -- build` on Windows; `npm run build` then `npm run desktop -- build` on Linux/macOS. Launch the built Windows executable with `& .\apps\desktop\src-tauri\target\release\mallea-desktop.exe`, Linux with `./apps/desktop/src-tauri/target/release/mallea-desktop`, or macOS with `./apps/desktop/src-tauri/target/release/mallea-desktop` (source-built executable; no signed app installer claimed). Release mode needs only the service and Parcel frontend; stop Fieldnote's frontend if not using native dev mode. Native Linux/macOS execution is untested.
 
-- Browser and notebook frontends share a React runtime and a local workspace service.
-- Model-authored layout and review behavior can be previewed, installed, and revised inside the running browser app.
-- Acknowledgements and installed versions persist in SQLite; preview data is separate.
-- Twenty-one automated checks and both frontend builds pass on Windows. Direct Meta initial/revision validation passed on the first attempt for each job.
-- Unsupported requests can return an explanation and suggested alternative without creating a draft. The capability audit records demonstrated support and limitations; model-assisted detection is not guaranteed for every request.
-- Windows native rendering, isolated acknowledgement, and native-to-browser evidence edits pass. Linux/macOS execution awaits verification.
+### Try shaping the apps
 
-The notebook owns observations and revisions; the board owns linked tasks and acknowledgements. Each app has separate package activation. The shared builder consumes app-provided definitions and MCP discovery; authorized evidence reads are routed to the connected owner. Generated UI rendering and acknowledgement have been verified in the actual Windows native window.
+Both apps include **Shape this app** in the top bar. Each app has its own Surface, layout, local values and installed version. Sharing image/note data does not copy the interface. New local fields save after a short editing pause or leaving the field; **Save local changes** also saves explicitly. Wait for **Local changes saved** before closing/reloading. Preview text is never installed as live note content.
 
-### Where this is going
+1. In Fieldnote, edit **Annotation** and **Revision note**. Double-click/drag the canvas title if desired. **Edit** opens the original annotation-color control. **Save revision** stores a PNG and note together.
+2. Choose **Shape this app**, keep or change the request, then **Build Surface**. The model receives the current workspace and registered capability contract. Generation has at most two repairs; unsupported requests can be declined.
+3. In preview, change the annotation or color. Only the preview copy changes. Approve requested access and **Install Surface**. The installed workspace uses the original live draft, not preview edits.
+4. Use the generated color control. Request another composition, for example: "Keep the working color control and editable fields, but group controls above the canvas in a vertical stack. Add the heading Creative controls." Build, preview and install. Compatible draft state remains.
+5. **Save revision**. In Parcel, **Allow saved-design access**, then **Refresh saved design**. The image/note and source revision update through MCP and the connected owner. Unsaved Fieldnote edits do not publish. Refreshing unchanged data does not create a new published revision.
+6. Reload/reopen: installed Surface and saved data remain. **Disable Surface** restores the starting workspace; **Enable Surface** restores the installed version. Revoking read access blocks further reads but does not delete the copy already published. Close Fieldnote to test source-offline feedback; reopen it to retry.
 
-The approved next PoC is a **desktop visual scratchpad** and a differently styled **local web asset-review board**. Muse Observer will propose a working color-control Surface; builder will create a publishing Automation and feedback Surface connecting both directions. These are planned, not available in the legacy walkthrough above. See [demo plan](docs/DEMO_PLAN.md), [foundation plan](docs/FOUNDATION_PLAN.md) and [slices](docs/SLICES.md).
+Only saved revisions persist as app edits; unsaved editing drafts are not recovered after closing/reloading. Keep one editing Fieldnote instance for predictable draft behavior. Observer, feedback return, automatic publication, generic uploads, arbitrary plugins and base-app upgrade handling are not implemented. Contributions use a small declarative vocabulary; no generated JavaScript executes in the new Surface renderer. The existing legacy sandbox remains separate.
 
-Runnable source delivery is required alongside the video, with Windows/macOS/Linux setup, simple local startup, labelled real-artifact keyless try mode and actual platform evidence. Native installers may reuse Tauri tooling; signed installer parity is optional. Reuse libraries where supported APIs fit behind small adapters; Mallea keeps its own application model and capability contract.
+Stop each dev/service terminal with Ctrl+C and close the native window. There is one active database: ignored `.mallea/workspace.sqlite`. Keep `MALLEA_DB=.mallea/workspace.sqlite` in your ignored .env. Earlier test databases have been moved under `.mallea/archive/` and are inactive, recoverable backups. Do not choose a different database for each test.
 
-The target framework supplies **one default agent: the Observer**. It notices permitted app-usage patterns, suggests a useful shortcut, view, or agent, and sends an accepted suggestion into the builder. Its activity is controllable; suggestions do not install changes automatically. **The Observer is not implemented yet.**
+If an older terminal still overrides MALLEA_DB, clear that override once before starting the service so it uses .env: PowerShell `Remove-Item Env:MALLEA_DB -ErrorAction SilentlyContinue`; Bash/Zsh `unset MALLEA_DB`. The service creates the configured database on first run. Stop the service before moving/copying databases; retain SQLite WAL/SHM companions if present. [Legacy walkthrough](docs/LEGACY_REVIEW.md).
 
-Every app also includes the **agent-builder capability**. It creates user-specific agents and changes the app's structure, data/action bindings, behavior, layout, and appearance within a published vocabulary. It is not a second preinstalled resident agent. Today the builder authors bounded review packages; live app-model composition and runnable user-created agents remain planned.
-
-Future trusted connector adapters can expose classic-app data/actions for use in Mallea views and agents, under explicit access. No classic-app connector is currently implemented. Spreadsheet/current-month-folder shortcuts and word-processor summary panels are illustrative examples of the vision, not apps included in this MVP. See [the foundation](docs/FOUNDATION.md) for the distinction between working features and the target model.
-
-Apps communicate through data, state updates, events, and permitted actions. Each app renders its own interface from that information. Transferring or embedding another app's visual components or view tree is out of scope; shared framework components and screenshots carried as data are separate concepts.
-
-See the [project plan](docs/README.md) and [implementation status](docs/STATUS.md).
+See [Surface SDK](docs/SURFACE_SDK.md), [demo plan](docs/DEMO_PLAN.md), [status](docs/STATUS.md), and [project documentation](docs/README.md). Run from source using the commands above. Native installers and keyless artifact replay are not yet available.
 
 ## Developer Setup
+
+### Model request failures
+
+The builder distinguishes authentication rejection, insufficient credit/quota, rate limiting, service unavailability, network failure and a 60-second timeout. It stops without automatically retrying or switching inference environments; your installed Surface remains unchanged. Check the selected development/production configuration, wait if rate-limited, then submit again manually. Configuration names and startup commands are above and below; never paste key values into reports. After updating service code, stop its terminal with Ctrl+C and restart the same service command; no desktop rebuild is needed for service-only error-reporting changes. These instructions apply to PowerShell, Bash and Zsh.
+
+If port 4318 is already occupied, the companion may still be running in an earlier terminal. Reuse it, or stop that project's service before starting another; do not start multiple companions against the same database. Do not stop unrelated processes.
+
+### Verify new local fields
+
+These optional commands use isolated in-memory services, not your active database. They make real model calls; each job allows an initial request plus two repairs. PowerShell/Bash/Zsh:
+
+```sh
+# Exact web note-panel request, then a refinement that must preserve its value:
+node --env-file=.env scripts/verify-local-surface.mjs --refine
+# Same facility with the desktop contract:
+node --env-file=.env scripts/verify-local-surface.mjs --desktop
+# Optional explicit direct Meta check (one job):
+node --env-file=.env scripts/verify-local-surface.mjs --production
+```
+
+Add the optional smoke.env argument as described above only when needed. Expected: ready jobs, declared new local textarea, retained existing app content, successful local write/refinement, then PASS and numeric usage. Artifacts/reports go under ignored .mallea/local-surface-checks. This is a service check, separate from native UI verification. Deterministic coverage is in `npm test` / Windows `npm.cmd --script-shell=cmd.exe test`. No test-suite inference calls.
+
+### Canvas library and authoring verification
+
+Fabric.js **7.4.0**, MIT licensed, implements canvas annotation/export behind a small adapter. Install through the committed lockfile using `npm.cmd ci` (PowerShell) or `npm ci` (Bash/Zsh); no global Fabric install or native canvas package setup is required for browser/Tauri use. Stop Mallea previews before changing dependencies. [Surface contract and limits](docs/SURFACE_SDK.md).
+
+Optional real-model service verification, same commands in PowerShell/Bash/Zsh:
+
+```sh
+# Development: two authoring jobs, maximum three attempts each, no production fallback.
+node --env-file=.env --env-file=docs/private/smoke.env scripts/verify-surface.mjs
+# Optional explicit direct Meta check; requires PROD_LLM_KEY, PROD_BASE_URL, PROD_MODEL.
+node --env-file=.env scripts/verify-surface.mjs --production
+```
+
+Omit the optional smoke.env argument when DEV_MODEL is already in .env. Expected: initial/refinement ready with attempts, versions, timings and numeric usage, retained app data, then a total. Missing monetary usage is null. Failures stop without an automatic rerun. This uses a separate in-memory service, not the user's database, and does not prove native UI behavior. Windows verified; Linux/macOS execution untested. Do not run paid checks unless you intend to use the explicitly selected inference configuration.
 
 ### Probe requests beyond the walkthrough
 
@@ -133,7 +126,7 @@ After updating to the unsupported-response change, restart the service and refre
 
 The sections below cover optional inference tests, prerequisites, builds, isolation checks, and detailed run instructions. They are not prerequisites for trying the browser preview above.
 
-### First step: verify development inference
+### Verify development inference
 
 This checks that local configuration can reach the development model before we build the agent loop. It sends one synthetic prompt, requests at most 512 output tokens (including any reasoning charged against that limit), times out after 60 seconds, and does not retry or use production credentials. A request can incur inference charges, including if a client timeout occurs.
 
@@ -219,7 +212,7 @@ git check-ignore .env docs/private/smoke.env
 git status --short
 ```
 
-### Second step: verify a tool-call round trip
+### Verify a tool-call round trip
 
 Use the same Node installation and development configuration as above. Commands are identical in PowerShell, Bash, and Zsh:
 
@@ -247,9 +240,9 @@ Windows verification passed in 5.154 seconds with 1,416 total tokens across two 
 
 If the model does not request a tool, the test fails without forcing a call or issuing a second request. Invalid arguments also stop execution. A non-JSON final response fails the strict result check. Check tool support, model configuration, and token limits before making another paid attempt; general HTTP troubleshooting above also applies.
 
-### Third step: explicit production compatibility check
+### Explicit production compatibility check
 
-This is a budget-consuming milestone check, not the default development command. Set `PROD_BASE_URL`, `PROD_LLM_KEY`, and `PROD_MODEL` locally. The production model used for the recorded check was `muse-spark-1.3`, confirmed by the existing Python example. Keep credentials outside source control.
+This is a budget-consuming production compatibility check, not the default development command. Set `PROD_BASE_URL`, `PROD_LLM_KEY`, and `PROD_MODEL` locally. The production model used for the recorded check was `muse-spark-1.3`, confirmed by the existing Python example. Keep credentials outside source control.
 
 Run in PowerShell, Bash, or Zsh:
 
@@ -267,7 +260,7 @@ The shared helper accepts an API base URL or a complete `/responses` or `/chat/c
 
 Both stages use automatic tool selection. The tested production endpoint rejects `tool_choice: "none"`; final validation rejects additional calls rather than executing them. The full round trip passed on Windows in 4.613 seconds with 1,588 tokens. Production usage did not include a monetary cost. Linux/macOS remain untested. [Meta chat-completions documentation](https://dev.meta.ai/docs/protocols/chat-completions) describes the protocol; longer reasoning-preserving loops may require a Responses adapter later.
 
-### Fourth step: experimental extension generation
+### Experimental extension generation
 
 Use development configuration only. Run in PowerShell, Bash, or Zsh:
 
@@ -393,7 +386,7 @@ The runner uses QuickJS compiled to WebAssembly inside a fresh worker. It expose
 
 ### Existing-workspace migration and recovery
 
-The first Slice 002 startup migrates a Slice 001 database transactionally. Before migration, SQLite writes a consistent backup alongside it named `<database>.pre-slice002-<timestamp>.sqlite`. The board retains its package versions, drafts, and acknowledgements; observations become notebook-owned records. The notebook starts with no installed panel. No credential changes are required.
+Older evidence-review databases are migrated transactionally on first startup, with a consistent SQLite backup alongside the original. Installed packages and acknowledgements are retained. See [migration details](docs/LEGACY_REVIEW.md#legacy-database-migration-details). No credential changes are required.
 
 Stop the service before copying or restoring a database. Keep the backup and original database. For a fresh demo without modifying either, set `MALLEA_DB` to a new filename using the table above. To inspect a backup, choose that backup as `MALLEA_DB` in a separate stopped-service session. Starting the current service on an old backup performs a new migration. Restoring an old backup does not preserve later edits; do not overwrite current state casually.
 
@@ -401,23 +394,25 @@ After pulling this dependency update, stop this project's previews and run `npm.
 
 ### Local routing and MCP verification
 
+Current studio mode adds registered `read_saved_design` with `{targetAppId, arguments:{designId}}`, used by Parcel's manual saved-design refresh. Source read access is distinct from Surface-local permissions. SDK 0.3 Surfaces and limits are described in [SURFACE_SDK.md](docs/SURFACE_SDK.md). The evidence-specific details below describe the retained legacy path.
+
 The automated suite makes real MCP discovery/tool calls over Streamable HTTP and tests outbound routing through a third synthetic instance. Run `npm.cmd --script-shell=cmd.exe test` / `npm test` from the repository root. No model calls or user workspace changes occur.
 
 The gateway is available at `/mcp` on the same loopback service. A local registered instance supplies its process-local `X-Mallea-Session` header. `read_observation` takes `targetAppId` and `observationId`; calls enforce workspace, grants, links, and owner availability. Discovery grants no read access. The runtime uses the official SDK's linked in-memory transport for its service-local calls; external SDK clients use Streamable HTTP. The outward app connection is WebSocket, not an MCP event log.
 
-App definitions live under `apps/definitions/`; service-side domain validators enforce the initial review contract. The SDK remains bounded to evidence panels and two policies. Do not expose this local registration/pairing model on a public interface. Revocation prevents subsequent reads/actions; it cannot erase information a caller already received.
+App definitions live under `apps/definitions/`; service-side domain validators enforce their contracts. Legacy SDK 0.2 remains bounded to evidence panels and two policies. Do not expose this local registration/pairing model on a public interface. Revocation prevents subsequent reads/actions; it cannot erase information a caller already received.
 
 Native generated frames now load from a short-lived service URL with an opaque sandbox origin and their own restrictive content policy. The frame receives no session token; task data arrives only over the validated parent bridge. The native host allows frames/connections only to the local service. This avoids inheriting the native host's inline-script policy through srcdoc.
 
 ### Browser authoring and compatibility
 
-Use the [running walkthrough](#see-it-running) above. The service is loopback-only, checks origins, and requires a process-local session token after bootstrap. This is a local development boundary, not production authentication. Never expose it on a public interface. Restarting the service invalidates browser sessions; reload to reconnect.
+Use the [current walkthrough](#see-it-running) above or the separate [legacy review walkthrough](docs/LEGACY_REVIEW.md). The service is loopback-only, checks origins, and requires a process-local session token after bootstrap. This is a local development boundary, not production authentication. Never expose it on a public interface. Restarting invalidates sessions; connected apps automatically reconnect and refresh authoritative state.
 
 SDK 0.2 supports a generated layout tree, a pure review function, two review policies, and one insertion slot. It is not unrestricted React generation. SDK 0.1 artifacts from the earlier command-line experiment remain verifiable with the isolated verifier but cannot be installed by this runtime. Runtime packages are authored through the builder; no manual file copying is necessary.
 
 ### Bounded real-model authoring validation
 
-For the current cross-app slice, use this service-level check (same command on every platform):
+Use `verify-surface.mjs` for the current apps. For the legacy evidence-review flow, this service-level check remains available (same command on every platform):
 
 ```sh
 node --env-file=.env scripts/verify-collaboration.mjs
@@ -425,7 +420,7 @@ node --env-file=.env scripts/verify-collaboration.mjs
 
 It starts an isolated in-memory workspace on an ephemeral loopback port, registers board and notebook clients, opens an outbound simulated notebook connection, grants linked evidence access, and checks two real authoring jobs with an evidence edit between them. It does not open a native window or alter your running workspace. Native acceptance is the separate interactive walkthrough above.
 
-Each job permits at most three model requests of 4,096 output tokens each, with a 60-second request timeout. Add the optional ignored model-selection env file as described above. For the explicit direct Meta milestone check, append `--production`; production key/base/model configuration is required. No environment fallback occurs. Expected: two ready jobs and PASS; usage is printed without credentials. Failures exit nonzero and unavailable monetary usage is reported as null.
+Each job permits at most three model requests of 4,096 output tokens each, with a 60-second request timeout. Add the optional ignored model-selection env file as described above. For the explicit direct Meta check, append `--production`; production key/base/model configuration is required. No environment fallback occurs. Expected: two ready jobs and PASS; usage is printed without credentials. Failures exit nonzero and unavailable monetary usage is reported as null.
 
 The older command below verifies the original standalone authoring path and remains useful for compatibility checks; it does not validate the new registry/MCP/event integration.
 
@@ -443,7 +438,7 @@ Add `--env-file=docs/private/smoke.env` immediately after `--env-file=.env` only
 node --env-file=.env scripts/verify-authoring.mjs --production
 ```
 
-For an entire interactive direct Meta session, append `--production` to the workspace-service command instead. Use it for milestone validation rather than routine development. There is no automatic environment switch.
+For an entire interactive direct Meta session, append `--production` to the workspace-service command instead. Reserve it for explicit production checks. There is no automatic environment switch.
 
 ### Run the desktop scaffold
 
@@ -471,7 +466,7 @@ npm.cmd --script-shell=cmd.exe run desktop -- dev
 npm run desktop -- dev
 ```
 
-The frontend uses port 5174 and shares the runtime with the browser app while presenting the notebook identity. First native compilation downloads Rust dependencies and takes longer. Ctrl+C stops each terminal's process. To inspect the notebook frontend without compiling Rust, visit `http://127.0.0.1:5174`; that is not a native-shell test.
+The frontend uses port 5174 and opens Fieldnote by default; use the service's `--studio` option. First native compilation downloads Rust dependencies and takes longer. Ctrl+C stops each terminal's process. Preview Fieldnote at `http://127.0.0.1:5174`; this is not a native-shell test. The retained notebook frontend is available at `http://127.0.0.1:5174/?legacy` with the legacy service mode.
 
 For a native release executable, first run the frontend build above, then:
 

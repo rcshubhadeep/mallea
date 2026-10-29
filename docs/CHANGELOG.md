@@ -96,3 +96,35 @@
 - Previous PROJECT_PLAN.v011.md unchanged; new PROJECT_PLAN.v012.md created by byte copy and 15 localized edits. Reversing edits reconstructs every previous byte, including whitespace/line endings.
 - Previous SHA-256: 3107f18f059086edb4fa4ca05bb255e5a4f45cc1413d7c136d1be3530f05990a.
 - New SHA-256: bfbfcf9ccc5714a09df955d2c2d4a776e2e95ce8e5f8dfe4a7b1e074539b3ea0.
+
+
+## v013 - 2026-10-28
+
+- One section-5 insertion records Slice 003's pinned Fabric adapter and strict data-only SDK 0.3 trusted renderer. Legacy SDK 0.2 iframe/QuickJS isolation stays intact; new Surfaces execute no model-authored JS and keep isolated preview and typed authority boundaries. Studio uses separate database/flag and preserves legacy route/data.
+- Previous PROJECT_PLAN.v012.md unchanged; new PROJECT_PLAN.v013.md created by byte copy plus localized insertion. Unaffected prefix/suffix verified byte-identical.
+- Previous SHA-256: bfbfcf9ccc5714a09df955d2c2d4a776e2e95ce8e5f8dfe4a7b1e074539b3ea0.
+- New SHA-256: e6647067c57a3b1207d5dc242197731f5f9fc174e7ff12a40e3590c98bac9420.
+
+
+## v014 - 2026-10-28
+
+- One section-5 insertion corrects the generality gap found by the user's web note-panel request: declared persistent Surface-local text/color fields in both hosts, shared setter/storage, isolated preview and app-owned-resource boundaries. See SLICE_003A.md.
+- v013 unchanged; v014 copied byte-for-byte then one insertion. Unaffected prefix/suffix verified.
+- Previous SHA-256: e6647067c57a3b1207d5dc242197731f5f9fc174e7ff12a40e3590c98bac9420.
+- New SHA-256: 775c4d5062eb9aa2abae63f5ae66f061986c7c65dad111ff0e54dfc660c0f35e.
+
+
+## v015 - 2026-10-28
+
+- User requested one clear active workspace instead of ambiguous test databases. Replaced one section-5 sentence: .mallea/workspace.sqlite is the single default/locally configured store; old test databases archived recoverably.
+- v014 unchanged; localized replacement with unaffected prefix/suffix verified.
+- Previous SHA-256: 775c4d5062eb9aa2abae63f5ae66f061986c7c65dad111ff0e54dfc660c0f35e.
+- New SHA-256: f53ddc54cd65387741f7d462e24ea023b6b52446432a35f99c9107275408a4cc.
+
+
+## v016 - 2026-10-28
+
+- One section-5 insertion records the accepted ordinary-app/targeted-extension direction before Observer: preserve unrelated additions, composable choices/action arguments, and move minimal feedback-return implementation into 003C. Existing architecture reused; final recording time protected.
+- Copied v015 byte-for-byte, then inserted only the new passage. Previous file and unaffected prefix/suffix verified identical.
+- Previous SHA-256: f53ddc54cd65387741f7d462e24ea023b6b52446432a35f99c9107275408a4cc.
+- New SHA-256: cc54a94befdefe886ec789b61546057bd80b3f6dd911421f165a32ded795ff46.

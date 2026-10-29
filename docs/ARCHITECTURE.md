@@ -1,5 +1,9 @@
 # Slice 002 architecture
 
+## Slice 003 extension
+
+The current --studio mode adds Fieldnote/Parcel definitions, app-owned canvas/draft and saved-image contracts, and SDK 0.3 Surfaces. These are validated data interpreted by trusted React controls, not executable model scripts. The existing author loop and per-app SQLite version store are extended through definition hooks; legacy SDK 0.2 execution remains unchanged. New registered saved-design reads use the same MCP gateway and authenticated owner socket. Studio state is separate from legacy tables and defaults to .mallea/workspace.sqlite. See SURFACE_SDK.md for implemented limits and STATUS.md for acceptance evidence. Observer, automation trigger and feedback return remain later slices.
+
 Historical implemented baseline. Current accepted target: PROJECT_PLAN.v012.md and FOUNDATION_PLAN.md (scratchpad/review-board apps, small live model, Surface/Automation contributions and reused local service/MCP/storage/isolation). New targets are not implemented by this planning update; the diagram below describes the legacy evidence demo.
 
 This describes the implemented local demo boundary. Follow PROJECT_PLAN.v006.md for goals and deferred work.

@@ -24,10 +24,14 @@ export function connect(onChange:()=>void,onAvailability:(online:boolean)=>void)
       socket.onmessage=async event=>{
         let message;try{message=JSON.parse(event.data);}catch{return;}
         if(message.type==='invoke'){
+          if(message.capability!=='read_observation'){
+            try{const value=await request('studio/owner',{capability:message.capability,arguments:message.arguments});socket?.send(JSON.stringify({type:'result',id:message.id,value}));}catch{socket?.send(JSON.stringify({type:'result',id:message.id,error:true}));}
+            return;
+          }
           if(message.capability!=='read_observation'||typeof message.arguments?.observationId!=='string')return;
           try{const value=await request(`observation?id=${encodeURIComponent(message.arguments.observationId)}`);socket?.send(JSON.stringify({type:'result',id:message.id,value}));}
           catch{socket?.send(JSON.stringify({type:'result',id:message.id,error:true}));}
-        }else if(['connected','presence','changed','tasks'].includes(message.type)){
+        }else if(['connected','presence','changed','tasks','studio'].includes(message.type)){
           if(message.type==='connected'){delay=500;onAvailability(true);}onChange();
         }
       };

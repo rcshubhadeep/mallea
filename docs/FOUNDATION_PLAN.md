@@ -1,6 +1,6 @@
 # Mallea PoC foundation plan
 
-Approved direction: the user's visual-scratchpad/asset-review demo and hackathon scope cuts. Follow active PROJECT_PLAN.v012.md; this document details its current implementation boundary. Features below are planned unless STATUS.md records acceptance.
+Approved direction: the user's visual-scratchpad/asset-review demo and hackathon scope cuts. Follow active PROJECT_PLAN.v016.md; this document details its current implementation boundary. Features below are planned unless STATUS.md records acceptance.
 
 ## Goal and constraints
 
@@ -14,11 +14,13 @@ Retain React/Tauri, the local Node service, built-in SQLite, generic inference a
 
 Mallea owns the live app model, typed capability contract, grants, Observer-to-builder flow, and installed contribution lifecycle. A library may implement a primitive behind a small adapter; its internal object model must not become Mallea's public contract. Do not implement a second plugin system or fight an established API to simulate ours.
 
-For image/text annotation, assess Fabric.js first: a short adapter check must prove displaying a bundled image, editing one text annotation, setting its color through a normal action, disposing/reloading the canvas, and exporting PNG. Use its supported API, not internal patches. If it needs invasive adaptation, use a smaller suitable library or a narrow Canvas 2D implementation. Cap selection/integration exploration at roughly two hours; make one reasoned choice, not a framework comparison project. Pin the selected dependency only when installing it. No dependency is added by this planning change.
+Slice 003 selected Fabric.js 7.4.0 (MIT) after its narrow adapter fit check: bundled image, editable/draggable text annotation, ordinary color mutation and PNG export. It uses public APIs without internal patches. Future libraries follow the same roughly two-hour fit-check rule: stop once fit is proven, or use a smaller alternative rather than bending Mallea contracts around an API. Pin actual selected versions in the lockfile.
 
-Use the browser's native color input, standard inputs/buttons, and existing CSS layouts. Do not add an agent framework, event bus, state manager, schema system, or editor framework unless existing code demonstrably cannot serve the slice. Fabric references: https://www.fabricjs.com/docs/getting-started/installing/ and https://www.fabricjs.com/docs/getting-started/helloworld/ .
+Use the browser's native color input (with an editable hex field), standard inputs/buttons, and existing CSS layouts. SDK 0.3 Surfaces are validated declarative data interpreted by trusted React components, with no generated JS/HTML/imports; legacy iframe/QuickJS isolation remains for SDK 0.2. See SURFACE_SDK.md. Do not add an agent framework, event bus, state manager, schema system, or editor framework unless existing code demonstrably cannot serve the slice. Fabric references: https://www.fabricjs.com/docs/getting-started/installing/ and https://www.fabricjs.com/docs/getting-started/helloworld/ .
 
 ## Minimum app contracts
+
+The designer workflow is the first end-to-end proof, not the framework's product boundary. Get that loop working before fleshing it out. Keep editor/asset-specific fields and rules in app adapters; shared composition, bindings, capability dispatch, contribution lifecycle and triggers consume registrations. Later requests may revise the scenario or vocabulary. Preserve these practical seams without speculative extension systems, universal abstractions or a rewrite in anticipation of unknown needs. Do not use prompt keywords or demo app identities to select finished behavior in the shared engine.
 
 The scratchpad owns one selected design, an image, editable text annotation, annotation color, accompanying note, and saved revisions. Save revision snapshots image export plus note; unsaved edits are not published. Start with bundled synthetic images and a tiny asset set. No general graphics editor, layers UI, crop tool, arbitrary remote-image loading, or filesystem browser is required.
 
@@ -30,7 +32,13 @@ One loopback companion serves both apps, owns local storage and model credential
 
 ## Live model and contributions
 
+Accepted next step before Observer: ordinary apps remain useful without authoring; users add, target, rearrange and remove identifiable contributions within one persistent app model while retaining unrelated work. Keep whole-workspace rearrangement when explicitly requested. Extend the small vocabulary with composable choices and validated literal action arguments, rather than a special color-palette workflow. Reuse current storage/rendering/version/preview. Minimal web feedback and desktop return move into this core slice; Observer then builds on it. See SLICE_003C.md. This paragraph records planned work, not current supported behavior.
+
+Each app owns an independent Surface/layout and installed version; shared resources never imply sharing or synchronizing its UI. Shape this app is a default framework capability in every host, outside the editable Surface, and should stay discoverable during use. Its appearance can follow the host app's design. It is already available in both Fieldnote and Parcel; user reports of a missing entry must be investigated as discoverability/runtime issues rather than treating web authoring as a future feature.
+
 Start with stack/split/grid layouts and text, image, button, text input/textarea, color input, repeated items, and approved references to trusted app components such as the canvas. The fixed shell and canvas implementation may remain trusted; the model must change a meaningful workspace layout and working controls, not merely populate a decorative chat sidebar. Bindings reference registered data, local form state, and action arguments. No arbitrary HTML, imports, dependencies, or raw Tauri commands.
+
+The vocabulary must create new working panels, not merely rearrange pre-existing domain fields. Both hosts support declared Surface-local text/color fields with generic editing/persistence, isolated preview and app/Surface ownership. This corrects the gap exposed by a request for an extra web note panel; a read-only domain contract must not disable framework-owned local state. See SURFACE_SDK.md and SLICE_003A.md.
 
 An installed agent contribution can supply a Surface, an Automation, or both. Persist its identity, purpose/request, declared access, model-authored definition, enabled state, and latest outcome. A Surface is an interactive locally loaded app contribution. An Automation executes declared bounded operations on an allowed trigger. Deterministic installed execution is valid and labelled as such; model authoring is distinct from inference on every run. A Surface can remain deterministic after the model composes it.
 

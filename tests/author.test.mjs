@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { WorkspaceStore } from '../services/workspace/store.mjs';
 import { createAuthor } from '../services/workspace/author.mjs';
 import { packageFixture } from './helpers.mjs';
+import { InferenceError } from '../scripts/lib/inference.mjs';
 const response = p=>({choice:{finish_reason:'stop',message:{content:JSON.stringify(p)}},usage:{total_tokens:1}});
 async function wait(author,id) { for(let n=0;n<200;n++){ const j=author.get(id); if(['ready','failed','cancelled','unsupported'].includes(j.phase))return j; await new Promise(r=>setTimeout(r,20)); } throw new Error('Job timeout'); }
 
@@ -36,4 +37,18 @@ test('invalid outputs stop after three calls', async()=>{
 test('cancelled generation cannot save a late result',async()=>{
  const store=new WorkspaceStore(':memory:');let release;const author=createAuthor(store,{config:{},infer:()=>new Promise(r=>{release=r;})});
  try{const j=author.start('Create panel');await new Promise(r=>setImmediate(r));author.cancel(j.id);release(response(packageFixture()));assert.equal((await wait(author,j.id)).phase,'cancelled');assert.throws(()=>store.draft(j.id));}finally{author.close();store.close();}
+});
+
+test('inference failures retain safe categories, do not retry and preserve installed state',async()=>{
+ for(const [kind,status] of [['quota',402],['rate_limit',429],['authentication',401],['unavailable',503],['timeout',undefined]]){
+  const store=new WorkspaceStore(':memory:');let calls=0;
+  const author=createAuthor(store,{config:{},infer:async()=>{calls++;throw new InferenceError(kind,status);}});
+  try{
+   store.saveDraft('seed',packageFixture(),null,'seed');await store.install('seed');const before=store.state();
+   const job=await wait(author,author.start('Change layout').id);
+   assert.equal(job.phase,'failed');assert.equal(calls,1);assert.equal(job.failure.kind,kind);assert.equal(job.failure.status,status);
+   assert.notEqual(job.error,'Inference failed or timed out. Check local model configuration and available quota.');
+   assert.deepEqual(store.state(),before);assert.throws(()=>store.draft(job.id));
+  }finally{author.close();store.close();}
+ }
 });

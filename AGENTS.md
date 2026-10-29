@@ -10,6 +10,8 @@ Use `docs/STATUS.md` for implementation progress and test evidence. Routine prog
 
 ## Required slice workflow
 
+The current demo is an end-to-end proof to flesh out later, not a permanent narrow product boundary. Keep domain-specific behavior in app adapters and shared mechanisms driven by registrations. Preserve small practical seams for revisiting components/actions/triggers; do not hardcode finished workflows in the shared engine or build speculative generality before the working loop.
+
 Before each slice, read the current status and inspect the implementation to verify it. Read both the overarching goal and the relevant detailed sections of the active plan. Run focused checks of the existing baseline; distinguish fresh verification from historical evidence.
 
 Define a bounded slice with numbered work units, plan-milestone mapping, acceptance conditions, and explicit exclusions. Record the active work unit and its state in docs/STATUS.md; keep this current when switching work units. Several work units may be completed before the full slice report, but meaningful progress updates are still required.
@@ -23,6 +25,8 @@ Then return to the baseline/status/goal review before planning the next slice. D
 Keep shared documentation, examples, fixtures, and source portable: never include actual machine-specific absolute filesystem paths, home-directory names, or local checkout locations. Use repository-relative paths and say to run commands from the repository root. Local-only details belong in gitignored private notes. Check shared files for accidental path leaks before finishing documentation changes.
 
 Keep the README experience-first: runnable preview instructions and current behavior precede a Developer Setup section containing detailed prerequisites, inference experiments, builds, and troubleshooting. Clearly distinguish working features from planned features.
+
+Keep the root README product-facing and concise: idea, demo scope, supported behavior, run/setup/test instructions and honest limits. Do not include slice/work-unit/milestone identifiers, progress reports or implementation chronology there; keep those in docs/STATUS.md and planning/evidence documents. App UI must not expose internal slice labels. Every app gets the default Shape this app entry through shared framework chrome, outside the model-editable Surface; Surfaces, layouts and installed definitions remain independent per app.
 
 Before replacing dependencies, stop this project's active preview/build processes, including agent-started sessions; Windows locks loaded native modules. Do not stop unrelated Node processes. If leaving previews running for the user, explicitly state that they must be stopped before npm ci. After an interrupted install, complete a clean reinstall before restarting previews.
 

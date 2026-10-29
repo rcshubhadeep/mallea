@@ -88,17 +88,19 @@ export class CollaborationStore {
   }
   packages(appId){
     const root=this;const app=()=>root.app(appId);const verify=artifact=>appDefinition(app().kind).verify(artifact);
+    const validate=artifact=>(appDefinition(app().kind).validate??validatePackage)(artifact);
     const adapter={
       definition:appDefinition(app().kind),
       state:()=>({active:app().active,tasks:app().tasks}),
       active:()=>{const version=app().active;return version?JSON.parse(root.db.prepare('SELECT value FROM app_packages WHERE app_id=? AND version=?').get(appId,version).value):null;},
       versions:()=>root.db.prepare('SELECT version FROM app_packages WHERE app_id=? ORDER BY rowid').all(appId).map(r=>r.version),
       draft:id=>{const row=root.db.prepare('SELECT * FROM app_drafts WHERE id=? AND app_id=?').get(id,appId);if(!row)throw new Error('Draft not found for this app.');return {id:row.id,base:row.base,artifact:JSON.parse(row.value),request:row.request};},
-      saveDraft:(id,artifact,base,request)=>{validatePackage(artifact);root.db.prepare('INSERT INTO app_drafts VALUES(?,?,?,?,?)').run(id,appId,base,encode(artifact),request);},
+      saveDraft:(id,artifact,base,request)=>{validate(artifact);root.db.prepare('INSERT INTO app_drafts VALUES(?,?,?,?,?)').run(id,appId,base,encode(artifact),request);},
       install:async id=>{
-        const draft=adapter.draft(id);validatePackage(draft.artifact);await verify(draft.artifact);root.db.exec('BEGIN IMMEDIATE');
+        const draft=adapter.draft(id);validate(draft.artifact);await verify(draft.artifact);root.db.exec('BEGIN IMMEDIATE');
         try{const state=root.state(),target=state.apps.find(a=>a.id===appId);if(target.active!==draft.base)throw new Error('This draft is stale. Generate again from the installed version.');
           if(adapter.active()&&adapter.active().manifest.id!==draft.artifact.manifest.id)throw new Error('Keep the package identity when revising.');
+          root.surfaceState?.activate(appId,draft.artifact);
           root.db.prepare('INSERT INTO app_packages VALUES(?,?,?)').run(appId,draft.artifact.manifest.version,encode(draft.artifact));target.active=draft.artifact.manifest.version;root.write(state);root.db.exec('COMMIT');
         }catch(error){root.db.exec('ROLLBACK');throw error;}return adapter.active();
       },

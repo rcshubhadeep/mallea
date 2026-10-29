@@ -8,13 +8,17 @@ import { createAuthor } from './author.mjs';
 import { describeApp, appDefinition } from '../../apps/definitions/index.mjs';
 import { runReview } from '../../packages/runner/index.mjs';
 import { compilePanel } from '../../packages/sdk/document.mjs';
+import { StudioStore } from './studio-store.mjs';
+import { studioCapabilities } from '../../apps/definitions/studio.mjs';
 
 export async function createCollaborationServer(options={}){
   const store=options.store??new CollaborationStore(options.database??':memory:');
-  const registry=new Registry(store),gateway=createGateway(registry),token=randomUUID(),authors=new Map(),previews=new Map(),frames=new Map();
+  const registry=new Registry(store),studio=options.studio?new StudioStore(store):null;
+  registry.studio=studio;
+  const gateway=createGateway(registry,studio?studioCapabilities:[]),token=randomUUID(),authors=new Map(),previews=new Map(),frames=new Map();
   const origins=['http://127.0.0.1:5173','http://127.0.0.1:5174','http://tauri.localhost','https://tauri.localhost','tauri://localhost'];
   if(options.artifact){const packages=store.packages('board-main');if(!packages.active()){packages.saveDraft(randomUUID(),options.artifact,null,'Explicit fixture');const row=store.db.prepare('SELECT id FROM app_drafts WHERE app_id=? ORDER BY rowid DESC LIMIT 1').get('board-main');await packages.install(row.id);}}
-  async function body(req){if(req.headers['content-type']?.split(';')[0]!=='application/json')throw new Error('JSON required.');let text='';for await(const chunk of req){text+=chunk;if(Buffer.byteLength(text)>16384)throw new Error('Request too large.');}return JSON.parse(text);}
+  async function body(req){if(req.headers['content-type']?.split(';')[0]!=='application/json')throw new Error('JSON required.');let text='';for await(const chunk of req){text+=chunk;if(Buffer.byteLength(text)>(studio?1600000:16384))throw new Error('Request too large.');}return JSON.parse(text);}
   async function tasks(session){
     return Promise.all(store.app(session.appId).tasks.map(async task=>{
       try{return {...task,observation:await gateway.read(session,task.evidence.appId,task.evidence.observationId),availability:'online'};}
@@ -23,12 +27,14 @@ export async function createCollaborationServer(options={}){
   }
   async function workspace(session){
     const app=store.app(session.appId),packages=store.packages(app.id),artifact=packages.active();
+    if(appDefinition(app.kind).contract)return studio.info(session);
     // Review is host-owned derived state; it does not depend on a mounted frame.
     const items=await Promise.all((await tasks(session)).map(async task=>({...task,review:artifact&&task.observation?await runReview(artifact,task,task.observation):null})));
     return {name:'Paper Moon',app:describeApp(app),tasks:items,extension:artifact?.manifest??null,versions:packages.versions(),instances:registry.list(session)};
   }
   async function authorContext(session){
     const app=store.app(session.appId),definition=appDefinition(app.kind),catalog=await gateway.discover(session);
+    if(definition.contract)return {app:describeApp(app),contract:definition.contract,currentWorkspace:studio.info(session).workspace,capabilityCatalog:catalog,instructions:'Compose only registered components/bindings/actions. Never embed private data as static text.'};
     for(const task of app.tasks){registry.authorize(session,task.evidence.appId,task.evidence.observationId);if(task.evidence.appId!==app.id&&!registry.online(task.evidence.appId))throw new Error('Open the source notebook before creating this capability.');}
     return {app:describeApp(app),slot:definition.authoring,capabilityCatalog:catalog,
       bindings:app.tasks.map(t=>({taskId:t.id,...t.evidence})),instructions:'Data stays in the host. The host resolves observation bindings through the authorized read_observation MCP capability. Never embed source data in static UI text.'};
@@ -57,6 +63,19 @@ export async function createCollaborationServer(options={}){
       }
       let session;try{session=registry.require(req.headers['x-mallea-session']);}catch(error){return send(403,{error:error.message});}
       const app=store.app(session.appId),packages=store.packages(app.id);
+      if(url.pathname.startsWith('/api/studio/')){
+        if(!studio||!appDefinition(app.kind).contract)throw new Error('Start the service with --studio and open the matching app.');
+        if(url.pathname==='/api/studio/state'&&req.method==='GET')return send(200,{...studio.info(session),readAllowed:studio.allowed(app.id,'scratchpad-main','design.saved.read'),sourceOnline:registry.online('scratchpad-main')});
+        if(url.pathname==='/api/studio/local'&&req.method==='POST'){if(studio.info(session).enabled===false)throw new Error('Enable the Surface before editing local fields.');const saved=studio.localState.save(session,await body(req));registry.broadcast(session.workspaceId,{type:'studio'});return send(200,saved);}
+        if(url.pathname==='/api/studio/save'&&req.method==='POST'){studio.save(session,await body(req));registry.broadcast(session.workspaceId,{type:'studio'});return send(200,studio.info(session));}
+        if(url.pathname==='/api/studio/access'&&req.method==='POST'){studio.grant(session,(await body(req)).allowed);registry.broadcast(session.workspaceId,{type:'studio'});return send(200,{ok:true});}
+        if(url.pathname==='/api/studio/owner'&&req.method==='POST'){const input=await body(req);return send(200,studio.resource(session,input.capability,input.arguments));}
+        if(url.pathname==='/api/studio/refresh'&&req.method==='POST'){studio.own(session,'review-board');const saved=await gateway.invoke(session,'scratchpad-main','read_saved_design',{designId:'design-moon'});studio.publishRead(session,saved);registry.broadcast(session.workspaceId,{type:'studio'});return send(200,studio.info(session));}
+        if(url.pathname==='/api/studio/draft'&&req.method==='GET')return send(200,packages.draft(url.searchParams.get('id')).artifact);
+        if(url.pathname==='/api/studio/enabled'&&req.method==='POST'){studio.enable(session,(await body(req)).enabled);registry.broadcast(session.workspaceId,{type:'studio'});return send(200,studio.info(session));}
+        if(url.pathname==='/api/studio/install'&&req.method==='POST'){const input=await body(req),draft=packages.draft(input.draftId);if(!Array.isArray(input.grants)||JSON.stringify([...input.grants].sort())!==JSON.stringify([...draft.artifact.manifest.permissions].sort()))throw new Error('Approve the declared access before installing.');await packages.install(input.draftId);studio.enable(session,true);registry.broadcast(session.workspaceId,{type:'studio'});return send(200,studio.info(session));}
+        return send(404,{error:'Unknown studio action.'});
+      }
       if(url.pathname==='/mcp'&&req.method==='POST')return await gateway.http(session,req,res,await body(req));
       if(req.method==='GET'&&url.pathname==='/api/workspace')return send(200,await workspace(session));
       if(req.method==='POST'&&url.pathname==='/api/connection')return send(200,{ticket:registry.ticket(session)});
@@ -103,7 +122,7 @@ export async function createCollaborationServer(options={}){
       return send(404,{error:'Not found.'});
     }catch(error){if(!res.headersSent)send(400,{error:error instanceof SyntaxError?'Invalid JSON.':String(error.message).slice(0,300)});else res.end();}
   });
-  const ws=new WebSocketServer({noServer:true,maxPayload:131072});
+  const ws=new WebSocketServer({noServer:true,maxPayload:studio?1600000:131072});
   server.on('upgrade',(req,socket,head)=>{
     const origin=req.headers.origin;
     if(!/^127\.0\.0\.1:\d+$/.test(req.headers.host??'')||req.url!=='/api/events'||(origin&&!origins.includes(origin))){socket.destroy();return;}

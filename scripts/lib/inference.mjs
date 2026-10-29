@@ -17,31 +17,43 @@ export function inferenceConfig(production = false) {
   return { endpoint, key: process.env[names.key], model: process.env[names.model] };
 }
 
+export class InferenceError extends Error {
+  constructor(kind, status) {
+    const messages = {
+      timeout: 'The model did not respond within 60 seconds. Try again; no automatic retry was made.',
+      cancelled: 'Model request cancelled.',
+      network: 'Could not reach the inference service. Check connectivity and try again.',
+      authentication: 'The inference service rejected authentication. Check the selected API key.',
+      quota: 'The inference service reported insufficient credit or quota. Check the selected account.',
+      rate_limit: 'The inference service rate-limited this request. Wait before trying again.',
+      unavailable: 'The inference service is temporarily unavailable. Try again later.',
+      request: 'The inference service rejected the request. Check the selected model and API configuration.',
+      response: 'The inference service returned an invalid response. No Surface was installed.',
+    };
+    super(messages[kind] ?? messages.request);
+    this.name = 'InferenceError'; this.kind = kind; this.status = status;
+  }
+}
+
 export async function chat(config, messages, options = {}, signal) {
   let response;
+  const requestSignal = signal ? AbortSignal.any([signal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000);
   try {
     response = await fetch(config.endpoint, {
-      method: 'POST', redirect: 'error', signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000),
+      method: 'POST', redirect: 'error', signal: requestSignal,
       headers: { Authorization: `Bearer ${config.key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: config.model, messages, max_tokens: 512, stream: false, ...options }),
     });
-  } catch { throw new Error('Network request failed or timed out. No automatic retry.'); }
+  } catch { throw new InferenceError(signal?.aborted ? 'cancelled' : requestSignal.aborted ? 'timeout' : 'network'); }
   if (!response.ok) {
-    let detail = '';
-    try {
-      const failure = await response.json();
-      detail = typeof failure.error?.message === 'string' ? failure.error.message : '';
-      for (const value of Object.values(process.env)) {
-        if (value && value.length >= 6) detail = detail.split(value).join('[redacted]');
-      }
-      detail = detail.replace(/https?:\/\/\S+/g, '[endpoint]').slice(0, 400);
-    } catch { /* Keep the HTTP status if the body cannot be decoded. */ }
-    throw new Error(`Inference returned HTTP ${response.status}. ${detail} No automatic retry.`);
+    const status = response.status;
+    await response.body?.cancel();
+    throw new InferenceError([401,403].includes(status) ? 'authentication' : status===402 ? 'quota' : status===429 ? 'rate_limit' : status>=500 ? 'unavailable' : 'request', status);
   }
   let result;
   try { result = await response.json(); }
-  catch { throw new Error('Endpoint did not return JSON.'); }
-  if (!result.choices?.[0]?.message) throw new Error('Missing assistant message.');
+  catch { throw new InferenceError(signal?.aborted ? 'cancelled' : requestSignal.aborted ? 'timeout' : 'response'); }
+  if (!result.choices?.[0]?.message) throw new InferenceError('response');
   const usage = {};
   for (const field of ['prompt_tokens', 'completion_tokens', 'total_tokens', 'cost']) {
     if (typeof result.usage?.[field] === 'number') usage[field] = result.usage[field];

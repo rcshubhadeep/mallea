@@ -2,7 +2,7 @@
 
 Accepted hackathon scope: desktop visual scratchpad and differently styled local web asset-review board. Muse Observer proposes a useful color-control Surface; builder also authors saved-image/note publishing Automation and feedback-return Surface. Contributions can supply a Surface, an Automation or both. Details: FOUNDATION_PLAN.md, DEMO_PLAN.md and SLICES.md. Reuse fitting libraries behind small adapters without forcing Mallea contracts around their APIs. Hosted HTTPS, base-app upgrades, broad provenance/state tracking, background scheduling and signed installer parity are deferred. Runnable source delivery and honest Windows/macOS/Linux instructions/evidence are mandatory.
 
-This records the user's clarified product philosophy. It is the decision guide alongside PROJECT_PLAN.v012.md and FOUNDATION_PLAN.md. It describes the intended foundation, not a claim that all of it is implemented.
+This records the user's clarified product philosophy. It is the decision guide alongside PROJECT_PLAN.v015.md and FOUNDATION_PLAN.md. It describes the intended foundation, not a claim that all of it is implemented.
 
 ## The idea
 
@@ -53,11 +53,11 @@ Foundation work belongs on the critical path when it enables those outcomes. A c
 
 ## Current gap
 
-Slices 001-002 establish working runtime pieces: authoring, validation, preview, isolation, versioned persistence, native/browser hosts, and scoped cross-app evidence. The SDK still fixes a review slot, known field paths, acknowledgement, and two policies; the host body and gateway retain domain branches. We must bridge that gap before describing Mallea as this live application-model framework.
+Slices 001-002 established authoring, validation, preview, isolation, versioned persistence, native/browser hosts and scoped evidence. Slice 003 now adds SDK 0.3's shared schema-driven Surface renderer/action dispatch, a trusted Fabric canvas adapter, distinct Fieldnote/Parcel apps and permitted saved-design reads. Legacy SDK 0.2 remains specialized to review panels. See SURFACE_SDK.md and REHEARSAL_003.md for actual scope/evidence; this is still a bounded framework PoC.
 
-The next slice delivers a first model-authored native workspace/color Surface in two distinctly styled apps. Later slices add Observer/feedback return, publishing Automation/try delivery and submission. A tiny alternate-schema fixture checks shared bindings/actions without a third polished product. See SLICES.md.
+The next slice strengthens normal minimal apps and targeted point-of-use additions: stable contribution identity, preservation of unrelated work, composable choices/actions and feedback return. Observer then uses this foundation, followed by publishing Automation/try delivery and submission. These additions are planned, not yet working. An unrelated weather-schema test already checks shared binding/action dispatch without a third polished product. See SLICES.md and active PROJECT_PLAN.v016.md.
 
-The Observer and runnable user-created agent model are target framework features that remain unimplemented. The builder already performs bounded package authoring, but it does not yet provide the full live-model/user-agent foundation described here.
+Observer and runnable Automation contributions remain unimplemented. The builder now authors persistent working Surfaces, including actual native use; this is partial progress toward the full live-model/user-agent foundation, not completion of scheduling or general agent lifecycle.
 
 ## Evidence required
 

@@ -2,14 +2,21 @@
 
 ## Active slice
 
-- Last completed slice: 002, bounded evidence flow. Next: 003, M1, distinct apps and first working model-authored native Surface; see SLICE_003.md and SLICES.md.
-- State: Slice 002 functional flow user-confirmed. New planning/handoff complete; Slice 003 implementation not started.
-- Current work unit: no active build unit. Slice 003 W1 (library fit/canvas) is next only when implementation starts; baseline/status/goal review required then.
-- Plan alignment: bounded Days 3-5 identity/ownership/communication path; progress toward Days 6-7 capability-aware authoring and revision. Full agent lifecycle and final demo gate remain incomplete.
-- Baseline at start: 19 tests and TypeScript checking passed. Final: 21 tests, TypeScript, both frontend builds, and Windows native release build pass.
-- User confirmation: Slice 001 planned flow worked; Slice 002 native edit makes the board acknowledgement available and the flow works. Other failure/recovery gates retain agent-operated and automated evidence rather than being attributed to the user.
+- Last completed slice: 003 — M1, distinct apps and working model-authored native Surface; see SLICE_003.md and REHEARSAL_003.md.
+- State: implemented and agent-verified for bounded M1 acceptance; user now confirms demo flow and changing panel side. This does not attribute every automated/native/recovery check to the user.
+- Current work unit: 003C W1 complete; W2 next, implementation not started. User accepts useful ordinary apps plus targeted extensions/rearrangement and cross-app agent capabilities. Fresh baseline 30 tests and TypeScript pass. Active plan v016, exact scope/work units in SLICE_003C.md. Earlier 003A/003B evidence remains scoped; new 003C acceptance is pending. Observer deferred until this core slice passes.
+- Plan alignment: M1 passes within its scoped acceptance. Observer/bidirectional feedback M2, publishing Automation/delivery M3 and submission M4 remain incomplete; no overall completion claimed.
+- Baseline at Slice 003 start: 21 tests and TypeScript pass. Final: 25 tests, TypeScript, both frontend builds and final Windows native release build pass. Linux/macOS untested.
+- User confirmation: 001 planned flow, 002 native edit/board acknowledgement, and 003 demo flow plus moving panel to the other side. Other failure/recovery gates retain agent-operated and automated evidence rather than being attributed to the user.
 
 ## Current state
+
+- Fieldnote visual scratchpad and distinctly styled Parcel asset-review app run in --studio mode with one active .mallea/workspace.sqlite. Prior root test databases and their companions were archived recoverably with user authorization. Trusted Fabric.js 7.4.0 adapter provides image/text annotation, drag, color/hex entry and PNG export.
+- SDK 0.3 uses a small validated declarative workspace vocabulary and shared registered binding/action dispatch. Existing author/version storage provides preview/install/refinement/disable. No generated JS executes in these Surfaces; legacy iframe/QuickJS remains unchanged. An unrelated weather fixture exercises shared bindings/actions.
+- Real development generation works in both apps and directly in actual Windows native builder. Native final v1.0.2 retains saved revision 7; Parcel has independently authored v1.0.0 and successfully fetched native revision 6. Preview edits remain separate, refinement retains compatible unsaved draft, and saved data/Surfaces survive reopen/service restart. See REHEARSAL_003.md for precise evidence and usage gaps.
+- Manual approved saved-design read uses official MCP gateway and authenticated owner socket; denied/offline reads fail and leave already-published data intact. No automatic publication or feedback return yet. One active workspace Surface per app; unsaved drafts are not recovered after close/reload. Observer, Automation lifecycle, keyless real-artifact try launcher and platform delivery polish remain next-slice work.
+
+### Retained legacy baseline
 
 - Distinct notebook/board app definitions, ownership, and app-scoped packages are implemented. The notebook edits observations; the board owns linked tasks, criticality, and exact-revision acknowledgements.
 - Local registry tracks app instances, sessions, presence, and scoped grants. Runtime MCP calls use the official SDK gateway and route owner reads over outbound WebSocket connections. External local clients can use Streamable HTTP at /mcp.
@@ -23,11 +30,13 @@
 
 ## Next actions
 
-1. Native-edit/board-acknowledgement walkthrough is user-confirmed. Record any further user feedback separately from automated checks.
-2. Before the next slice, re-read this status, FOUNDATION.md, and the overarching goal/detailed plan v012 and FOUNDATION_PLAN.md/DEMO_PLAN.md; inspect source and revalidate the accepted baseline.
+- Latest user direction (2026-10-28): authoring is starting to work; evolve core point-of-use extension before Observer. User agrees to normal minimal apps, targeted independent additions, preservation of unrelated work, composable controls/actions, and agents operating between permitted apps. v016 records this bounded direction; 003C is defined. No implementation or full acceptance claimed by this planning update.
+
+1. User confirms Slice 003 demo flow and moving the panel to the other side. Record additional results separately. Follow-up requests: independent per-app Surfaces (already supported), default builder visible in every app, and no project-tracking labels in root README.
+2. User tests the 003A new-field correction using README and REHEARSAL_003A.md. Before Slice 004, re-read status, FOUNDATION.md, overarching goal/detailed plan v015 and FOUNDATION_PLAN.md/DEMO_PLAN.md; inspect source and revalidate baseline. Do not silently expand scope or start the next slice during this handoff.
 3. Submission target: November 4, 2026, morning Eastern Time, supplied by the user with roughly nine days remaining. Reserve the final two full days for freeze/rehearsal/recording/submission; exact cutoff hour remains unspecified.
-4. Approved scenario: visual scratchpad and differently styled local asset-review board. 003 delivers working Surface; 004 Muse Observer/feedback return; 005 publishing Automation/receipt/try delivery; 006 validation/video/submission. Previous broad 003 archived byte-for-byte. No new implementation started.
-5. No further production calls are required for Slice 002. Final submission still needs an actual native/browser rehearsal and recording with the target Meta configuration.
+4. Approved scenario: visual scratchpad and distinct local asset-review board. 003/M1 implemented; 004 adds Muse Observer/feedback return; 005 publishing Automation/receipt/try delivery; 006 validation/video/submission. Prior broad 003 proposal remains archived.
+5. No further production calls required for Slice 003. Final submission still needs full Observer/Automation actual native/browser rehearsal/recording with target Meta configuration.
 
 ## Pending facts
 
@@ -38,6 +47,60 @@
 - Linux/macOS platform verification and final target-model/native demo recording; Windows native interaction now passes.
 
 ## Evidence log
+
+### 003C W1: ordinary-app extension scope accepted - 2026-10-28
+
+- Reviewed active index/status/goal, foundation/detail/slice plans, actual renderer and app contracts. Fresh baseline: all 30 tests and TypeScript pass. Native/frontend build evidence remains historical; no inference or runtime changes in this planning turn.
+- Created v016 from byte-identical v015 with one section-5 insertion; previous SHA-256 and unchanged prefix/suffix verified. Logged decision/schedule changes in CHANGELOG.md. Added bounded SLICE_003C.md and updated foundation/sequence/004 dependency: minimal feedback return moves into core acceptance, Observer follows, Automation remains 005. Final November 2-3 recording time retained.
+- W1 acceptance passed: evidence, milestone mapping, exclusions, numbered units and target user tests recorded. M1 broader targeted composition and M2 feedback acceptance remain incomplete; W2-W5 not started. Neither unrestricted cross-app authority nor cross-app UI transfer is authorized by the user's statement that agents can operate between apps.
+- README reviewed; no changes needed because this turn adds no working features, setup or commands. Future 003C completion must update supported vocabulary/run/test instructions, provide exact user tests and record user results separately. Shared docs checked for paths/private names and links; immutable prior snapshots retained.
+
+### 003B inference-failure follow-up - 2026-10-28
+
+- User reports actual native authoring failed after following a supported alternative to a restricted five-color palette. The screenshot's generic failure comes from inference, not schema refusal. Existing code swallowed the original failure, so its historical cause cannot be recovered reliably. Do not label it a proven timeout/quota issue.
+- Bounded correction advances M1 reliable try/authoring. Structured allowlisted inference errors now distinguish HTTP authentication/quota/rate-limit/service rejection, network, timeout and invalid response. The author retains safe category/status and actionable message, never raw response bodies/network errors. No retry loop or automatic production fallback added; installed data unchanged on failure.
+- Fresh focused test run initially had one loopback EACCES under restricted execution (7 passed); reran the full suite with local network access: all 30 pass. TypeScript passes. New tests prove error categorization/no credential echo, one failed request rather than retries, and retained installed state. Frontend/native binaries unchanged; this is a service-only fix.
+- One development-only diagnostic used screenshot request with initial desktop contract, separate from the live installed Surface. Endpoint responded in 22,407 ms; 5,164 tokens and reported cost 0.018743. It hit the 4,096 output-token limit, so this is connectivity evidence only, not a validated Surface or exact live-context reproduction. No further paid probe or production call made. Earlier failure remains undiagnosed.
+- README reviewed/updated with actionable errors, manual retry/no fallback, service restart/port reuse and current unrestricted-color versus fixed-palette limit. Plan v015 unchanged: no vocabulary/architecture expansion. M2-M4 remain incomplete. User should restart/reuse updated companion, then manually retry; an old displayed job error is historical and will not change retroactively.
+
+### Slice 003A correction completed - 2026-10-28
+
+- W1-W3: new generic declared text/color state, explicit permission, strict bindings, app/Surface-keyed SQLite persistence and shared preview/live editing. Reused existing author/install/version/renderer infrastructure; no dependency change or Parcel-specific notes feature. Active plan v015; v014 added the bounded state decision and v015 consolidated the active database with localized byte-preserving edits.
+- W4: 28 tests, TypeScript, both frontend builds and Windows native release build pass. Tests cover two-app isolation, persistence/refinement, preview independence, size/type/access checks, stale state/package rejection and transactional activation. Actual web new-note request succeeded; initial placement was below artwork, corrected by a real follow-up that retained text and moved the panel above it. Actual native generation needed one diagnostic repair, then installed a separate blank note; preview text did not leak. Native note saved/reopened, web note retained independently; original asset/revision notes unchanged. See REHEARSAL_003A.md for evidence and inference usage.
+- User did not know the active test database and authorized clearing/consolidation. Stopped the identified old service; moved 16 SQLite-related files to ignored archive, retaining recovery; selected .mallea/workspace.sqlite in ignored configuration and service default. Credentials unchanged. This is one active store, not deletion of backups.
+- W5/README gate: reviewed and updated vocabulary, supported new fields, saves/preview limits, one database, exact optional verification commands, Windows/Linux/macOS guidance. Root README remains free of internal tracking labels. Shared portability/private-name/link/snapshot checks performed at handoff. Linux/macOS remain untested; user acceptance of this correction remains pending.
+- Advances M1 malleability/general composition; scoped acceptance passed. Observer, executable publishing Automation, feedback return, runnable-delivery polish and final demonstration M2-M4 remain incomplete. Project previews/service are left running for user testing; stop them and native windows before npm ci.
+
+### Post-003 user acceptance and presentation feedback - 2026-10-28
+
+- User confirms the demo flow and independently moving the panel to the left. This is user acceptance of that flow/variation only; automated/native/restart cases remain their separate evidence.
+- Bounded follow-up F1: reviewed status, active v013 goal, foundation and implementation. Confirmed app-scoped packages and unconditional Shape this app button in shared StudioApp header for both app kinds. Parcel authoring was also agent-verified previously. Current web preview was stopped when inspected, so the user's exact missing-button state was not reproduced; static header scrolling out of view is a plausible explanation, not a proven diagnosis.
+- F2: pinned shared app header during scroll; builder remains outside model-editable UI. Removed internal slice labels from app copy. Cleaned root README of slice/work-unit/milestone references and moved legacy migration history to legacy documentation; kept supported behavior/setup/test/limits. Added standing README/chrome rules and explicit independent-Surface guidance. This reinforces existing plan decisions; v013 unchanged.
+- F3: TypeScript, both frontend builds and Windows native rebuild pass. README tracking-label scan, portable-path/private-name scan, local document links, unchanged v013 snapshot hash and diff check pass. No new live browser/native interaction check is claimed for this presentation-only change. No inference, dependency changes or user-data changes. This follow-up does not start Slice 004 or complete M2-M4. README reviewed/updated.
+
+### Slice 003 completed - 2026-10-28
+
+- W1-W4: selected pinned MIT Fabric adapter without invasive patches; distinct apps/saved-data contracts; SDK 0.3 shared declarative Surface model; reused author/preview/install/version hooks. Core is registration-driven; domain rules remain in adapters. Exact scope in SURFACE_SDK.md.
+- W5: 25 tests, TypeScript, both frontend builds and final Windows native release pass. Real initial/refinement authoring in browser, separate web layout and actual native builder all succeeded on attempt 1. Native color action and annotation drag/PNG save verified. Preview copy, unsaved-draft retention, stale/failed packages, grant denial/offline, app isolation, reopen/restart/reconnect and disable/enable passed through recorded automated/agent-operated checks. No user confirmation claimed.
+- Direct Meta muse-spark-1.3 service-level initial/refinement: 8,345 tokens, both attempt 1, no monetary usage supplied. Actual native authoring used configured development inference, not a Meta-native recording. Three retained development usage records subtotal 12,692 tokens / reported cost 0.0253788; a fourth Parcel generation's usage was not retained before restart, so complete development spend is unavailable. No paid repeat to recover it.
+- W6: README experience-first studio commands, exact user walkthrough, Windows/macOS/Linux prerequisites/run/build/stop/config/reset, bounded service verifier and known limits updated. Legacy walkthrough separated. README gate passed. Linux/macOS and fresh-machine execution await actual tests; no installer/keyless replay completion claimed.
+- Plan v013 has one localized rendering/library insertion; unchanged v012 hash and unaffected segments verified. Shared-file scan of 44 changed/new text files found no machine paths/private infrastructure names; local doc links and screenshot artifacts verified. Diff check passed. No credentials copied or changed.
+- REHEARSAL_003.md records detailed outcomes and inference accounting limits. Agent-started native window closed and three identified Mallea service/preview processes stopped to avoid Windows install locks. No unrelated processes stopped.
+- M1 scoped acceptance passed; M2-M4 remain incomplete. User test instructions in root README Try Slice 003; no subsequent implementation slice has started.
+
+### Slice 003 W1-W4 initial implementation - 2026-10-28
+
+- Re-read status/goal/plan/source. Fresh baseline 21 tests and TypeScript pass. Stopped only identified Mallea previews before dependency installation. Added pinned Fabric.js 7.4.0 (MIT); no invasive API patches. Adapter supports image, editable/draggable annotation, color and PNG export. Corrected public origin settings for Fabric 7 defaults.
+- Distinct Fieldnote scratchpad and Parcel local web review app use isolated .mallea/studio.sqlite with --studio; legacy workspace retained. Manual approved saved-design read uses existing MCP/outbound socket gateway. Draft changes are not exposed as saved revisions.
+- Added SDK 0.3 declarative Surface grammar and shared trusted renderer with registered bindings/actions/components. It accepts no generated JS/HTML/imports; legacy iframe/QuickJS boundary remains. Plan snapshot boundary update pending before handoff.
+- Extended existing author and per-app version storage rather than creating another agent loop. Real development initial generation passed attempt 1. Preview text changed to PREVIEW ONLY while live stayed KEEP EXPLORING; installation retained live data. Generated color control updated actual canvas and saved PNG/note, fetched by web at source revision 4 after approval. Early color-input event issue corrected with live input handling.
+- Existing 21 tests, TypeScript and both frontend builds pass after implementation. New targeted tests, native/revision/restart evidence, bounded direct Meta check and README handoff remain pending. No user acceptance claimed yet. W1-W4 implementation is not full M1 completion.
+
+### Demo-first implementation without domain lock-in - 2026-10-28
+
+- User clarifies that the simple designer demo proves the end-to-end flow first; later work may flesh it out or revisit decisions. Recorded this in FOUNDATION_PLAN.md and standing guidance.
+- This reinforces v012's existing schema/registration-driven engine and domain-adapter boundary; no new scope or architecture decision, snapshot revision or speculative extensibility subsystem. Shared mechanisms must not select finished workflows by prompt keywords/app IDs.
+- Documentation clarification only; no runtime/inference/dependency changes. README reviewed; no changes needed because ambition and bounded demo are already distinguished. Slice 003 remains not started; M1-M4 implementation acceptance incomplete.
 
 ### Complete judging rubric supplied - 2026-10-28
 

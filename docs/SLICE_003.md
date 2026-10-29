@@ -1,6 +1,6 @@
 # Slice 003: first working Surface in two distinct apps
 
-State: defined, implementation not started. Milestone M1 in FOUNDATION_PLAN.md and PROJECT_PLAN.v012.md. The prior broad proposal is preserved byte-for-byte in archive/SLICE_003.live-model-proposal.md.
+State: implemented and agent-verified for M1; user confirms demo flow and moving panel side. Other automated/native/recovery cases remain separate evidence. W1-W6 complete with evidence in REHEARSAL_003.md and current handoff in README. Milestones M2-M4 remain incomplete. Follow FOUNDATION_PLAN.md and PROJECT_PLAN.v013.md. The prior broad proposal is preserved byte-for-byte in archive/SLICE_003.live-model-proposal.md.
 
 ## Outcome and baseline
 

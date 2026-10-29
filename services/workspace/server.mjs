@@ -10,8 +10,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const args = process.argv.slice(2);
     const artifactPath = args.find(a=>!a.startsWith('--'));
     const artifact = artifactPath ? JSON.parse(await readFile(artifactPath, 'utf8')) : null;
-    if(args.filter(a=>a.startsWith('--')).some(a=>a!=='--production'))throw new Error('Only --production and an optional package path are supported.');
-    const server = await createCollaborationServer({artifact, database: process.env.MALLEA_DB ?? '.mallea/workspace.sqlite', author: { production: args.includes('--production') } });
+    if(args.filter(a=>a.startsWith('--')).some(a=>!['--production','--studio'].includes(a)))throw new Error('Supported options: --studio, --production and optional legacy package path.');
+    const studio=args.includes('--studio');
+    const server = await createCollaborationServer({artifact,studio, database: process.env.MALLEA_DB ?? '.mallea/workspace.sqlite', author: { production: args.includes('--production') } });
     if(server.workspaceStore.backup)console.log('Created a pre-Slice-002 SQLite backup alongside the workspace database.');
     server.requestTimeout = 5000;
     server.on('error', () => { console.error('Service failed to bind. Check port 4318.'); process.exitCode = 1; });

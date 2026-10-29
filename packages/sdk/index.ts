@@ -1,4 +1,4 @@
-export type AppKind = 'board' | 'notebook';
+export type AppKind = 'board' | 'notebook' | 'scratchpad' | 'review-board';
 export type Review = {status:'clear'|'warning'|'blocked';label:string};
 export type Manifest = {id:string;title:string;version:string;permissions:string[]};
 export type Observation = {id:string;title:string;revision:number;text:string;screenshot:string};

@@ -1,3 +1,4 @@
 import { createRoot } from 'react-dom/client';
 import { App } from '../../../packages/runtime/App';
-createRoot(document.getElementById('root')!).render(<App kind="board"/>);
+import { StudioApp } from '../../../packages/runtime/studio/StudioApp';
+createRoot(document.getElementById('root')!).render(location.search.includes('legacy')?<App kind="board"/>:<StudioApp kind="review-board"/>);

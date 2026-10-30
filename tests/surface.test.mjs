@@ -13,7 +13,8 @@ import { CollaborationStore } from '../services/workspace/collaboration-store.mj
 import { StudioStore } from '../services/workspace/studio-store.mjs';
 
 export function colorSurface(version='1.0.0'){
- const a=structuredClone(initialWorkspace);a.manifest.version=version;a.manifest.permissions.push('annotation.color');a.ui.children.push({id:'color',type:'color',label:'Annotation color',bind:'draft.color',action:'annotation.color',argument:'color'});return a;
+ // Retain a pre-redesign installed definition to check backward compatibility.
+ return {manifest:{id:'scratch-workspace',title:'Canvas workspace',version,sdkVersion:'0.3',permissions:['design.read','annotation.text','design.note','annotation.color']},ui:{id:'workspace',type:'stack',children:[{id:'canvas',type:'component',component:'design-canvas'},{id:'annotation',type:'input',label:'Annotation',bind:'draft.text',action:'annotation.text',argument:'text'},{id:'note',type:'textarea',label:'Revision note',bind:'draft.note',action:'design.note',argument:'note'},{id:'color',type:'color',label:'Annotation color',bind:'draft.color',action:'annotation.color',argument:'color'}]}};
 }
 function png(){
  const crc=b=>{let c=0xffffffff;for(const x of b){c^=x;for(let i=0;i<8;i++)c=(c>>>1)^((c&1)?0xedb88320:0);}return(c^0xffffffff)>>>0;};

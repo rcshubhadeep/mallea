@@ -1,0 +1,36 @@
+import test from'node:test';import assert from'node:assert/strict';import{mkdtemp,rm}from'node:fs/promises';import{join}from'node:path';import{tmpdir}from'node:os';
+import{CollaborationStore}from'../services/workspace/collaboration-store.mjs';import{StudioStore}from'../services/workspace/studio-store.mjs';import{EngineApps,builtinManifests}from'../services/workspace/engine-apps.mjs';import{createCollaborationServer}from'../services/workspace/collaboration.mjs';
+import{Client}from'@modelcontextprotocol/sdk/client/index.js';import{StreamableHTTPClientTransport}from'@modelcontextprotocol/sdk/client/streamableHttp.js';import WebSocket from'ws';
+const blank={version:1,id:'blank-study',name:'Blank study',author:'Test author',purpose:'A blank test project',adapter:'surface'};
+test('engine persists dynamic app identity and catalog without resetting predecessor data',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'mallea-engine-'));let root;
+ try{root=new CollaborationStore(join(dir,'workspace.sqlite'));const studio=new StudioStore(root),before=studio.state(),apps=new EngineApps(root);for(const m of builtinManifests)apps.register(m);const record=apps.register(blank),info=apps.describe(blank.id);
+  assert.equal(info.name,blank.name);assert.equal(info.author,blank.author);assert.equal(info.surfaces[0].elements.length,1);assert.equal(info.surfaces[0].elements[0].events.length,0);assert.deepEqual(studio.state(),before);assert(!JSON.stringify(info).includes(record.credential));
+  const fieldnote=apps.describe('scratchpad-main');assert(fieldnote.surfaces[0].elements.find(e=>e.id==='annotation').events.some(e=>e.label==='When I type'));assert.equal(fieldnote.surfaces[0].elements.find(e=>e.id==='versions').events.length,0);
+  assert.throws(()=>apps.register({...blank,id:'../escape'}));assert.throws(()=>apps.register({...blank,secret:'not allowed'}));assert.throws(()=>apps.register({...blank,name:'A different owner'}));
+  const key=record.credential;root.close();root=new CollaborationStore(join(dir,'workspace.sqlite'));new StudioStore(root);const reopened=new EngineApps(root);assert.equal(reopened.authenticate(blank.id,key).name,blank.name);assert.equal(root.packages(blank.id).active(),null);
+ }finally{root?.close();await rm(dir,{recursive:true,force:true});}
+});
+test('app MCP facades advertise only their owner tools and enforce grants; presence follows owner lifetime',async()=>{
+ const server=await createCollaborationServer({studio:true,engine:true}),records=builtinManifests.map(m=>server.engineApps.register(m));await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`,sockets=[],clients=[];
+ try{
+  async function call(path,body,session){const r=await fetch(base+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(session?{'X-Mallea-Session':session}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,value:await r.json()};}
+  const registrations=await Promise.all(records.map(r=>call('/api/native/register',{appId:r.manifest.id,credential:r.credential}))),[field,parcel]=registrations.map(r=>r.value.session);
+  for(const session of [field,parcel]){const ticket=(await call('/api/connection',{},session)).value.ticket,ws=new WebSocket(base.replace('http:','ws:')+'/api/events');sockets.push(ws);await new Promise(r=>ws.once('open',r));const ready=new Promise(r=>ws.on('message',raw=>{if(JSON.parse(raw).type==='connected')r();}));ws.on('message',async raw=>{const m=JSON.parse(raw);if(m.type==='invoke'){const value=(await call('/api/studio/owner',{capability:m.capability,arguments:m.arguments},session)).value;ws.send(JSON.stringify({type:'result',id:m.id,value}));}});ws.send(JSON.stringify({type:'hello',ticket}));await ready;}
+  const listing=(await call('/api/engine/apps',undefined,field)).value;assert(listing.every(a=>a.online&&a.instances.length===1));assert.equal(new Set(listing.flatMap(a=>a.instances.map(i=>i.id))).size,2);
+  const client=new Client({name:'engine-test',version:'1.0.0'});clients.push(client);await client.connect(new StreamableHTTPClientTransport(new URL(base+'/api/apps/scratchpad-main/mcp'),{requestInit:{headers:{'X-Mallea-Session':parcel}}}));
+  const tools=(await client.listTools()).tools;assert.deepEqual(tools.map(t=>t.name).sort(),['describe_app','read_saved_design']);assert(!JSON.stringify(tools).includes('targetAppId'));assert.equal((await client.callTool({name:'read_saved_design',arguments:{designId:'design-moon'}})).isError,true);
+  await call('/api/studio/access',{allowed:true},parcel);const result=await client.callTool({name:'read_saved_design',arguments:{designId:'design-moon'}});assert(!result.isError);assert.equal(JSON.parse(result.content[0].text).id,'design-moon');
+  await call('/api/studio/access',{allowed:false},parcel);assert.equal((await client.callTool({name:'read_saved_design',arguments:{designId:'design-moon'}})).isError,true);
+  const closed=new Promise(r=>sockets[0].once('close',r));sockets[0].close();await closed;await new Promise(r=>setTimeout(r,30));const after=(await call('/api/engine/apps',undefined,parcel)).value;assert.equal(after.find(a=>a.id==='scratchpad-main').online,false);assert.equal(after.find(a=>a.id==='review-main').online,true);
+ }finally{for(const c of clients)await c.close();for(const s of sockets)s.terminate();server.workspaceRegistry.close();server.closeAllConnections();await new Promise(r=>server.close(r));}
+});
+test('native registration binds app identity and protects control APIs and other app data',async()=>{
+ const server=await createCollaborationServer({studio:true,engine:true,controlToken:'test-control-only'});const a=server.engineApps.register(blank),b=server.engineApps.register({...blank,id:'other-study'});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;
+ try{async function call(path,body,session){const r=await fetch(base+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(session?{'X-Mallea-Session':session}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,value:await r.json()};}
+  assert.equal((await call('/api/bootstrap')).status,403);assert.equal((await call('/api/register',{appId:blank.id})).status,403);assert.equal((await call('/api/native/register',{appId:'other-study',credential:a.credential})).status,403);
+  assert.equal((await call('/api/native/register',{appId:blank.id,credential:a.credential,targetAppId:b.manifest.id})).status,403);
+  const registered=await call('/api/native/register',{appId:blank.id,credential:a.credential});assert.equal(registered.status,200);assert.equal(registered.value.workspace.app.id,blank.id);assert.equal(registered.value.workspace.data.asset,undefined);
+  const session=registered.value.session;assert.equal((await call('/api/engine/apps',undefined,session)).value.length,2);assert.equal((await call('/api/engine/apps',{...blank,id:'intruder-app'},session)).status,403);assert.equal((await call('/api/studio/review',{type:'comment',text:'bad'},session)).status,400);
+ }finally{server.closeAllConnections();await new Promise(r=>server.close(r));}
+});

@@ -1,5 +1,7 @@
 # Slice 006: runnable submission and three-minute proof
 
+Historical plan: superseded by the October 30 desktop-engine rebase. Follow docs/README.md and PROJECT_PLAN.v019.md; do not resume this execution sequence.
+
 State: defined, not started. Milestone M4, requires M1-M3. Freeze November 2-3; submit before November 4 morning ET, exact hour unknown. Verify status/source/goal and baseline; no new foundation features.
 
 | Unit | Work | Acceptance |

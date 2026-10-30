@@ -128,3 +128,44 @@
 - Copied v015 byte-for-byte, then inserted only the new passage. Previous file and unaffected prefix/suffix verified identical.
 - Previous SHA-256: f53ddc54cd65387741f7d462e24ea023b6b52446432a35f99c9107275408a4cc.
 - New SHA-256: cc54a94befdefe886ec789b61546057bd80b3f6dd911421f165a32ded795ff46.
+
+
+## v017 - 2026-10-29
+
+- One section-5 insertion records user-requested Surface-native richer starting apps, first bounded delivery 003C-A. Built-ins share grammar/rendering/actions; trusted host/canvas boundaries retained; old customization preserved inactive. Targeted contribution management remains later 003C work.
+- Previous snapshot/prefix/suffix unchanged, verified byte-for-byte.
+- Previous SHA-256: cc54a94befdefe886ec789b61546057bd80b3f6dd911421f165a32ded795ff46.
+- New SHA-256: 950d43a9d6ca0f2c326948aee0157a7d59578d2be1a31926577beffdf876ed40.
+
+
+## v018 - 2026-10-29
+
+- One section-5 insertion: user requests fundamental malleability before Observer following a bold-list refusal. Define targeted operations, consistent bounded styling and category-based acceptance rather than a one-prompt fix.
+- v017 and all unaffected bytes verified unchanged.
+- Previous SHA-256: 950d43a9d6ca0f2c326948aee0157a7d59578d2be1a31926577beffdf876ed40.
+- New SHA-256: b9f8960718661a210404934051f8b3ba91714a39d8298d309cf7d1460ed7efd7.
+
+
+## v019 - 2026-10-30: authorized desktop-engine rebase
+
+- User explicitly replaces the web/Observer-first scope with Core, independent desktop apps, Surface/data registry, per-app MCP interfaces and app/Surface permissions, shared Meta settings, dashboard/catalogue, portable blank-project creation and executable Automations.
+- This is a user-authorized full rebase, not a localized modification to obsolete scope. Active guides/README/AGENTS rewritten coherently; prior mutable sources copied byte-for-byte to archive/desktop-engine-rebase. v001-v018 and application data/source retained. Subsequent snapshots resume normal exact-preservation procedure.
+- Added E001-E005 sequence, detailed first slice, desktop demo, Automation compositions and catalogue content brief. Fresh baseline 36 tests/TypeScript passed; no runtime implementation/inference/credential changes in this planning slice.
+- Previous v018 SHA-256 unchanged: b9f8960718661a210404934051f8b3ba91714a39d8298d309cf7d1460ed7efd7.
+- New v019 SHA-256: c597f9fbca0cacf1fb8243c65dac12502fc4abf7b8ee373fb383436e9dc920d7.
+
+
+## v020 - 2026-10-30: contextual authoring and Automation flow
+
+- Two localized insertions record element context menus, scoped versus app-wide Shape, trigger eligibility and a three-step Automation flow with simple English preset triggers, explicit transformation/input and compatible permitted destination selection.
+- Copied v019 byte-for-byte; all unchanged ranges and original hash verified. No runtime implementation claimed.
+- Previous SHA-256: c597f9fbca0cacf1fb8243c65dac12502fc4abf7b8ee373fb383436e9dc920d7.
+- New SHA-256: 07d3ea831f34cfee5f1f716f61b580720187d9457e50620a73b665d1f91f49b7.
+
+
+## v021 - 2026-10-30: dependency-ordered slices
+
+- One localized section-8 milestone-table replacement puts the malleable Surface/model foundation before the dashboard that consumes it, and makes E001-E005 map one-to-one to E1-E5. Blank native compile spike stays in E001; contextual interaction and Automation scope unchanged.
+- Copied v020 byte-for-byte; original and all unaffected ranges verified identical.
+- Previous SHA-256: 07d3ea831f34cfee5f1f716f61b580720187d9457e50620a73b665d1f91f49b7.
+- New SHA-256: c9803168f5a25bf9896d0bbff48719ac629a48478452f8ad98754288043c503e.

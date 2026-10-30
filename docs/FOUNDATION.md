@@ -1,71 +1,21 @@
-# Mallea's foundation
+# Mallea foundation
 
-Accepted hackathon scope: desktop visual scratchpad and differently styled local web asset-review board. Muse Observer proposes a useful color-control Surface; builder also authors saved-image/note publishing Automation and feedback-return Surface. Contributions can supply a Surface, an Automation or both. Details: FOUNDATION_PLAN.md, DEMO_PLAN.md and SLICES.md. Reuse fitting libraries behind small adapters without forcing Mallea contracts around their APIs. Hosted HTTPS, base-app upgrades, broad provenance/state tracking, background scheduling and signed installer parity are deferred. Runnable source delivery and honest Windows/macOS/Linux instructions/evidence are mandatory.
+Active plan: [PROJECT_PLAN.v021.md](PROJECT_PLAN.v021.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
 
-This records the user's clarified product philosophy. It is the decision guide alongside PROJECT_PLAN.v015.md and FOUNDATION_PLAN.md. It describes the intended foundation, not a claim that all of it is implemented.
+Mallea is a framework for software that users can reshape at the point of use, with Meta Muse assistance in every app. It also gives apps a shared way to discover each other and exchange permitted data/state/actions on one machine. These are the two inseparable foundations.
 
-## The idea
+The product consists of a local Core engine, independently running Tauri desktop apps and a dashboard. React is the Surface renderer. Core supplies registry, typed data, agent tools, permissions, persistence, MCP routing and Automation execution. The dashboard inspects apps, configures the common Meta model/key, displays an illustrative catalogue and scaffolds projects; it does not embed app interfaces.
 
-Explore how application development and software behavior change when agents participate natively in the environment. Users should be able to reshape software while using it, with their current data, task, and permitted capabilities available to the authoring process.
+Every app-owned visual element and its events, bindings and actions belongs to the Surface API. A Surface has identity, owner, schema references, placement, version and persistent/session lifetime. Built-in and user-authored Surfaces use the same mechanism. Framework panels are system-owned Surfaces; OS window chrome and primitive internals remain native implementation details. Full access to the authorized API does not mean arbitrary host code or access to model credentials.
 
-A running app should have an inspectable, persistent model of its views, bindings, interaction state, behavior, capabilities, and participating agents. Its interface is a presentation of that model. The model-backed builder can propose changes to it; the framework validates, previews, and activates them while preserving authoritative data.
+Definitions, schemas and bindings live in a local registry and change transactionally while apps run. Revisions notify the renderer; edits do not require app reload or native rebuild. Persistent Surfaces/data survive restart. Session-only Surfaces are explicitly ephemeral. Presentation removal and data deletion are separate operations.
 
-Communication and modification fuel each other. Another app's registered resource or action becomes something a view/behavior can bind to. A user can change what their app displays or does using those capabilities, and can make changes in either direction. The product promise is the ability to compose and reshape software in context.
+Each app supplies an app-specific MCP interface, which the local engine may host as an app-scoped endpoint and route to the owner. Discovery shares metadata automatically. App/Surface grants authorize data/actions; approved subscriptions may then auto-sync. Revocation stops new operations. Communication transfers typed data/state/events, never another app's running view tree.
 
-Apps exchange typed data, state updates, events, and permitted action requests/results through the existing protocol approach. Each app renders that information using its own UI and modifies its own local app model. Transferring, embedding, mirroring, or synchronizing another app's visual elements or view/component tree is out of scope for the MVP. Sharing framework code and treating screenshots/images as data resources remain separate, supported concepts.
+An Automation is an executable, permissioned event-to-operation definition with optional Muse reasoning and an output binding. It may run deterministically after authoring. Its trigger/input/output/permissions and latest outcome are inspectable. Live brief-to-concepts is the recommended semantic demonstration; date-to-slots explains deterministic reactivity.
 
-The long-term ambition includes rethinking an OS from these primitives. The current hackathon deliverable remains an application framework running on existing browser/native hosts. React and Tauri provide rendering and hosting; they need not dictate the application model exposed to humans and agents.
+A newly scaffolded project compiles to a real blank Tauri app with only Shape access. The user builds it incrementally using Surfaces and models. Blank creation and app-specific schema/action composition are essential proof of a framework rather than two fixed demos.
 
-## The acceptable MVP constraint
+Web product support and Observer are parked. Remote P2P/encrypted routing, marketplace distribution, OS implementation and RL training are future directions. The original designer apps and existing targeted-edit tests are reusable evidence, not a limit on the new framework model or proof the new vision already works.
 
-Constrain the language used to build software: a small set of elements, layouts, bindings, transformations, actions, and permission rules. For example, a renderer may support text, images, buttons, inputs, repeated items, and a few layouts.
-
-Within that language, let the model compose different useful structures and behaviors from app-provided schemas. The engine must not identify a user intent and select one of a few prewritten final workflows. Evidence review and retest are possible examples of the vocabulary's use, not the foundation's identity.
-
-Domain apps still need trusted adapters for their data and actions. Generality means the shared composition/binding/action machinery can consume those registrations without knowing domain field names or workflow names. It does not mean any imaginable capability is available, or that permissions and domain invariants disappear.
-
-## Observer, builder, and user-created agents
-
-The Observer is the only predefined agent type supplied by the framework, with app-scoped observation. It observes permitted usage patterns within each app and suggests something that could help that user: a shortcut, a new control, a different view, or a user-created agent. It is available in every app; observation activity remains explicitly controllable under the existing scoped collection policy. It proposes improvements grounded in actual activity and available capabilities, rather than installing changes automatically or repeatedly offering a canned workflow.
-
-The agent builder is an always-present framework capability. It can be invoked directly or from an accepted Observer suggestion. Its model calls are authoring operations, not evidence of a second preinstalled resident Builder agent. It must inspect the live app model and registered capabilities, create/revise user agents, and change interface structure, layout, bindings, behavior, and appearance within the supported vocabulary.
-
-User-created agents are explicit app entities with identity, purpose/instructions, authorized inputs/tools, trigger, outputs/UI contributions, enabled state, and observable execution state as implemented. The MVP supports model-authored Surface and/or Automation contributions with declared inputs/actions and bounded working execution. Execution may be deterministic after authoring; inference on each run is optional. A metadata record without working execution is insufficient. Arbitrary schedules, long-running loops, and broad autonomy can remain future work.
-
-The spreadsheet/current-month-folder example illustrates the Observer recognizing repeated navigation and proposing a dynamic shortcut such as Open Current Month Folder. We are not building a spreadsheet app. Its filesystem/navigation capabilities would need to be exposed and permitted before such a proposal could execute.
-
-A future Mallea word processor illustrates user-created agents: the user creates an agent that reads authorized document content, summarizes it, and displays the result in a panel, then changes that panel's layout or color. We are not building a word processor now. The reusable mechanism is agent inputs/execution/outputs coupled to live app composition, rather than a preinstalled summary agent.
-
-Keep model authoring, model execution by a created agent, and deterministic reactions distinguishable. The Observer should use the same builder and composition mechanisms; it should not require a separate bespoke authoring product.
-
-## Classic applications and connectors
-
-Trusted adapters may eventually expose data/actions from classic apps using existing connector or MCP interfaces, under the same resource schemas and grants. Mallea views and user-created agents can use approved external data inside the app. This avoids requiring every data source to be a Mallea app.
-
-Keep that compatibility boundary in the design; do not claim current support for an unimplemented connector or imply that an external app's own UI becomes malleable. No classic-app connector is currently implemented. Credentials stay in the trusted service/adapter, and connector data retains its source identity and access limits.
-
-## Two outcomes guide the build
-
-1. A compelling three-minute demonstration showing software transform at the point of use, with substantive Meta participation and meaningful bidirectional effects.
-2. A reliable way for other people to try the supported vocabulary, replay labelled real artifacts, and attempt supported requests of their own.
-
-Foundation work belongs on the critical path when it enables those outcomes. A communications feature with no visible software transformation is insufficient; a rearranged screen with no useful data/actions is also insufficient. Broad abstraction without a working demo is not the target either.
-
-## Current gap
-
-Slices 001-002 established authoring, validation, preview, isolation, versioned persistence, native/browser hosts and scoped evidence. Slice 003 now adds SDK 0.3's shared schema-driven Surface renderer/action dispatch, a trusted Fabric canvas adapter, distinct Fieldnote/Parcel apps and permitted saved-design reads. Legacy SDK 0.2 remains specialized to review panels. See SURFACE_SDK.md and REHEARSAL_003.md for actual scope/evidence; this is still a bounded framework PoC.
-
-The next slice strengthens normal minimal apps and targeted point-of-use additions: stable contribution identity, preservation of unrelated work, composable choices/actions and feedback return. Observer then uses this foundation, followed by publishing Automation/try delivery and submission. These additions are planned, not yet working. An unrelated weather-schema test already checks shared binding/action dispatch without a third polished product. See SLICES.md and active PROJECT_PLAN.v016.md.
-
-Observer and runnable Automation contributions remain unimplemented. The builder now authors persistent working Surfaces, including actual native use; this is partial progress toward the full live-model/user-agent foundation, not completion of scheduling or general agent lifecycle.
-
-## Evidence required
-
-- A natural-language request changes a meaningful working surface and its bindings/behavior during use.
-- A different request produces a materially different composition within the same published vocabulary.
-- Both browser and actual native app use that same mechanism; permitted actions work in both directions.
-- The changes preserve data and survive reload; invalid proposals and denied operations leave the prior app usable.
-- A new small contract fixture can use the mechanism without edits to the shared engine.
-- The demo distinguishes live generation, saved replay, authored code, and deterministic execution.
-
-The philosophy is a design hypothesis. Do not claim established novelty, universal generation, or a finished OS from this bounded implementation.
+Implementation scope and status: [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md), [STATUS.md](STATUS.md). Demo and Automation choices: [DEMO_PLAN.md](DEMO_PLAN.md), [AUTOMATION_IDEAS.md](AUTOMATION_IDEAS.md).

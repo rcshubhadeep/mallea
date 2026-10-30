@@ -1,4 +1,3 @@
 import { createRoot } from 'react-dom/client';
-import { App } from '../../../packages/runtime/App';
-import { StudioApp } from '../../../packages/runtime/studio/StudioApp';
-createRoot(document.getElementById('root')!).render(location.search.includes('legacy')?<App kind="notebook"/>:<StudioApp kind="scratchpad"/>);
+import {NativeApp}from'../../../packages/runtime/NativeApp';
+createRoot(document.getElementById('root')!).render(<NativeApp/>);

@@ -1,4 +1,5 @@
 import type { AppKind, WorkspaceInfo } from '../sdk/index';
+import{nativeInvoke}from'./native';
 const base = window.location.hostname === 'tauri.localhost' || window.location.protocol === 'tauri:' ? 'http://127.0.0.1:4318' : '';
 let token = '', session = '';
 let kind:AppKind='board';
@@ -8,6 +9,7 @@ export async function request<T>(path:string,body?:unknown):Promise<T>{
   const value=await response.json();if(!response.ok)throw new Error(value.error??'Workspace request failed.');return value;
 }
 export async function bootstrap(appKind:AppKind=kind){
+  if(window.__TAURI__){const registered=await nativeInvoke<{session:string;workspace:WorkspaceInfo}>('native_connect');session=registered.session;return registered.workspace;}
   kind=appKind;token=(await request<{token:string}>('bootstrap')).token;
   const registered=await request<{session:string;workspace:WorkspaceInfo}>('register',{kind});session=registered.session;return registered.workspace;
 }

@@ -1,5 +1,7 @@
 # Slice 004: Observer and feedback returning to desktop
 
+Historical plan: superseded by the October 30 desktop-engine rebase. Follow docs/README.md and PROJECT_PLAN.v019.md; do not resume this execution sequence.
+
 State: defined, not started. Milestone M2; depends on accepted 003C targeted composition and feedback return. Follow active plan, FOUNDATION_PLAN.md and DEMO_PLAN.md. Review status/source/goal and verify baseline before starting. Feedback adapters now belong to 003C; this slice adds Observer and verifies the combined bidirectional, malleable workflow.
 
 | Unit | Work | Acceptance |

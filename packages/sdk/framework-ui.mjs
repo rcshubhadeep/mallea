@@ -1,0 +1,2 @@
+export const shapeContract={readPermission:'mallea.ui',permissions:['mallea.ui','mallea.shape'],fields:{'runtime.disabled':'boolean'},actions:{'mallea.shape':{}}};
+export const shapeSurface={manifest:{id:'mallea-shape',title:'Shape Your App',version:'1.0.0',sdkVersion:'0.3',permissions:shapeContract.permissions},ui:{id:'shape-entry',type:'button',label:'✧ Shape this app',action:'mallea.shape',disabledBind:'runtime.disabled'}};

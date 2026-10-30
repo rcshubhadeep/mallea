@@ -6,10 +6,10 @@ export class Registry {
   register(appId,workspaceId='local-demo'){
     const app=this.store.app(appId);if(app.workspaceId!==workspaceId)throw new Error('App is outside this workspace.');
     if(this.sessions.size>=64)throw new Error('Too many app sessions. Restart unused clients.');
-    const session={id:randomUUID(),instanceId:randomUUID(),appId,workspaceId,socket:null};this.sessions.set(session.id,session);
+    const session={id:randomUUID(),instanceId:randomUUID(),appId,workspaceId,socket:null,connectedAt:Date.now(),lastSeen:Date.now()};this.sessions.set(session.id,session);
     return session;
   }
-  require(id){const session=this.sessions.get(id);if(!session)throw new Error('Session expired. Reconnect the app.');return session;}
+  require(id){const session=this.sessions.get(id);if(!session)throw new Error('Session expired. Reconnect the app.');session.lastSeen=Date.now();return session;}
   ticket(session){const ticket=randomUUID();if(this.tickets.size>=128)this.tickets.delete(this.tickets.keys().next().value);this.tickets.set(ticket,{sessionId:session.id,expires:Date.now()+10000});return ticket;}
   attach(ticket,socket){const record=this.tickets.get(ticket);this.tickets.delete(ticket);if(!record||record.expires<Date.now())throw new Error('Invalid connection ticket.');
     const session=this.require(record.sessionId);session.socket?.close();session.socket=socket;this.broadcast(session.workspaceId,{type:'presence'});
@@ -18,7 +18,7 @@ export class Registry {
     return session;
   }
   online(appId){return [...this.sessions.values()].some(s=>s.appId===appId&&s.socket?.readyState===1);}
-  list(session){return this.store.state().apps.filter(a=>a.workspaceId===session.workspaceId).map(a=>({...describeApp(a),online:this.online(a.id),allowed:this.store.allowed(session.appId,a.id)}));}
+  list(session){return this.store.state().apps.filter(a=>a.workspaceId===session.workspaceId).map(a=>({...this.store.describe(a.id),online:this.online(a.id),allowed:this.store.allowed(session.appId,a.id)}));}
   authorize(session,targetAppId,observationId){
     const target=this.store.app(targetAppId);
     if(target.workspaceId!==session.workspaceId||!appDefinition(target.kind).provides.some(c=>c.name==='read_observation'))throw new Error('Capability is unavailable in this workspace.');

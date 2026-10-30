@@ -1,0 +1,12 @@
+# Surface-native starting apps: evidence
+
+Date: 2026-10-29. This records 003C-A work before the targeted-edit continuation. It is scoped evidence, not completion of the malleability gate.
+
+- Baseline 30 tests/TypeScript; expanded suite 32 tests and frontend/Windows native builds passed. Linux/macOS untested. Existing historical Surface fixture was made independent of the redesigned default so backward compatibility remains a real check.
+- Fieldnote and Parcel starting workspaces are hand-authored Surface data, validated and rendered with the same code as generated models. App controls dispatch registered actions; trusted header/approval/canvas internals remain outside editable primitive definitions.
+- Actual native Fieldnote showed brief, canvas, inspector, note and saved summaries. Actual Parcel showed linked asset, image/note, review selector and comment composer. Saved customizations/local values were retained inactive through Show built-in app, not erased.
+- Posted a normal review comment in Parcel; enabled feedback read in Fieldnote and explicitly fetched it through the owner/MCP route. The comment appeared in native. Saved native revision 3 with a changed note; refreshed Parcel to source revision 3, retaining review comment. Changed review status through the actual browser selector and observed saved confirmation. No generated customization was activated in those views.
+- Final companion restart retained byte-equivalent SQLite table fingerprints for studio data, app/grants state, installed versions and local state. This proves retention for that restart, not a universal recovery guarantee.
+- Development desktop service authoring of an extra local note: ready attempt 1, 11,107 tokens, reported cost 0.02171375, 7,258 ms. Direct Meta web local-note check: ready attempt 1, 11,307 tokens, 19,494 ms, no monetary usage returned. Separate isolated workspaces, not an actual Meta-native recording.
+- Actual UI screenshots were displayed during verification, but final screenshot capture was interrupted by Computer Use being unable to confidently determine the Windows browser URL. No final saved screenshot artifact is claimed for this delivery. Root README was updated for both apps, two-way permissions, original/customized mode, limits and Windows/Linux/macOS commands.
+- Independent contribution management remained incomplete. The subsequent user bold-list refusal is recorded as a real malleability gap and drives 003C-B; normal starting apps alone did not establish a sufficiently expressive framework.

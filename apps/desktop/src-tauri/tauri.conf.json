@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Fieldnote", "version": "0.1.0", "identifier": "dev.mallea.notebook",
+  "productName": "Mallea app host", "version": "0.1.0", "identifier": "dev.mallea.host",
   "build": { "devUrl": "http://127.0.0.1:5174", "frontendDist": "../dist" },
-  "app": { "windows": [{ "title": "Fieldnote · Powered by Mallea", "width": 1200, "height": 900 }],
+  "app": { "withGlobalTauri": true, "windows": [{ "title": "Mallea", "width": 1200, "height": 900 }],
     "security": { "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://127.0.0.1:4318 ws://127.0.0.1:4318; frame-src 'self' http://127.0.0.1:4318" } },
   "bundle": { "active": false }
 }

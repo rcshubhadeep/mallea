@@ -1,60 +1,34 @@
-# Slice 002 architecture
+# Desktop engine architecture: target and current gaps
 
-## Slice 003 extension
+Governed by PROJECT_PLAN.v021.md. This guide describes implementation boundaries; it is not a completed-system claim.
 
-The current --studio mode adds Fieldnote/Parcel definitions, app-owned canvas/draft and saved-image contracts, and SDK 0.3 Surfaces. These are validated data interpreted by trusted React controls, not executable model scripts. The existing author loop and per-app SQLite version store are extended through definition hooks; legacy SDK 0.2 execution remains unchanged. New registered saved-design reads use the same MCP gateway and authenticated owner socket. Studio state is separate from legacy tables and defaults to .mallea/workspace.sqlite. See SURFACE_SDK.md for implemented limits and STATUS.md for acceptance evidence. Observer, automation trigger and feedback return remain later slices.
+## Runtime roles
 
-Historical implemented baseline. Current accepted target: PROJECT_PLAN.v012.md and FOUNDATION_PLAN.md (scratchpad/review-board apps, small live model, Surface/Automation contributions and reused local service/MCP/storage/isolation). New targets are not implemented by this planning update; the diagram below describes the legacy evidence demo.
+- Tauri native host: window/lifecycle, trusted OS integration, app identity and project build/launch operations.
+- React/Surface runtime: renders declared app and framework Surfaces, dispatches registered events/actions and applies live revision updates.
+- Core engine: local app/Surface/model registry, SQLite persistence, shared Meta inference, scoped sessions/grants, app-specific MCP facades, owner routing, subscriptions and Automation executor.
+- Dashboard: a Surface-based control app consuming actual Core metadata. It does not embed other app UIs or own their normal lifetimes.
 
-This describes the implemented local demo boundary. Follow PROJECT_PLAN.v006.md for goals and deferred work.
+Current code to reuse: apps/desktop native shell; packages/sdk Surface schema/targeted transforms; packages/runtime renderer/builder; services/workspace Node/SQLite registry/author/gateway/owner connection; existing Fabric/review adapters. E001 now supplies native identity/manifest bootstrap, dynamic app registration, independent native Fieldnote/Parcel and a portable blank-project runtime. Artwork/review handlers remain specific registered adapters; grants remain predominantly app-level. Independent Surface/model composition and complete framework UI coverage are E002 gaps.
 
-```mermaid
-flowchart LR
-  B[Browser board] -->|outbound session connection| S[Trusted workspace service]
-  N[Tauri notebook] -->|outbound session connection| S
-  S --> D[(SQLite)]
-  A[Shared builder] -->|app contract and capability descriptions| L[Configured model]
-  S --- A
-  S -->|official SDK client and linked transport| M[MCP gateway]
-  E[External local MCP client] -->|Streamable HTTP with instance session| M
-  M -->|authorized owner request| S
-  S -->|request over existing connection| N
-  P[Isolated generated panel] -->|allowlisted action message| B
-```
+## Persistent graph
 
-## Ownership and persistence
+App -> Surface -> elements. Surface -> model references -> typed fields/collections. Element -> binding/event -> registered operation. Automation -> approved inputs/trigger/steps/output. Grant -> requesting app/Surface + providing app/Surface/resource + allowed operation. Definitions/data have distinct revisions. Current activation uses existing transactional validation/version patterns, expanded beyond one workspace artifact.
 
-- The notebook owns observations, approved synthetic screenshots, and evidence revisions.
-- The board owns tasks, criticality, evidence links, and acknowledgements of exact revisions.
-- Each app owns its installed package pointer and immutable package versions. Installing on the board does not install on the notebook.
-- SQLite holds the authoritative demo state. Host-owned reads and actions use app/instance identity; the service persists their results. Remote ownership is expressed through contracts and enforcement, not a separate database on each machine.
-- A first-start transaction migrates legacy data after a consistent backup. Legacy tables remain available for recovery; new code uses the collaboration state and app-scoped package tables.
+The central registry is the chosen local PoC store; apps remain logical owners of their data. No UI definitions are copied between apps as a sharing mechanism. Subscribe to resource identity/revisions, authorize owner reads, update recipient data, then render the recipient's own Surface.
 
-## A read and an edit
+## Agent and model boundary
 
-1. A local client bootstraps and registers a known app, receiving an instance session. A one-use short-lived ticket attaches its outbound WebSocket connection.
-2. Discovery returns app identities, presence, and capability descriptions. A user explicitly allows linked notebook evidence before the board reads it. The service checks the workspace, grant, target capability, and entity link at every invocation.
-3. The runtime uses an official MCP SDK client to call read_observation on the gateway. The gateway routes the call over an existing owner connection; the owner reads its observation through its scoped service route and replies. The service checks the reply against authoritative stored data.
-4. The notebook saves an edit with expected revision and operation ID. A transaction increments the revision; repeating the same operation returns its prior result, while conflicting operation reuse or stale edits are rejected.
-5. An authorized, linked consumer receives a minimal revision notification, then refreshes through the capability read. Events carry identity/revision metadata rather than the full observation body.
-6. The host calculates installed review behavior for workspace state independently of the panel frame. Acknowledgement checks the latest authoritative revision; acknowledging N never clears N+1.
+The shared agent runtime can inspect and manipulate authorized Surface/data/action records. Meta model selection/key are engine-owned; all apps use the selected profile. App payloads, generated projects, registry discovery and model context exclude key values. Secrets use session memory first or an established native credential facility when persistent storage is added. Model output is validated; failed/stale proposals cannot mutate live state.
 
-The runtime-to-gateway transport is SDK in-memory JSON-RPC within the service. The outward owner connection is WebSocket. External local clients can use the SDK's stateless Streamable HTTP endpoint at /mcp. These are distinct responsibilities; WebSocket notifications are not presented as durable MCP events. The implementation follows the official [MCP server](https://ts.sdk.modelcontextprotocol.io/server) and [client](https://ts.sdk.modelcontextprotocol.io/client) APIs pinned in package.json.
+Dynamic behavior comes from typed events and bounded registered operations, optionally a Muse structured transformation. No arbitrary generated Node/Rust modules, unrestricted network or universal expression engine is required for the PoC. A general app can still be composed from useful primitive data operations, collections, inputs and outputs.
 
-## Authoring and execution
+## Native project delivery
 
-The shared builder receives the selected app definition, linked source identities, slot contract, and a real MCP discovery result. The model generates SDK 0.2 markup layout and pure review code, or returns an explicit unsupported result. Domain requirements and behavior verification run before saving an installable draft. An explicit alternative is never installed automatically.
+A project contains an app manifest, pinned Mallea runtime/SDK artifact, Tauri shell/template, app-owned metadata and normal build scripts/locks. It builds without an absolute link into the creator's checkout. The initial default definition is empty except framework Shape. Subsequent model/schema/Surface revisions load from Core without native recompilation. The E001 format copies the built frontend and native sources/lock into each project, with its own pinned Tauri CLI dependency and private local host configuration. It compiled outside the original checkout.
 
-Data remains under host control. Generated observation bindings resolve through the approved read capability at runtime. The generated program cannot call arbitrary MCP tools; this slice's bridge exposes one evidence resource and acknowledgement action. The model receives capability metadata, not the full observation contents, during authoring.
+Core can initially be launched explicitly from source. Automatic sidecar installation/engine startup is delivery work only after the source path works; no bundled runtime/installer claim is made prematurely. Closing the dashboard is distinct from shutting down Core.
 
-The host compiles allowlisted UI nodes to escaped markup. It serves the markup using bounded short-lived random frame handles and an independent restrictive content policy. The iframe uses allow-scripts without allow-same-origin; it receives no API/session token or raw native command access. The parent validates message source, channel, action, task, revision, and permission. Review code executes separately in the bounded QuickJS worker.
+## Current verification boundary
 
-## Limits
-
-- Local trusted-workspace pairing is not production user authentication. A holder of the local bootstrap token can register a known workspace app. Use only on loopback.
-- Two known app types and a third synthetic instance demonstrate shared contracts and generic routing. They do not establish support for arbitrary app types or schemas. The SDK remains evidence-review oriented and supports two decision policies.
-- The source app must be connected for cross-app reads. Offline evidence is shown as unavailable; reconnect refreshes authoritative state. No cross-app offline cache guarantee is made.
-- Session status is process-local and bounded to 64 registrations per service run. Packages, grants, revisions, and operation deduplication persist. Full session lifecycle/remote identity is later work.
-- Session cancellation and interpreter limits reduce exposure; complete protection against runtime vulnerabilities is not established.
-- There is no event log replay. Revision checks, operation IDs, and reconnect refresh supply the bounded demo's recovery behavior.
-- Full created-agent scheduling/history, observer suggestions, arbitrary generated React/forms/actions, production deployment, and final video polish remain later work.
+E001 Windows evidence: 39 sequential tests, TypeScript, independent native Fieldnote/Parcel with two-way manual exchange, a separately compiled portable blank app, live notes authoring and persisted state. The dashboard, session Surface expiry, Surface-level grants, automatic subscriptions and semantic Automations remain to be built and verified. Browser product support and Observer are parked; older guides are archived historical evidence.

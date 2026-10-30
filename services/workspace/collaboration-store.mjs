@@ -49,6 +49,8 @@ export class CollaborationStore {
   state(){return JSON.parse(this.db.prepare('SELECT value FROM collaboration WHERE id=1').get().value);}
   write(state){this.db.prepare('UPDATE collaboration SET value=? WHERE id=1').run(encode(state));}
   app(id){const app=this.state().apps.find(a=>a.id===id);if(!app)throw new Error('Unknown app.');return app;}
+  definition(id){return this.engineApps?.has(id)?this.engineApps.definition(id):appDefinition(this.app(id).kind);}
+  describe(id){if(this.engineApps?.has(id))return this.engineApps.describe(id);const app=this.app(id);const {verify,validate,...definition}=this.definition(id);return {id,workspaceId:app.workspaceId,...definition};}
   createApp(id,kind,workspaceId='local-demo'){
     appDefinition(kind);if(!/^[a-z][a-z0-9-]{2,60}$/.test(id)||this.state().apps.some(a=>a.id===id))throw new Error('Invalid or duplicate app ID.');
     const state=this.state();state.apps.push({id,kind,workspaceId,active:null,tasks:[],...(kind==='notebook'?{observations:[]}: {})});this.write(state);return this.app(id);
@@ -87,10 +89,10 @@ export class CollaborationStore {
     this.write(state);
   }
   packages(appId){
-    const root=this;const app=()=>root.app(appId);const verify=artifact=>appDefinition(app().kind).verify(artifact);
-    const validate=artifact=>(appDefinition(app().kind).validate??validatePackage)(artifact);
+    const root=this;const app=()=>root.app(appId);const verify=artifact=>root.definition(appId).verify(artifact);
+    const validate=artifact=>(root.definition(appId).validate??validatePackage)(artifact);
     const adapter={
-      definition:appDefinition(app().kind),
+      definition:root.definition(appId),
       state:()=>({active:app().active,tasks:app().tasks}),
       active:()=>{const version=app().active;return version?JSON.parse(root.db.prepare('SELECT value FROM app_packages WHERE app_id=? AND version=?').get(appId,version).value):null;},
       versions:()=>root.db.prepare('SELECT version FROM app_packages WHERE app_id=? ORDER BY rowid').all(appId).map(r=>r.version),

@@ -1,45 +1,38 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v016.md](PROJECT_PLAN.v016.md).
+Active project plan: [PROJECT_PLAN.v021.md](PROJECT_PLAN.v021.md).
 
-This is the implementation guide for the hackathon project. Read the active plan before starting work. The initial plan records the conversation's direction and identifies assumptions that still need validation.
+The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 
-- [FOUNDATION.md](FOUNDATION.md): clarified product philosophy and the decision guide for malleability, agents, and bidirectional capabilities.
-- [FOUNDATION_REVIEW.md](FOUNDATION_REVIEW.md): expanded hosted-web/local-companion vision, technical-brief review, proposed identity/provenance/locality boundaries, and code gaps before revising the foundation.
+## Active guides
 
-- [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md): accepted minimal PoC contracts, reuse boundaries, deferrals and runnable delivery.
-- [DEMO_PLAN.md](DEMO_PLAN.md): approved scratchpad/review-board storyboard and acceptance.
-- [SLICES.md](SLICES.md): bounded M1-M4 sequence.
-- [SURFACE_SDK.md](SURFACE_SDK.md): implemented SDK 0.3 vocabulary, data-only rendering, preview and app-adapter boundary.
-- [SLICE_003A.md](SLICE_003A.md): correction for new persistent Surface-local fields in web and desktop.
-- [SLICE_003C.md](SLICE_003C.md): next foundation slice, ordinary apps with targeted additions, choices and feedback return; defined, not implemented.
-- [REHEARSAL_003A.md](REHEARSAL_003A.md): new-field, preview, refinement, persistence and consolidated-workspace evidence.
-- [LEGACY_REVIEW.md](LEGACY_REVIEW.md): retained evidence-review experience for Slices 001-002.
-- [SLICE_004.md](SLICE_004.md): Observer and feedback return, defined/not started.
-- [SLICE_005.md](SLICE_005.md): publishing Automation and try delivery, defined/not started.
-- [SLICE_006.md](SLICE_006.md): platform evidence, video and submission, defined/not started.
-- [STATUS.md](STATUS.md): mutable implementation progress, next actions, and verification evidence.
-- [CHANGELOG.md](CHANGELOG.md): append-only record of plan revisions.
-- [SLICE_001.md](SLICE_001.md): completed browser authoring slice.
-- [CAPABILITY_AUDIT.md](CAPABILITY_AUDIT.md): post-slice capability probes, observed limits, and the unsupported-request fix.
-- [SLICE_002.md](SLICE_002.md): completed cross-app slice, work units, and acceptance gates.
-- [ARCHITECTURE.md](ARCHITECTURE.md): implemented ownership, routing, MCP, and execution boundaries.
-- [REHEARSAL_002.md](REHEARSAL_002.md): observed native/browser rehearsal and model timing evidence.
-- [REHEARSAL_003.md](REHEARSAL_003.md): actual Surface authoring/native/browser results, model usage and scoped acceptance.
-- [PROGRESS_REVIEW.md](PROGRESS_REVIEW.md): goal comparison, reusable mechanisms, domain assumptions, and recommended next work.
-- [SLICE_003.md](SLICE_003.md): M1 implemented and agent-verified; user confirms demo flow and changing panel side.
-- [IDEAS.md](IDEAS.md): uncommitted candidates with explicit admission gates; these do not expand active slice scope.
-- `PROJECT_PLAN.vNNN.md`: immutable plan snapshots, numbered consecutively.
+- [FOUNDATION.md](FOUNDATION.md): accepted product principles and boundaries.
+- [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md): registry, native host, agent, MCP, data and execution contracts.
+- [ARCHITECTURE.md](ARCHITECTURE.md): ownership and actual code gaps.
+- [DEMO_PLAN.md](DEMO_PLAN.md): desktop-only three-minute story and recording gates.
+- [AUTOMATION_IDEAS.md](AUTOMATION_IDEAS.md): semantic and deterministic compositions, recommended demo choice.
+- [CONTEXTUAL_AUTHORING.md](CONTEXTUAL_AUTHORING.md): element context menus, scoped/global Shape and the three-step plain-English Automation flow.
+- [CATALOGUE.md](CATALOGUE.md): named illustrative apps and original artwork directions.
+- [SLICES.md](SLICES.md): E001-E005 implementation sequence and acceptance.
+- [SLICE_E001.md](SLICE_E001.md): first slice, work units, test targets and exclusions.
+- [SLICE_E002.md](SLICE_E002.md): malleable Surface/data foundation and contextual editing.
+- [SLICE_E003.md](SLICE_E003.md): Surface-based dashboard, model settings, catalogue and creator.
+- [SLICE_E004.md](SLICE_E004.md): Surface permissions, auto-sync and the three-step Automation flow.
+- [SLICE_E005.md](SLICE_E005.md): clean setup, rehearsal, video and submission.
+- [STATUS.md](STATUS.md): current unit, fresh versus historical evidence and next actions.
+- [REHEARSAL_E001.md](REHEARSAL_E001.md): native foundation evidence, reproduction and remaining limits.
+- [CHANGELOG.md](CHANGELOG.md): plan decisions and preservation evidence.
 
-## Exact-preservation revision procedure
+## Reusable predecessor evidence
 
-1. Identify the smallest passage that must change and the reason. A change to goals, scope, architecture, milestone acceptance, provider policy, or deliverables requires a new plan version.
-2. Copy the active snapshot to the next numbered filename using a byte-preserving file copy. Never overwrite an existing snapshot.
-3. Apply localized replacements to the new file only. Preserve every byte outside the changed passages. Do not normalize line endings, encoding, spacing, wrapping, or headings. Use a byte-oriented replacement when a text editor cannot guarantee preservation.
-4. Check that the previous snapshot's SHA-256 hash is unchanged. Compare the new file against the previous snapshot and verify that every difference is intentional; for byte-range replacements, verify all untouched byte segments match exactly.
-5. Append a revision entry to CHANGELOG.md with the old and new filenames, reason, affected sections, and validation performed.
-6. Update only the active-plan link above. Future work follows that snapshot; all earlier snapshots remain available.
+[SURFACE_SDK.md](SURFACE_SDK.md) documents the current bounded grammar. [MALLEABILITY.md](MALLEABILITY.md), [REHEARSAL_003CA.md](REHEARSAL_003CA.md) and [REHEARSAL_003CB.md](REHEARSAL_003CB.md) document targeted editing and previous native/data checks. They are implementation references, not the new engine's acceptance gates. Older numbered plans and slice guides remain historical; do not resume their web/Observer sequence.
 
-The snapshot filename carries the version; do not add changing version headers, dates, or revision histories inside otherwise unchanged plan content. Routine implementation status belongs in STATUS.md, not in rewritten plan snapshots.
+Prior mutable guides and standing guidance were copied byte-for-byte under [archive/desktop-engine-rebase](archive/desktop-engine-rebase/README.md) before rewriting. No source or user data was deleted.
 
-Plan revisions can be made as necessary within the user's authorized work; this process does not introduce an additional approval step.
+## Revision procedure from this baseline
+
+The user explicitly authorized the October 30 full rebase. v019 is a new coherent baseline; this exceptional rebase did not attempt to preserve obsolete paragraphs as active instructions. Earlier immutable snapshots are unchanged.
+
+For subsequent plan decisions, copy the active numbered snapshot byte-for-byte to the next number, apply only necessary localized changes, verify the previous hash and all unaffected bytes, append reason/sections/hashes to CHANGELOG.md, and update this active link. Never alter older snapshots. Routine status/test evidence belongs in STATUS.md. Another whole-document rebase requires user direction.
+
+Review current status/source, overarching goal and detailed scope before each slice. Define numbered units/acceptance/exclusions; track the active unit. Finish with milestone advanced, acceptance passed, incomplete work, user steps/expected results/limits and README review. Keep README product-facing with portable paths and parallel platform instructions. Archive labels do not turn unimplemented features into working ones.

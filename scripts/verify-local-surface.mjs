@@ -14,8 +14,9 @@ try{
  for(const [step,prompt]of prompts.entries()){
   const started=Date.now();let job=await call('author',{request:prompt});
   while(!['ready','failed','unsupported','cancelled'].includes(job.phase)){await new Promise(r=>setTimeout(r,300));job=await call(`jobs/${job.id}`);}
-  const record={step,phase:job.phase,attempt:job.attempt,usage:job.usage,elapsedMs:Date.now()-started};records.push(record);console.log(JSON.stringify(record));
+  const record={step,phase:job.phase,attempt:job.attempt,changes:job.changes??null,diagnostics:job.diagnostics,usage:job.usage,elapsedMs:Date.now()-started};records.push(record);console.log(JSON.stringify(record));
   if(job.phase!=='ready')throw new Error(job.error??job.unsupported?.reason??job.phase);
+  assert(job.changes?.length,'Expected targeted operations, not a regenerated app');
   const artifact=await call(`studio/draft?id=${job.id}`),nodes=[];function walk(n){nodes.push(n);for(const c of n.children??[])walk(c);}walk(artifact.ui);
   const note=nodes.find(n=>n.type==='textarea'&&localKey(n.bind));assert(note,'Missing new local textarea');if(step)assert.equal(localKey(note.bind),key);else key=localKey(note.bind);
   if(kind==='review-board')assert(nodes.some(n=>n.type==='image'&&n.bind==='asset.image'),'Existing asset view must remain');

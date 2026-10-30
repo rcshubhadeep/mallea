@@ -1,6 +1,8 @@
 # Slice 003C: useful apps that users can extend
 
-State: defined; W1 complete, implementation not started. Follow PROJECT_PLAN.v016.md, FOUNDATION.md and FOUNDATION_PLAN.md. Advances broader M1 composition and the feedback-return part of M2. Prior narrow M1 acceptance is retained; it does not establish these new features.
+Historical plan: superseded by the October 30 desktop-engine rebase. Follow docs/README.md and PROJECT_PLAN.v019.md; do not resume this execution sequence.
+
+State: defined; W1 complete, implementation not started. Follow PROJECT_PLAN.v018.md, FOUNDATION.md and FOUNDATION_PLAN.md. Advances broader M1 composition and the feedback-return part of M2. Prior narrow M1 acceptance is retained; it does not establish these new features.
 
 ## Goal
 
@@ -9,6 +11,14 @@ A normal minimal app works without invoking the builder. While using it, a perso
 Fresh W1 baseline: inspected current renderer, app definitions, local state and install boundary; 30 tests and TypeScript pass on Windows. Existing Surface authoring replaces one workspace definition and supports one global disable. Generic local text/color persistence exists. Targeted independent additions and value-bearing choice controls do not. Previous native/build evidence is historical, not a fresh build in this planning step.
 
 ## Numbered work units
+
+### Current delivery: 003C-B, targeted malleability
+
+User requests fundamental malleability before Observer after a bold-only list change was refused. B1 baseline/plan; B2 bounded typography plus stable-ID set/insert/move/remove applied to a copied app model; B3 model proposal/preview/install integration and visible change summaries; B4 focused category tests, exact real-model regression and README handoff. Preserve unrelated nodes/layout/bindings/data. Acceptance includes the exact bold request with unchanged rest, an independent insertion/removal, rearrangement and valid action binding/persistence. Passing bold alone does not complete the overall gate. This is a bounded continuation of W2/W3, not a new feature branch or Observer slice.
+
+### First delivery: 003C-A, Surface-native starting apps
+
+User refined the order on October 29: first show richer normal apps with no generated contribution active; their built-in workspace elements and interactions use the same Surface architecture. A1 baseline/plan complete; A2 shared bounded grammar/registered actions and hand-authored app definitions; A3 review/feedback backend and shared host orchestration; A4 actual browser/native checks, README and user handoff. Preserve installed customizations inactive, not deleted. The target is annotation inspector/saved details and asset status/feedback, not a general editor. Base and generated definitions must share validation/rendering and action dispatch. Host identity/approval chrome and canvas internals are trusted boundaries. Full W2/W3 targeted lifecycle remains later in this slice; A acceptance does not complete it.
 
 | Unit | Scope | Acceptance |
 | --- | --- | --- |

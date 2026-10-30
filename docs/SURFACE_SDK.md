@@ -1,6 +1,8 @@
 # SDK 0.3: bounded live Surfaces
 
-Slices 003/003A extend the existing builder/version store with strict declarative data and new local fields. It is not arbitrary React generation. Follow PROJECT_PLAN.v015.md. Legacy SDK 0.2 packages keep their iframe/QuickJS boundary.
+Implementation reference for the predecessor runtime. Current product direction and unimplemented engine contracts are governed by PROJECT_PLAN.v019.md; this reference does not establish their acceptance.
+
+Slices 003/003A/003C-A extend the existing builder/version store with strict declarative data, local fields and Surface-native starting apps. It is not arbitrary React generation. Follow PROJECT_PLAN.v017.md. Legacy SDK 0.2 packages keep their iframe/QuickJS boundary.
 
 ## Definition
 
@@ -9,20 +11,38 @@ An artifact contains manifest, ui and optional state. Manifest: id, title, seman
 | Node | Meaning |
 | --- | --- |
 | stack, split, grid | Nonempty children in vertical/two-column layouts; responsive single column |
+| row, details | Wrapping horizontal group or native collapsible group; nonempty children |
 | text | Escaped literal text or registered binding |
 | image | Registered image binding; trusted data-image resource only |
 | input, textarea, color | Existing app binding plus action/argument, or new declared local binding using the framework setter |
-| button | Registered argument-free action |
+| choice | 1-12 unique options {label,value}; bound like an input; local text/color or registered field/action |
+| button | Registered argument-free action, or declared argument plus validated literal value |
 | repeat | Registered list rendered as text items; no custom row code |
 | component | One registered trusted app component reference, such as design-canvas |
 
-Style is bounded data: background/color as six-digit hex, gap/padding as integers 0-40. No arbitrary CSS, HTML, scripts, expressions, URLs, imports, dependencies or native commands. Component implementations are trusted framework/app code. Model-provided data is validated before trusted React rendering; text is escaped, and no eval/HTML injection path exists. This reduces executable surface area; it is not a claim of a security audit.
+Style is bounded data: background/color/borderColor as six-digit hex; gap/padding integers 0-40; fontWeight normal/bold or integer 100-900; fontSize 10-48 px; fontStyle normal/italic; textAlign left/center/right; textDecoration none/underline/line-through; lineHeight 1-2.5; borderRadius 0-32 and borderWidth 0-4. Typography on repeat applies to actual list items; input typography also reaches the text control. Font family, arbitrary CSS, HTML, scripts, expressions, URLs, imports, dependencies and native commands remain unsupported. Canvas internals are trusted app code controlled by registered actions. Model data is validated before React rendering and text is escaped; this is not a security-audit claim.
+
+## Targeted app-model edits
+
+New Surface authoring prefers a proposal `{changes:[operation],title?,state?,permissions?}`. At most 20 operations: set(id,props), insert(parentId,index,node), move(id,parentId,index), remove(id). Indices are zero-based; move insertion uses the destination after detaching the source. Target IDs come from the visible current app model. set updates only named node properties and merges style fields; it cannot assign id/children. It is not a property-path interpreter. Root removal, moves into descendants, invalid layouts, unknown targets, missing required components and invalid final bindings/styles/actions are rejected.
+
+Edits operate on a copy. Only a fully validated artifact enters the existing draft/preview/install pipeline; failed operations do not mutate the original. All unrelated nodes remain as-is. Added state merges named fields without changing existing key types; permissions are additive and still validated/approved. Removing a node does not delete its stored local values. Stored/imported full SDK 0.3 artifacts remain compatible; new Surface inference jobs require targeted proposals and reject rewritten apps through the bounded repair path. Legacy SDK 0.2 authoring is unchanged. No prompt-keyword recipe selects operations. Model proposals can still misunderstand a request; semantic checks and user preview remain necessary.
+
+Installed versions persist the resolved full model using existing SQLite/version activation and stale-version checks. Proposed change summaries appear before preview approval. There is no new package manager or unbounded patch engine. Per-contribution selection/management, undo UI and blank-window app authoring remain future work.
+
+Optional appearance tokens: workspace, sidebar, card, toolbar, title, muted, eyebrow, badge, primary. They select trusted CSS presentation, including a responsive three-column workspace, not arbitrary classes. disabledBind references a permitted registered boolean. Choice options/literal button arguments honor registered action.values and color types. A limited-choice control does not redefine domain authorization or global data policy.
+
+## Built-in apps are Surfaces
+
+studio-surfaces.mjs authors both starting interfaces as ordinary SDK 0.3 node data. They pass validateSurface at module load and render through the same Surface component/action dispatcher used for generated models. Brief/collection, canvas/image stage, inspector, operational buttons and review forms are declared there; there is no parallel hardcoded app workspace tree. StudioApp orchestrates app adapters/service calls, ephemeral draft state, connections and the protected framework header/builder. Fabric canvas internals remain a trusted registered component, not generated editable code.
+
+Fresh apps have no generated package installed. Show built-in app reversibly deactivates presentation of an existing customization; it retains the package and app-local values. Install reactivates the new accepted version. The builder receives the visible initial model even when an older customization is inactive. Targeted multi-contribution editing/removal and blank-window authoring remain future work; current activation versions one composed app workspace.
 
 ## Registered app boundary
 
 Contracts specify readable paths and types, read permission, allowed actions with argument/binding, and trusted components. Shared rendering and binding dispatch do not know annotation/asset field names. The Fieldnote adapter owns its canvas/draft mutations; Parcel owns the published asset. A test-only weather contract exercises the same mechanism without engine edits.
 
-Fieldnote exposes annotation text/color, revision note, saved image/note/revision and one required design-canvas. Parcel exposes image/note/title/revision. Both also support new Surface-local data through the framework; Parcel's read-only asset contract does not prevent adding a writable local text box. The builder can add/group/reorder controls and panels. It cannot remove the required canvas, invent remote writes, scheduling or file access, or claim unimplemented feedback/publication.
+Fieldnote exposes annotation text/color/position, revision note, saved image/note/revision summaries, permitted feedback cache and one required design-canvas. Parcel exposes image/note/title/revisions plus app-owned review status/comment draft and posting. Both support new Surface-local data. Registered host actions perform save, grant toggle and explicit refresh; preview has no service-write/export/grant bridge. The builder cannot remove the required canvas, invent remote writes, scheduling or file access, or claim unimplemented automatic publication.
 
 ## New local fields in either host
 

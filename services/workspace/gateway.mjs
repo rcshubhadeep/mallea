@@ -6,8 +6,15 @@ import { z } from 'zod';
 import { observationCapability } from '../../apps/definitions/index.mjs';
 
 export function createGateway(registry,capabilities=[]){
-  function server(session){
-    const mcp=new McpServer({name:'mallea-workspace',version:'0.2.0'});
+  function server(session,targetId){
+    const mcp=new McpServer({name:targetId?`mallea-${targetId}`:'mallea-workspace',version:'0.2.0'});
+    if(targetId){
+      const target=registry.store.app(targetId);if(target.workspaceId!==session.workspaceId)throw new Error('App is outside this workspace.');
+      mcp.registerTool('describe_app',{description:'Inspect this app declarations without reading its data.',inputSchema:z.object({}).strict()},async()=>({content:[{type:'text',text:JSON.stringify(registry.store.describe(targetId))}]}));
+      for(const capability of capabilities.filter(c=>c.ownerKind===target.kind))mcp.registerTool(capability.name,{description:capability.description,inputSchema:capability.schema},async args=>{
+        try{return {content:[{type:'text',text:JSON.stringify(await registry.readRegistered(session,targetId,capability.name,args))}]};}catch(error){return {isError:true,content:[{type:'text',text:error.message}]};}
+      });return mcp;
+    }
     mcp.registerTool('read_observation',{
       description:observationCapability.description,
       inputSchema:{targetAppId:z.string().min(3).max(61),observationId:z.string().min(1).max(100)},
@@ -30,8 +37,8 @@ export function createGateway(registry,capabilities=[]){
       if(result.isError)throw new Error(result.content[0].text);return JSON.parse(result.content[0].text);
     }),
     invoke:(session,targetAppId,name,args)=>withClient(session,async client=>{const result=await client.callTool({name,arguments:{targetAppId,arguments:args}});if(result.isError)throw new Error(result.content[0].text);return JSON.parse(result.content[0].text);}),
-    async http(session,req,res,body){
-      const mcp=server(session),transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined,enableJsonResponse:true});
+    async http(session,req,res,body,targetId){
+      const mcp=server(session,targetId),transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined,enableJsonResponse:true});
       try{await mcp.connect(transport);res.on('close',()=>{void transport.close();void mcp.close();});await transport.handleRequest(req,res,body);}
       catch(error){await transport.close();await mcp.close();throw error;}
     },

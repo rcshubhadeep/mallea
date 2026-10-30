@@ -6,4 +6,4 @@ export type Task = {id:string;title:string;critical:boolean;reviewedRevision:num
 export type AppDefinition = {id:string;kind:AppKind;title:string;purpose:string;initialRequest:string;workspaceId:string;online?:boolean;allowed?:boolean};
 export type WorkspaceInfo = {name:string;app:AppDefinition;extension:Manifest|null;tasks:Task[];versions:string[];instances:AppDefinition[]};
 export type Panel = {channel:string;html:string;framePath:string;manifest:Manifest;policy:string;snapshot:{task:{id:string;title:string;reviewedRevision:number};observation:Observation;review:Review;canAcknowledge:boolean}};
-export type Job = {id:string;phase:string;attempt:number;diagnostics:{attempt:number;message:string}[];error?:string;unsupported?:{reason:string;alternative:string}};
+export type Job = {id:string;phase:string;attempt:number;diagnostics:{attempt:number;message:string}[];changes?:string[];error?:string;unsupported?:{reason:string;alternative:string}};

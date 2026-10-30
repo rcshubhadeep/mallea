@@ -1,5 +1,7 @@
 # Slice 005: publishing Automation and runnable try path
 
+Historical plan: superseded by the October 30 desktop-engine rebase. Follow docs/README.md and PROJECT_PLAN.v019.md; do not resume this execution sequence.
+
 State: defined, not started. Milestone M3; depends on 004/M2. Read status/source/goal and verify baseline before starting. Follow FOUNDATION_PLAN.md and DEMO_PLAN.md; reuse service/storage/grants/builder.
 
 | Unit | Work | Acceptance |

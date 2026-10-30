@@ -1,84 +1,61 @@
-# Mallea PoC foundation plan
+# Engine foundation: implementation guide
 
-Approved direction: the user's visual-scratchpad/asset-review demo and hackathon scope cuts. Follow active PROJECT_PLAN.v016.md; this document details its current implementation boundary. Features below are planned unless STATUS.md records acceptance.
+Follow PROJECT_PLAN.v021.md. This is the target architecture; STATUS.md alone records completion.
 
-## Goal and constraints
+## Keep and change
 
-Two independently styled apps Powered by Mallea: a desktop visual scratchpad and a locally served web asset-review board. Both include the builder capability and the Observer as the only predefined agent. Humans and agents can inspect and reshape a persistent working app model using a small vocabulary. Apps exchange permitted typed data/actions; each renders its own UI.
-
-Deliver a convincing three-minute demonstration and a repository that another machine can run. Do not spend days on generic infrastructure before a working transformation. Every work unit must serve a visible slice or its reproducible delivery.
-
-## Reuse without surrendering the model
-
-Retain React/Tauri, the local Node service, built-in SQLite, generic inference adapter, MCP SDK, WebSocket connections, Zod validation, preview/install lifecycle, and isolation where applicable. Preserve existing tests and data; the old review example may remain a legacy route rather than undergo a generic migration project.
-
-Mallea owns the live app model, typed capability contract, grants, Observer-to-builder flow, and installed contribution lifecycle. A library may implement a primitive behind a small adapter; its internal object model must not become Mallea's public contract. Do not implement a second plugin system or fight an established API to simulate ours.
-
-Slice 003 selected Fabric.js 7.4.0 (MIT) after its narrow adapter fit check: bundled image, editable/draggable text annotation, ordinary color mutation and PNG export. It uses public APIs without internal patches. Future libraries follow the same roughly two-hour fit-check rule: stop once fit is proven, or use a smaller alternative rather than bending Mallea contracts around an API. Pin actual selected versions in the lockfile.
-
-Use the browser's native color input (with an editable hex field), standard inputs/buttons, and existing CSS layouts. SDK 0.3 Surfaces are validated declarative data interpreted by trusted React components, with no generated JS/HTML/imports; legacy iframe/QuickJS isolation remains for SDK 0.2. See SURFACE_SDK.md. Do not add an agent framework, event bus, state manager, schema system, or editor framework unless existing code demonstrably cannot serve the slice. Fabric references: https://www.fabricjs.com/docs/getting-started/installing/ and https://www.fabricjs.com/docs/getting-started/helloworld/ .
-
-## Minimum app contracts
-
-The designer workflow is the first end-to-end proof, not the framework's product boundary. Get that loop working before fleshing it out. Keep editor/asset-specific fields and rules in app adapters; shared composition, bindings, capability dispatch, contribution lifecycle and triggers consume registrations. Later requests may revise the scenario or vocabulary. Preserve these practical seams without speculative extension systems, universal abstractions or a rewrite in anticipation of unknown needs. Do not use prompt keywords or demo app identities to select finished behavior in the shared engine.
-
-The scratchpad owns one selected design, an image, editable text annotation, annotation color, accompanying note, and saved revisions. Save revision snapshots image export plus note; unsaved edits are not published. Start with bundled synthetic images and a tiny asset set. No general graphics editor, layers UI, crop tool, arbitrary remote-image loading, or filesystem browser is required.
-
-The review board owns an asset card linked explicitly to that design, its published image/note/source revision, and feedback comments. It has a different shell, typography, navigation, and layout. Share Mallea mechanisms, not an identical branded app skin.
-
-Register only the resources/actions needed: inspect selected design/saved revision, set annotation color, save revision, inspect/update linked asset, list/add feedback. Final names and schemas are fixed during Slice 003 W2. Domain validation stays with these trusted adapters. The shared renderer and builder consume registrations rather than inspect domain-specific field names.
-
-One loopback companion serves both apps, owns local storage and model credentials, routes through existing MCP/connections, and persists packages and grants. This is a single-user local PoC. No new service deployment, P2P, or cloud account infrastructure. Public HTTPS-to-local connectivity is explicitly deferred.
-
-## Live model and contributions
-
-Accepted next step before Observer: ordinary apps remain useful without authoring; users add, target, rearrange and remove identifiable contributions within one persistent app model while retaining unrelated work. Keep whole-workspace rearrangement when explicitly requested. Extend the small vocabulary with composable choices and validated literal action arguments, rather than a special color-palette workflow. Reuse current storage/rendering/version/preview. Minimal web feedback and desktop return move into this core slice; Observer then builds on it. See SLICE_003C.md. This paragraph records planned work, not current supported behavior.
-
-Each app owns an independent Surface/layout and installed version; shared resources never imply sharing or synchronizing its UI. Shape this app is a default framework capability in every host, outside the editable Surface, and should stay discoverable during use. Its appearance can follow the host app's design. It is already available in both Fieldnote and Parcel; user reports of a missing entry must be investigated as discoverability/runtime issues rather than treating web authoring as a future feature.
-
-Start with stack/split/grid layouts and text, image, button, text input/textarea, color input, repeated items, and approved references to trusted app components such as the canvas. The fixed shell and canvas implementation may remain trusted; the model must change a meaningful workspace layout and working controls, not merely populate a decorative chat sidebar. Bindings reference registered data, local form state, and action arguments. No arbitrary HTML, imports, dependencies, or raw Tauri commands.
-
-The vocabulary must create new working panels, not merely rearrange pre-existing domain fields. Both hosts support declared Surface-local text/color fields with generic editing/persistence, isolated preview and app/Surface ownership. This corrects the gap exposed by a request for an extra web note panel; a read-only domain contract must not disable framework-owned local state. See SURFACE_SDK.md and SLICE_003A.md.
-
-An installed agent contribution can supply a Surface, an Automation, or both. Persist its identity, purpose/request, declared access, model-authored definition, enabled state, and latest outcome. A Surface is an interactive locally loaded app contribution. An Automation executes declared bounded operations on an allowed trigger. Deterministic installed execution is valid and labelled as such; model authoring is distinct from inference on every run. A Surface can remain deterministic after the model composes it.
-
-Reuse validation, bounded repairs, preview and immutable install versions. Preview receives a copy of state and cannot mutate another live app. A failed or stale proposal leaves the active version usable. Support feedback/refinement and disable. Existing version persistence can support restoring a compatible prior definition if cheap; do not build a migration/rollback management UI. Base-app schema upgrade/incompatibility handling is deferred for the fixed PoC version.
-
-## Observer
-
-Muse is the Observer's reasoning component and is central to the demo. Collect allowlisted app-level semantic events locally after opt-in; summarize repeated navigation to Edit -> Annotation color. A small deterministic repetition gate limits cost; a genuine bounded model request reasons over the summary and current capabilities and may suggest nothing. Do not synthesize event history or reveal a prebuilt final Surface.
-
-Reuse bounded event buffer/cooldown ideas without a telemetry system. No raw keyboard/screen monitoring. Disclose that a minimal summary goes to configured inference. On acceptance, open the same editable builder/preview/install path used by the user. Observer is the only default agent; the builder is an operation, not another resident personality. The web app also includes the same framework entry points; only the desktop suggestion needs screen time in the demo.
-
-## Communication, persistence, and traceability
-
-Use app/entity/capability grants and owner-executed actions, existing connection availability and revisions. Writes check expected revision and operation ID. Discovery alone grants nothing. Transport carries text/images/state/action requests/results, never another app's component tree.
-
-Use stable resource IDs, revision numbers, and SHA-256 over exact stored PNG bytes and defined UTF-8 note text. Compute these on Save revision, not on each mouse movement. Images are data and should be stored once with references in messages/ledger; enforce a documented practical size cap. No generalized content-addressed store or automatic deduplication is needed.
-
-A small SQLite exchange table records operation, source/target apps, resource/version references, time, capability, and outcome. Show a concise update receipt using that record. No blockchain, full event sourcing, global identity for every UI state, or dashboard project. It covers broker-mediated operations, not arbitrary activity outside the framework.
-
-Installed definitions and app data live in the local companion's existing storage. For this PoC, active means an authenticated connected app runtime; no background daemon scheduling. Web-load automation runs after link/grant/session readiness on open/reconnect and can run manually. It compares a saved source revision, updates only its linked asset, deduplicates repeats, and reports offline/denied cases. It must not publish a draft or overwrite unrelated feedback. No new work starts for a disconnected app; closing cannot undo a committed write.
-
-## Portability and delivery
-
-Source-run is the mandatory delivery path on Windows, macOS, and Linux: Node 24 and locked dependencies for the companion/browser, plus the documented Tauri/Rust/native prerequisites when building the actual desktop. The user can test on all three; only record a platform as verified after real execution. A browser preview of the desktop frontend is useful but is not native acceptance.
-
-Provide a small cross-platform Node launcher for companion + web and a clear native launch/build path, useful errors, clean shutdown, and isolated demo data/reset. Prefer serving built web assets locally from the existing service for the tester path if straightforward; retain Vite for development. Do not create a process manager framework or bundle Node into a sidecar for this deadline.
-
-Package a Windows native build as the initial reference deliverable where practical. Tauri's existing platform bundler may provide installers; macOS/Linux native artifacts are built/tested on their respective hosts if available. Signing/notarization, app stores, auto-updates, installer parity, and one-click installation without Node are not release gates. Be explicit about missing signing or native prerequisites and do not instruct disabling platform security. References: https://v2.tauri.app/distribute/ .
-
-Try mode replays clearly labelled real model-authored artifacts without an API key. Fresh authoring/Observer reasoning requires explicit configured inference. Screenshots of replay must not imply fresh Muse generation. Do not distribute credentials, private model traces, user databases, or native build paths from the development machine.
-
-## Milestones and delivery gates
-
-| Milestone | Observable acceptance | Slice |
+| Area | Reuse | Required change |
 | --- | --- | --- |
-| M1: first live transformation | Distinct apps and functional scratchpad; direct model request installs a working workspace/color Surface in actual native app and survives restart | 003 |
-| M2: proactive and bidirectional composition | Real usage prompts Muse's Observer; shared builder installs its suggestion; a user-authored feedback Surface brings new browser comments into desktop | 004 |
-| M3: installed Automation and usable handoff | User builds web-open publishing Automation; saved image/note arrive once, receipt/grants work, and a fresh-machine try path exists | 005 |
-| M4: submission quality | Timed direct-Meta/native rehearsal, honest video under 180 seconds, reproducible docs and recorded platform evidence | 006 |
+| Desktop host | Existing working Tauri shell/build and React renderer | Generic app identity/manifest startup, native Parcel and dashboard roles; no hardcoded scratchpad-only entry |
+| App model | SDK 0.3 nodes, bindings, styles and targeted edits | Separately identified Surfaces, app-defined models, event/action registrations and declared lifetime |
+| Persistence | SQLite, versions, atomic activation and local field storage | Central app/Surface/model registry, durable links/subscriptions/Automation records; clear session cleanup |
+| Agent service | Generic inference adapter and bounded author/repair/preview flow | Shared Meta-only model catalogue/settings and full registered Surface/model/action tools for blank apps |
+| Communication | Official MCP SDK, registry and owner sockets | App-specific MCP endpoints/discovery, app/Surface-scoped grants, approved automatic subscriptions |
+| App behavior | Fabric adapter, saved revisions and review/feedback | Register domain adapters behind the same Surface/data API; no separate application UI path |
+| Project creation | Tauri CLI/toolchain | Portable template/runtime artifact, folder picker, safe scaffold/build/launch from dashboard |
 
-Aim for 003 on October 28-29, 004 on October 29-30, and 005 on October 30-November 1. These are time budgets, not evidence of completion. Freeze core features by November 1 evening; protect November 2-3 for Slice 006 and submit before November 4 morning ET. If effort exceeds a budget, reduce primitive/editor breadth and decorative polish first. Preserve Observer, genuine authoring, both data directions, installed persistence, and a runnable handoff. Do not silently omit a core gate; revise scope explicitly if blocked.
+## Concrete ownership boundaries
 
-Detailed story: DEMO_PLAN.md. Bounded execution: SLICES.md and SLICE_003.md through SLICE_006.md. STATUS.md carries the actual current work unit. No implementation slice starts solely because these plans are written.
+Core is the evolution of the current services/workspace service, not a new fleet. It owns one configured local database and API key handling. Local tables namespace app IDs, Surface IDs, model IDs, versions, grant tuples, Automation definitions and current state. Existing images can remain app resources. Data revisions and definition revisions are distinct.
+
+The shared native host loads an app manifest/identity and the engine-provided model. A trusted registry maps primitive/operation names to adapters. Domain adapters may export/save an image or post review text; generated definitions cannot import arbitrary modules or call arbitrary native commands. Model context lists available schemas/actions/events, never secrets.
+
+Contextual entry points are framework supplied: right-click an element to Modify this surface or, if a declared trigger exists, Set Automation. The same Shape panel receives the owning Surface and element focus; app-wide Shape retains the running app inventory. Validate scope in the engine. Automation setup uses three plain-English steps: when, what happens, where the result goes. Preset triggers come from capability metadata; destination choices come from compatible writable bindings and grants. See CONTEXTUAL_AUTHORING.md; this is planned work for E002/E004, not current functionality.
+
+Use one Surface API for ordinary apps, dashboard and framework UI. Builder/approval/settings are system-owned Surfaces with appropriate rights. Keep a recovery action available if customization hides app navigation. Do not solve ordinary editing by placing uneditable application subtrees in a trusted component.
+
+MCP facade implementation: one distinct app-scoped server endpoint can be hosted by Core with the official SDK. It advertises that app's declarations and routes approved resource/tool calls to its current owner. Do not start a redundant HTTP daemon per app, and do not equate a global tools catalogue with per-app access boundaries.
+
+A subscription is explicit configuration linking a permitted source model/resource to a destination Surface/model. Revision events trigger authorized reads/updates, with expected revisions, operation IDs and deduplication. A revoked grant blocks the next run. Existing copied output can remain visibly stale; it is not remotely erased. Direct UI transfer remains excluded.
+
+## Blank-app data and behavior
+
+Surface coverage is orthogonal: containers/layout/placement; text/media; typed inputs including boolean/enum/date; collection item templates; ordinary appearance/visibility; events and typed operation arguments; data bindings and lifetime. Dynamic dashboard app cards must use collection templates with scoped item bindings/actions, not manually coded cards for known app names. Existing repeat renders text only, so this is a real required extension. Bindings are structured field/item references, not executable expressions. Use the same mechanism for a user-created list app.
+
+Existing app-local text/color fields are insufficient for this target. Add only the generic typed models/collections and operations needed to compose the demo app: create/inspect a model, field binding, data.set, collection append/remove, declared input events and approved resource reads/writes. Simple date/enum/image primitives are added when used. Avoid a general expression language or visual graph editor.
+
+Treat data portability as a registered operation too: export approved text/JSON or an existing image resource through a trusted native save action. The model chooses a supported format/resource; the user/native picker chooses the destination. No generated arbitrary filesystem writes or universal document-format project. Do not claim export before that operation is implemented.
+
+Surface lifetime is explicit: persistent definitions/data survive app restarts; session definitions are discarded when the runtime session ends, including a bounded crash/reconnect grace. Do not erase persistent model data merely because a view disappears. Registry ownership and model references determine retention.
+
+Automation records reuse these same inputs/events/operations. Runtime supports one explicit run path first, then bounded data-change/app-ready triggers. Add a validated Muse-to-structured-output step for the live brief or review checklist. One in-flight request per Automation, idle gate, output cap and stale-source guard prevent per-keystroke generation or older output overwriting newer text. Pause/disable and last outcome must work.
+
+## Shared model configuration
+
+The trusted engine owns one active Meta profile used by every app. The dashboard configures model/key and exposes readiness; apps receive no credential values. Only registered Meta model identities can be selected. Keep profile selection explicit and development/demo budgets separate. Do not silently fall back to production or permit arbitrary non-Meta models through a free-form label.
+
+Session-only key storage is acceptable first. Persist credentials only through an established native credential facility, never plaintext in shared registry records or generated projects. Existing ignored environment configuration remains a developer bootstrap until dashboard settings work; no credential migration is performed in the planning rebase.
+
+## Project portability and native startup
+
+The creator writes a new directory selected by the user and refuses collisions. Package a pinned shared runtime/SDK with the scaffold so it builds without referencing the original developer checkout's absolute location. The exact bundle/template format is chosen by the early compile spike. Native compilation creates the shell; subsequent app composition is live engine data and does not recompile Rust.
+
+Reuse one host implementation with manifest-selected identity for the two existing apps; create separate native app instances/windows that register independently. A multiwindow proof is useful, but the deliverable also needs a real standalone scaffold that compiles/launches. Closing dashboard details must not close apps. Central engine must remain running independently of dashboard navigation.
+
+## Work boundaries and deferred scope
+
+Do not pre-create new packages/folder layers unless a work unit uses them. Existing apps/desktop, packages/runtime, packages/sdk and services/workspace are practical starting points. Park browser delivery without deleting useful regression tests or unrelated user work. Move files only when it makes a concrete boundary clearer.
+
+No new OS, remote pairing/encryption, production multi-user identity, marketplace backend, billing, arbitrary code interpreter, general scheduler or Observer. Catalogue content must have local original artwork and explicit concept labels. Dashboard statistics come from real registry state; no invented CPU/memory values.
+
+Acceptance comes from two native apps plus a separately scaffolded blank app, real model-authored changes and semantic Automation, Surface-scoped grant denial/revocation, hot updates, restart persistence and reproducible source-run instructions. Strong predecessor tests do not substitute for those checks.

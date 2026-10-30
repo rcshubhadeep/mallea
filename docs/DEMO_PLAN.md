@@ -1,81 +1,42 @@
-# Three-minute demo: software that adapts where you work
+# Desktop-engine demo: 180 seconds
 
-State: approved scenario, planned implementation. Governed by PROJECT_PLAN.v016.md and FOUNDATION_PLAN.md. Exact timings must be rehearsed. Scratchpad and Review Board are working app labels, not a naming exercise.
+Follow PROJECT_PLAN.v021.md. This replaces the browser/Observer storyboard. It is a target, not an implemented walkthrough.
 
-## Promise
+## Story
 
-Two visibly different apps Powered by Mallea. The desktop helps a designer annotate an image and keep a note. The local browser app helps a team review saved assets. Muse reasons about a repeated inconvenience, authors an improvement, and helps the user create contributions that connect the apps. The payoff is less navigation and less copying between tools.
+Mallea lets software take the user's shape. A shared local engine supplies Surfaces, model-powered authoring and Automations. Apps keep their own desktop windows and share only permitted data. Show the framework by creating an app, not just customizing two prepared examples.
 
-## Starting scene and data
-
-- Desktop: canvas-centric, compact toolbar, warm/dark creative-tool treatment; bundled synthetic image, one editable text annotation and accompanying note. Annotation color lives behind Edit initially. Fixed shell/canvas are normal trusted app code.
-- Web: a light asset-card/review layout with its own brand/navigation and feedback area. It initially holds an older saved version of the same design and a clearly linked asset identity.
-- Use a striking visible annotation/color/text difference between the two saved versions. No copyrighted/private customer material, clipboard secrets, or external services are needed.
-- Start from a documented fresh demo dataset, no generated final Surfaces/Automation installed. Both runtimes and companion are connected; inference explicitly uses the target Meta configuration for the recorded acceptance run.
-
-## Storyboard (180-second ceiling)
-
-| Time | Visible action | Proof |
+| Time | Scene | Evidence |
 | --- | --- | --- |
-| 0:00-0:15 | Show desktop and browser, different designs, same linked asset at different saved revisions. State the friction in one sentence. | Two apps, one framework; recognizable work |
-| 0:15-0:35 | Make actual annotation-color changes through Edit several times. Show the Observer's concise Muse-backed suggestion to keep that control beside the canvas. | Observation based on real permitted interaction, model reasoning |
-| 0:35-1:00 | Accept into builder, preview, install. Use the new color Surface immediately; make one brief placement/appearance refinement if timing permits. | Software changes at point of use; working model-authored controls |
-| 1:00-1:35 | Save a new image/note revision. In web builder request the publishing Automation, inspect its link/access, preview and install; reopen the web app. | User-created executable contribution, app-load trigger, desktop-to-web data |
-| 1:35-2:10 | Web updates to saved image/note and shows source revision/receipt. Add review feedback. In desktop builder request feedback beside the canvas, preview and install; the comment appears. | Useful effect in both directions; direct builder Surface |
-| 2:10-2:35 | Use the resulting workspace: edit color, save, rerun/reopen web to show newer published revision; feedback remains. Briefly show installed entries/disable access if time allows. | Persistent capabilities operating together; repeated use without repeated generation |
-| 2:35-3:00 | Reload/reopen proves installed contributions persist. Finish with one compact architecture/model credit and runnable-project pointer. | Durable local customization, meaningful Meta role, PoC limits |
+| 0:00-0:12 | Dashboard with Fieldnote and Parcel running; explain Engine, Surface, Automation in one sentence each | Real app registration, shared runtime |
+| 0:12-0:38 | Open both native apps; right-click an element, Modify this surface, change an appearance property and add/reposition a working control | Correct scoped context; same Surface API for built-in/authored UI; unrelated work intact; global Shape remains available |
+| 0:38-1:05 | Save a design; Parcel's approved subscription updates image/note automatically; return review data to Fieldnote | Two-way typed data, real trigger, retained comments |
+| 1:05-1:20 | Inspect app/Surface access; revoke one receiving Surface and show its next refresh blocked | Discovery is separate from permission; other app keeps working |
+| 1:20-1:28 | Return to dashboard catalogue: attractive named concept apps with local artwork | Ecosystem direction, clearly illustrative content |
+| 1:28-1:58 | Create project in a folder, show genuine compilation/launch, then a blank app with Shape only; add a text editor Surface | Actual scaffold and incremental creation; shortened build wait labelled |
+| 1:58-2:40 | Add a Concepts Surface; right-click Brief input, Set Automation: choose an English trigger, Muse extraction and Concepts as destination; write/change the brief | Three simple steps, declared model/events, semantic Meta participation, meaningful edit |
+| 2:40-3:00 | Reopen app, retain Surfaces/data; show shared Meta identity, runnable pointer and scope | Durable app, one engine configuration, honest local-only PoC |
 
-These are editing budgets, not promises of model latency. Transparently label shortened generation waits. If three full authoring sequences exceed 180 seconds, show short request/preview/result excerpts from the actual run, preserving proof of all three; put full run evidence in the repository. Do not replace them with hand-authored final screens or claim edited/replayed generation is live.
+## Candidate new-app prompts
 
-## Requests and outcomes
+1. Add a writing Surface called Brief with a multiline editor and a persistent text model. Keep it minimal.
+2. Add a separate Concepts Surface beside it, with a list bound to a new collection.
+3. When I pause writing, use Muse to update Concepts with the main ideas, constraints and open questions. Read only this brief and write only that collection. Keep the latest result and let me pause it.
 
-Observer request comes from a real model suggestion informed by repeated Edit -> Annotation color events and registered capabilities. Expected intent: make annotation color easier to reach. The exact text/layout is not scripted or matched to an intent enum.
+Choose a short actual brief with a visible constraint, then change that constraint. The updated output must reflect the change. Never use canned extraction results. If time allows, permit one existing app Surface to read the concepts; do not add a rushed fourth story.
 
-Direct web request example:
+## Fallback and recording rules
 
-> When I open this board, check the linked scratchpad design. If it has a newer saved revision, update this asset's image and note. Keep the feedback and tell me which revision was published.
+If adding semantic Automation to the blank-app segment is too dense, demonstrate a feedback-to-checklist Muse Automation in the existing apps and build a smaller persistent notes/list app from blank. Preserve both new-project proof and genuine Muse reasoning; simplify editing, optional sharing scenes and catalogue navigation first.
 
-Desktop request example:
+Record real source events, model requests, compilation and resulting execution. Label edited waits. Keep raw/backup footage and measured timings. Never claim the whole native toolchain installs/compiles instantly, that concept catalogue apps work, or that session data persists. Avoid displaying API keys and private paths in settings/creation footage; use a clean demo location.
 
-> Show feedback from this image's linked review card beside my canvas. Keep my editing controls available.
+## Recording gates
 
-Supported variation to verify off-camera: a different placement/grouping/label within the same vocabulary, with unchanged data and working bindings. A small layout vocabulary is acceptable; selecting fixed complete workflows from prompt keywords is not.
-
-## Model participation
-
-Muse supplies Observer reasoning and builder authoring/refinement; record actual model IDs and usage from the run. Installed color controls, permitted action execution, revision comparison, and triggers run deterministically unless explicitly defined otherwise. The video should make that distinction legible without becoming an implementation lecture.
-
-## Acceptance walk-through (target for completed build)
-
-1. Follow the final README's fresh-demo start instructions. Open the actual desktop plus local web app; verify different visual identities. Existing README currently runs the legacy evidence demo until the corresponding slices land.
-2. Enable Observer, repeat the real color-edit flow, and accept its suggestion. Preview must leave live data untouched. Install and change annotation color through the new control.
-3. Save revision with an accompanying note. Link the board asset and approve the specific access. Author/install the web-load Automation. Reopen the board: the new image/note/source revision appear exactly once with a receipt.
-4. Reopen again without a new save: no duplicate published revision. Make an unsaved desktop edit: web does not publish it. Save and run/reopen: new saved revision appears.
-5. Add browser feedback. Author/install the desktop feedback Surface: comment appears without transferring the web app's UI. Reload: both contributions remain.
-6. Deny/revoke access or close source app: show understandable unavailable status, no unauthorized update. Restore/reconnect: refresh current data. Disable Automation: reopening makes no new update.
-7. Try labelled saved-artifact mode without credentials, then configured live mode with a fresh supported request. Save separate Windows/macOS/Linux results; browser-only desktop preview is not native verification.
-
-These steps describe future acceptance, not working behavior today. Each slice supplies exact implemented labels/commands in README at handoff.
-
-## Judging evidence supplied by the user
-
-Stage One is pass/fail for theme fit, viability and reasonable use of Meta Model API and/or Meta open-weight models. Preserve real target-Meta Observer reasoning and builder authoring evidence, a working end-to-end run and an explanation of theme relevance. Theme/track details and complete submission requirements still need confirmation; eligibility is not guaranteed by this plan.
-
-Stage Two scores each criterion from 0-10. The user supplied the missing rubric as an image; weights and evaluation intent are recorded below. Stage Three advances the top five projects per track to live video viewing/ranking using the same rubric. Prioritize a self-contained video; do not assume judges inspect the repository to understand it. Scores and finalist odds remain unknown.
-
-| Criterion | Weight | Rubric intent (paraphrased) | Evidence in this demo |
-| --- | --- | --- | --- |
-| Impact | 30% | Real-world potential, beneficiaries, significance, likelihood of use and fit to a listed problem statement | A designer reduces repeated menu navigation and manual image/note transfer, while feedback stays beside the work. Show a connected workflow, not only a relocated color control. State the broader framework benefit briefly; confirm actual problem-statement/track fit separately. |
-| Use of Meta AI Tooling | 25% | Creative substantive use beyond basic integration; surprising capabilities | Muse reasons from real usage patterns, then authors/refines a working Surface and executable Automation from capabilities. Show actual model request/preview/result. A deterministic repetition gate must not masquerade as the Observer brain. |
-| Technical Depth & Execution | 20% | Sound engineering, refinement, thoughtful design and craft | Both apps use shared composition and permission mechanisms; preview does not mutate live data; installed definitions persist; saved revisions publish once; feedback survives. Demonstrate results briefly instead of explaining plumbing. Runnable instructions and focused evidence support inspection. |
-| Demo | 25% | Working, impressive product that holds up live and a compelling video | Distinct polished apps, clear before/after, immediate working controls, publishing and returned feedback, reload proof within 180 seconds. Measure rehearsal, label compressed waits and retain actual run evidence. |
-
-This mapping changes presentation emphasis, not feature scope: impact is the largest category, and Meta tooling plus demo together are 50%. Do not add infrastructure or more models to chase technical-depth points. Measure a real repeated workflow if using a time/click comparison; do not invent productivity savings. Before submission confirm the exact listed problem statement and track, which were not included with the rubric.
-
-Current competitive assessment: plausible contender if the complete authored-transformation/automation/feedback loop works and is clear in three minutes. Main presentation risk is appearing to reveal prebuilt controls or merely synchronize two apps. Show real request/preview/result, useful working behavior, persistence and distinct apps. This is an assessment, not official scoring guidance or evidence of finalist odds.
-
-## Cuts and delivery
-
-No public hosting, multi-user login, version conflict UI, production sync, full design editor, background agent service, certificate setup, or installer infrastructure project. No demo segment solely to tour the ledger. One concise receipt is enough. Keep keyless saved-artifact try mode and a documented source-run path; signed installers on every platform are optional.
-
-Prepare a real-run backup recording, three-minute edited video, submission text, model/usage evidence, known limits, and runnable instructions. Freeze November 1 evening; November 2-3 are rehearsal/recording/delivery days. Submission target: November 4 morning ET; exact hour remains unknown.
+- Dashboard app cards and metadata reflect real running native instances.
+- Ordinary malleability, both data directions, approved auto-sync and Surface-scoped revocation pass.
+- One shared Meta configuration powers actual authoring and semantic Automation.
+- New project builds with portable references and launches blank before live composition.
+- Persistent versus session Surface lifecycle is verified, even if session cleanup stays in backup footage.
+- Windows run and fresh-machine instructions pass; other platforms remain untested until executed.
+- Final two full days, November 2-3, remain for freeze, setup, rehearsal, video and submission.

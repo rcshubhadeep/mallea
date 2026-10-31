@@ -1,0 +1,47 @@
+# Dashboard and project-creation acceptance
+
+Windows reference, October 31, 2026. Original E003 evidence advances E3 under v022; the user-requested v023 local-launch follow-up is recorded below. The user reports general dashboard success but has not tested project creation. Agent-operated checks remain separate from that partial user feedback.
+
+## Evidence
+
+- Fresh entry: nine focused engine/live tests and TypeScript passed. The initial restricted local-connection run did not complete; it was rerun with local connections enabled. Final regression suite: 50/50 passed, plus TypeScript and frontend/native builds.
+- Core dashboard is an ordinary SDK 0.4 app with five independent Surfaces, read-only typed registry collections and declared actions. App cards use the shared repeat/item-template renderer. Counts, authors, purposes, presence and app/Surface/model inventory come from the actual registry, including generated apps. No OS performance metrics are invented.
+- Actual native Fieldnote metadata/detail inspection passed. Closing the dashboard left Fieldnote, Parcel and the generated app running; Core is a separate service. Both manual owner-routed data directions also passed after restart without changing existing grants.
+- Shared settings list configured registered Meta profiles. Native profile selection was exercised; subsequent generation used the selected direct-Meta configuration. Keys are session-only or read from the developer environment, never persisted to app/Surface models or bundled projects. Tests cover a session key completing an otherwise configured profile, rejection of unregistered choices, existing author instances using changed settings, unauthorized control denial and key-free public responses.
+- The native folder picker selected a parent folder. The dashboard scaffolded a new project, compiled its own native executable and launched a genuine blank window with only Shape access. This reused the existing scaffolder, pinned Tauri CLI, native sources/Cargo lock and compiler cache; it is not a cold-build timing claim. A new app ID/credential was registered only after compilation.
+- In that new native app, a real development model built input/Add/list behavior across two independent Surfaces. Generation needed three bounded attempts: a JSON-format failure and invalid style-property placement were repaired before acceptance. Preview, approval and install were used; native input/Add produced a saved collection item. No scripted model output was substituted.
+- Both Core and the new project's own executable were restarted. The two Surfaces and saved note remained. A dashboard-selected Muse Spark 1.3 check then refined the saved-notes heading on its first attempt: one request, 1,995 tokens. The installed change affected one Surface, retained the other Surface exactly and kept the note. Development usage/traces remain private; no automatic fallback occurred.
+- A source-only copy of that newly generated project also compiled from a temporary folder outside the checkout, without copying host credentials. It reused the compiler cache; the measured build duration is retained privately. This is portable-source evidence, not a fresh-toolchain installation test.
+- Six original bundled SVG concept illustrations render in the catalogue. Native Lumen preview opened with its explicit illustrative/no-installation label.
+- A restart bug that mixed dashboard-only system panels into other apps' metadata was fixed and covered by a persistent-database regression. Hidden root content no longer reserves an empty layout column. Configured model keys were absent from eight runtime/native artifacts; active plan hash remained unchanged.
+
+## User tests
+
+### Local app launching follow-up
+
+Under plan v023, dashboard cards also have an ordinary Surface **Open app** button. Native testing opened Fieldnote and the previously generated notes project from their registered local hosts. Reopening a running Fieldnote reported that it was already running and kept one window. New project creation remains untested by the user; the user's reported dashboard success is general feedback, not acceptance of that flow or these new launch buttons.
+
+The launcher accepts only a registered app ID through the dashboard's protected native control path. Core resolves private project locations/credentials; it accepts no UI-supplied executable or command. Repeated startup requests share a short guard; live owner presence prevents duplicate running windows. Missing builds/registration report a remedy. Catalogue concepts remain previews. The shared CLI/project-creator launch helper also strips inference credentials from child environments. A one-time upgrade adds the button while preserving existing dashboard content/data; later Shape removal or rearrangement remains respected.
+
+To test: close Fieldnote, choose its dashboard **Open app**, and expect its own window plus Running presence. Choose Open app again and expect an already-running message with no extra window. Try a previously dashboard-created project as well; its own executable should open with retained data. Opening an already-running window does not focus it automatically; switch to it normally. Reopen the dashboard using the README's **Open Mallea again** section; no reinstall or rebuild is required for ordinary reopening.
+
+### Creation and other dashboard functions
+
+Use the README run/build commands. If the current service/windows are already running, reuse them; do not start a second Core on port 4318. Stop identified project processes before reinstalling dependencies or replacing executables.
+
+1. Open the dashboard with `node scripts/launch-app.mjs mallea-core`. Open Fieldnote and Parcel if needed using the README commands. Expect their cards to show actual connection state. Choose **Inspect app**: author, purpose, MCP path, declared sharing and Surface/model inventory should match that app. **Close details** must leave the app running.
+2. Open **Model settings**. Keep the development profile for experimentation, leave replacement key empty and choose **Use this profile**. Expect its model name/readiness on the dashboard. No inference call is made merely by selecting it. A replacement key, if entered, lasts only for this Core session; restarting restores environment settings. Reopen the dashboard after a Core restart.
+3. Scroll to **Possible with Mallea**. Open **Preview concept**. Expect original artwork, a description and an explicit illustrative label; there is no working Install or marketplace service.
+4. Choose **Create an app**, enter a new name such as `My Notes`, choose an existing parent folder, then **Create, compile and open**. Expect progress and a new blank native window. A folder with the generated name must not already exist. First builds may take minutes and download dependencies; keep Core running. Cancel the folder picker before building to verify no project is created. Reusing an existing destination must show a refusal without overwriting it.
+5. In the new app, open **Shape this app** and try: “Build a simple notes app with two independent Surfaces. One has a multiline New note field and an Add note button. The other shows Saved notes. The button appends the current text to a persistent collection.” Inspect the preview, approve and install. Enter a note, click Add and expect it in the list. Wait for **Local changes saved**.
+6. Close that app. From its generated project folder, run `node project-host.mjs start` (Windows, Linux/macOS). Expect the same Surfaces and note without recompilation. Close the dashboard while other apps remain open: their windows must remain. Core must stay running for their shared services.
+
+## Limits and remaining work
+
+Windows native execution is verified; Linux/macOS and a fresh machine still need E5 testing. Source toolchains are required; no installer or automatic Core startup is supplied. The copied project is portable source, while app state and local identities remain in the current Core; re-register on another machine. Restarting Core invalidates the dashboard's native control token, so reopen the dashboard; ordinary apps reconnect through their existing identities.
+
+Project builds are serialized and bounded to fifteen minutes; the creator has no queue or resume system. Failure retains the project for its documented manual build/diagnostic steps; do not delete user files to retry. Closing the creator/dashboard does not cancel compilation. Stopping Core stops its managed build processes. Compiler jobs and launched apps strip inference credentials from inherited environment settings. No production credential vault/hostile-process isolation is claimed.
+
+Meta profile endpoints/model IDs remain developer configuration, with only registered Meta identities selectable. A “Ready” label reports configuration, not a network/budget probe. Generation can need repairs or misunderstand a request even when its schema is valid. Shared-session changes affect subsequent inference jobs; ongoing requests retain their chosen configuration.
+
+E4 still supplies Surface-scoped sharing grants, approved auto-sync and executable three-step Automations. E5 supplies final reproducibility/platform evidence, direct-Meta rehearsal and the three-minute video/submission. Web delivery and Observer remain parked. README reviewed/updated with current dashboard, settings, creator/reopen behavior, configuration names and parallel platform instructions; no progress history was added to it.

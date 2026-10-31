@@ -1,0 +1,3 @@
+import{spawn}from'node:child_process';
+export function projectEnvironment(){const env={...process.env};for(const k of Object.keys(env))if(/KEY|TOKEN|SECRET|PASSWORD/i.test(k)||/^(DEV_|PROD_|MALLEA_)/.test(k))delete env[k];return env;}
+export function launchNative(binary,host,spawnProcess=spawn){return new Promise((done,fail)=>{const child=spawnProcess(binary,['--host-config',host],{detached:true,stdio:'ignore',windowsHide:true,env:projectEnvironment()});child.once('error',()=>fail(new Error('Could not open the native app. Check its build and local registration.')));child.once('spawn',()=>{child.unref();done(child);});});}

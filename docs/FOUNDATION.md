@@ -1,6 +1,6 @@
 # Mallea foundation
 
-Active plan: [PROJECT_PLAN.v021.md](PROJECT_PLAN.v021.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
+Active plan: [PROJECT_PLAN.v023.md](PROJECT_PLAN.v023.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
 
 Mallea is a framework for software that users can reshape at the point of use, with Meta Muse assistance in every app. It also gives apps a shared way to discover each other and exchange permitted data/state/actions on one machine. These are the two inseparable foundations.
 

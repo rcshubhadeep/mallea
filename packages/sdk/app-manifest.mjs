@@ -1,7 +1,7 @@
 import {z}from'zod';
 import{validateSurface,withSurfaceState,surfacePrompt}from'./surface.mjs';
 export const appIdSchema=z.string().regex(/^[a-z][a-z0-9-]{2,39}$/);
-export const appManifestSchema=z.object({version:z.literal(1),id:appIdSchema,name:z.string().min(1).max(80),author:z.string().min(1).max(100),purpose:z.string().min(1).max(500),adapter:z.enum(['fieldnote','parcel','surface']),initialSurface:z.unknown().optional()}).strict();
+export const appManifestSchema=z.object({version:z.literal(1),id:appIdSchema,name:z.string().min(1).max(80),author:z.string().min(1).max(100),purpose:z.string().min(1).max(500),adapter:z.enum(['fieldnote','parcel','surface','core']),initialSurface:z.unknown().optional()}).strict();
 export const genericContract=withSurfaceState({readPermission:'app.read',permissions:['app.read'],fields:{},actions:{},components:[]});
 export function blankSurface(id,name){return {manifest:{id,version:'1.0.0',sdkVersion:'0.3',title:name,permissions:[]},ui:{id:'workspace',type:'stack',children:[]}};}
 export function validateAppManifest(value){const manifest=appManifestSchema.parse(value);if(manifest.adapter!=='surface'&&manifest.initialSurface)throw new Error('Built-in adapters supply their own initial Surface.');if(manifest.initialSurface)validateSurface(manifest.initialSurface,genericContract);return manifest;}

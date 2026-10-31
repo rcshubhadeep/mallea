@@ -1,0 +1,27 @@
+import{spawn}from'node:child_process';import{resolve,join,basename,dirname,isAbsolute}from'node:path';import{access,mkdir,readFile,writeFile,copyFile}from'node:fs/promises';import{fileURLToPath}from'node:url';import{randomUUID}from'node:crypto';
+import{projectEnvironment,launchNative}from'../../scripts/lib/native-launch.mjs';export{projectEnvironment}from'../../scripts/lib/native-launch.mjs';
+const checkout=fileURLToPath(new URL('../../',import.meta.url));
+function stopChild(child){if(child.exitCode!==null||child.signalCode!==null)return;if(process.platform==='win32'){const stop=spawn('taskkill.exe',['/PID',String(child.pid),'/T','/F'],{windowsHide:true,stdio:'ignore'});stop.on('error',()=>child.kill());}else{try{process.kill(-child.pid,'SIGTERM');}catch{child.kill();}}}
+export class ProjectCreator{
+ constructor({engine,home,notify=()=>{},run}={}){Object.assign(this,{engine,home:resolve(home??'.mallea'),notify});this.run=run??this.command.bind(this);this.job=null;this.children=new Set();}
+ public(){return this.job?{id:this.job.id,phase:this.job.phase,message:this.job.message,appId:this.job.appId,name:this.job.name}:null;}
+ command(executable,args,cwd,timeout=900000){return new Promise((done,fail)=>{const env=projectEnvironment();env.CARGO_TARGET_DIR=join(checkout,'apps/desktop/src-tauri/target');const child=spawn(executable,args,{cwd,env,windowsHide:true,detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']});this.children.add(child);const timer=setTimeout(()=>{stopChild(child);fail(new Error('Build exceeded fifteen minutes. Project retained; retry from its folder.'));},timeout);let failed=false;child.stdout.on('data',()=>{});child.stderr.on('data',()=>{});child.on('error',()=>{failed=true;clearTimeout(timer);this.children.delete(child);fail(new Error('Build tooling is unavailable. Check Node, Rust and Tauri prerequisites.'));});child.on('exit',code=>{clearTimeout(timer);this.children.delete(child);if(!failed)code===0?done():fail(new Error('Compilation failed. Project retained; run its documented build command for diagnostics.'));});});}
+ async start(input){if(this.starting||(this.job&&['creating','compiling','launching'].includes(this.job.phase)))throw new Error('A project is already being built.');if(!input||Object.keys(input).some(k=>!['parent','name'].includes(k))||typeof input.parent!=='string'||!isAbsolute(input.parent)||typeof input.name!=='string'||!input.name.trim()||input.name.length>60||/[\r\n]/.test(input.name))throw new Error('Choose a parent folder and an app name.');this.starting=true;try{
+  const name=input.name.trim(),slug=name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,24);if(!/^[a-z][a-z0-9-]{1,23}$/.test(slug)||/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(slug))throw new Error('Use an app name starting with a letter.');const target=resolve(input.parent,slug);if(dirname(target)!==resolve(input.parent)||basename(target)!==slug)throw new Error('Invalid project folder.');await access(input.parent);try{await access(target);throw new Error('That project folder already exists. Choose a different name.');}catch(e){if(e.code!=='ENOENT')throw e;}
+  const appId=(slug+'-'+randomUUID().slice(0,8)).slice(0,39);this.job={id:randomUUID(),phase:'creating',message:'Creating portable project…',appId,name};const job=this.job;void this.execute(job,target);return this.public();
+ }finally{this.starting=false;}
+ }
+ update(job,phase,message){Object.assign(job,{phase,message});this.notify();}
+ async execute(job,target){try{
+  await this.run(process.execPath,[join(checkout,'scripts/create-project.mjs'),target,job.appId,job.name],checkout,30000);
+  this.update(job,'compiling','Compiling the native window. First builds may download dependencies; you can keep using your other apps.');
+  await this.run(process.execPath,[join(checkout,'node_modules/@tauri-apps/cli/tauri.js'),'build','--no-bundle'],target);
+  const binary=process.platform==='win32'?'mallea-project.exe':'mallea-project',output=join(target,'src-tauri/target/release');await mkdir(output,{recursive:true});await copyFile(join(checkout,'apps/desktop/src-tauri/target/release',binary),join(output,binary));
+  const manifest=JSON.parse(await readFile(join(target,'app.manifest.json'),'utf8')),registered=this.engine.register(manifest);if(!registered.created)throw new Error('App registration collided. Project retained.');
+  const host={version:1,appId:job.appId,engineUrl:'http://127.0.0.1:4318',credential:registered.credential};await mkdir(join(target,'.mallea'),{recursive:true});await mkdir(join(this.home,'hosts'),{recursive:true});await writeFile(join(target,'.mallea/host.json'),JSON.stringify(host),{mode:0o600});await writeFile(join(this.home,'hosts',job.appId+'.json'),JSON.stringify(host),{mode:0o600});
+  const registryPath=join(this.home,'projects.json');let projects={};try{projects=JSON.parse(await readFile(registryPath,'utf8'));}catch{}projects[job.appId]={folder:target,binary:join(output,binary)};await writeFile(registryPath,JSON.stringify(projects,null,2),{mode:0o600});
+  this.update(job,'launching','Opening your blank app…');await launchNative(join(output,binary),join(target,'.mallea/host.json'));
+  this.update(job,'ready','Your blank app is open. Use Shape this app to build it; changes persist in Core.');
+ }catch(error){this.update(job,'failed',error.message);}}
+ close(){for(const c of this.children)stopChild(c);}
+}

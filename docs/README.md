@@ -1,6 +1,6 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v021.md](PROJECT_PLAN.v021.md).
+Active project plan: [PROJECT_PLAN.v023.md](PROJECT_PLAN.v023.md).
 
 The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 
@@ -21,11 +21,14 @@ The October 30 desktop-engine vision supersedes the earlier browser/Observer-fir
 - [SLICE_E005.md](SLICE_E005.md): clean setup, rehearsal, video and submission.
 - [STATUS.md](STATUS.md): current unit, fresh versus historical evidence and next actions.
 - [REHEARSAL_E001.md](REHEARSAL_E001.md): native foundation evidence, reproduction and remaining limits.
+- [SURFACE_API_004.md](SURFACE_API_004.md): shared live app records, vocabulary, events, authoring and lifecycle.
+- [REHEARSAL_E002.md](REHEARSAL_E002.md): malleable-core checks and user Surface-modification tests.
+- [REHEARSAL_E003.md](REHEARSAL_E003.md): dashboard/settings/new-project evidence, user tests and limits.
 - [CHANGELOG.md](CHANGELOG.md): plan decisions and preservation evidence.
 
 ## Reusable predecessor evidence
 
-[SURFACE_SDK.md](SURFACE_SDK.md) documents the current bounded grammar. [MALLEABILITY.md](MALLEABILITY.md), [REHEARSAL_003CA.md](REHEARSAL_003CA.md) and [REHEARSAL_003CB.md](REHEARSAL_003CB.md) document targeted editing and previous native/data checks. They are implementation references, not the new engine's acceptance gates. Older numbered plans and slice guides remain historical; do not resume their web/Observer sequence.
+[SURFACE_SDK.md](SURFACE_SDK.md) records the predecessor SDK 0.3 grammar; [SURFACE_API_004.md](SURFACE_API_004.md) describes the current native API. [MALLEABILITY.md](MALLEABILITY.md), [REHEARSAL_003CA.md](REHEARSAL_003CA.md) and [REHEARSAL_003CB.md](REHEARSAL_003CB.md) document targeted editing and previous native/data checks. They are implementation references, not the new engine's acceptance gates. Older numbered plans and slice guides remain historical; do not resume their web/Observer sequence.
 
 Prior mutable guides and standing guidance were copied byte-for-byte under [archive/desktop-engine-rebase](archive/desktop-engine-rebase/README.md) before rewriting. No source or user data was deleted.
 

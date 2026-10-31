@@ -1,6 +1,6 @@
 # Desktop-engine demo: 180 seconds
 
-Follow PROJECT_PLAN.v021.md. This replaces the browser/Observer storyboard. It is a target, not an implemented walkthrough.
+Follow PROJECT_PLAN.v023.md. This replaces the browser/Observer storyboard. It is a target, not an implemented walkthrough; STATUS.md records which recording gates have passed.
 
 ## Story
 

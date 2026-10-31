@@ -11,12 +11,20 @@ import { compilePanel } from '../../packages/sdk/document.mjs';
 import { StudioStore } from './studio-store.mjs';
 import { studioCapabilities } from '../../apps/definitions/studio.mjs';
 import{EngineApps}from'./engine-apps.mjs';
+import{LiveApps}from'./live-apps.mjs';
+import{ModelSettings}from'./model-settings.mjs';
+import{Dashboard}from'./dashboard.mjs';
 
 export async function createCollaborationServer(options={}){
   const store=options.store??new CollaborationStore(options.database??':memory:');
   const registry=new Registry(store),studio=options.studio?new StudioStore(store):null;
   const engine=options.engine?new EngineApps(store):null;
   registry.studio=studio;
+  const models=engine?new ModelSettings(options.author??{}):null;
+  const live=engine&&studio?new LiveApps(store,studio,engine,registry,{...options.author,config:()=>models.config()}):null;
+  const dashboard=live?new Dashboard({engine,live,registry,models,home:options.home}):null;
+  store.dashboard=dashboard;
+  registry.onPresence=id=>{if(live&&!live.closed&&engine?.has(id))live.presence(id);};
   const gateway=createGateway(registry,studio?studioCapabilities:[]),token=randomUUID(),authors=new Map(),previews=new Map(),frames=new Map();
   const origins=['http://127.0.0.1:5173','http://127.0.0.1:5174','http://tauri.localhost','https://tauri.localhost','tauri://localhost'];
   if(options.artifact){const packages=store.packages('board-main');if(!packages.active()){packages.saveDraft(randomUUID(),options.artifact,null,'Explicit fixture');const row=store.db.prepare('SELECT id FROM app_drafts WHERE app_id=? ORDER BY rowid DESC LIMIT 1').get('board-main');await packages.install(row.id);}}
@@ -65,7 +73,8 @@ export async function createCollaborationServer(options={}){
         const control=!!options.controlToken&&req.headers['x-mallea-control']===options.controlToken;
         if(req.method==='GET'&&url.pathname==='/api/engine/apps'){if(!control){try{registry.require(req.headers['x-mallea-session']);}catch{return send(403,{error:'Core access required.'});}}return send(200,engine.list(registry));}
         if(!control)return send(403,{error:'Core control access required.'});
-        if(req.method==='POST'&&url.pathname==='/api/engine/apps'){const result=engine.register(await body(req));return send(200,{...result,app:engine.describe(result.manifest.id)});}
+        if(req.method==='POST'&&url.pathname==='/api/engine/dashboard')return send(200,await dashboard.action(await body(req)));
+        if(req.method==='POST'&&url.pathname==='/api/engine/apps'){const input=await body(req);if(input.adapter==='core'||input.id==='mallea-core')throw new Error('Core identity is reserved.');const result=engine.register(input);return send(200,{...result,app:engine.describe(result.manifest.id)});}
         if(req.method==='POST'&&url.pathname==='/api/engine/host'){const input=await body(req);return send(200,{appId:input.appId,credential:engine.issueCredential(input.appId)});}
       }
       if(req.method==='GET'&&url.pathname==='/api/bootstrap')return engine?send(403,{error:'Use a registered native host.'}):send(200,{token});
@@ -78,6 +87,16 @@ export async function createCollaborationServer(options={}){
       }
       let session;try{session=registry.require(req.headers['x-mallea-session']);}catch(error){return send(403,{error:error.message});}
       const app=store.app(session.appId),packages=store.packages(app.id);
+      if(live&&url.pathname.startsWith('/api/live/')){
+        if(req.method==='GET'&&url.pathname==='/api/live/state')return send(200,live.info(session));
+        if(req.method==='POST'&&url.pathname==='/api/live/event')return send(200,live.event(session,await body(req)));
+        if(req.method==='POST'&&url.pathname==='/api/live/author'){const input=await body(req);return send(200,live.author(session,input.surfaceId??null,input.elementId??null).start(input.request));}
+        const job=url.pathname.match(/^\/api\/live\/jobs\/([a-z0-9-]+)(\/cancel)?$/);if(job)return send(200,live.job(session,job[1],!!job[2]));
+        if(req.method==='GET'&&url.pathname==='/api/live/draft')return send(200,live.draft(session,url.searchParams.get('id')).artifact);
+        if(req.method==='POST'&&url.pathname==='/api/live/install'){const input=await body(req);return send(200,live.install(session,input.draftId,input.approved));}
+        if(req.method==='POST'&&url.pathname==='/api/live/export'){const input=await body(req);return send(200,live.export(session,input.surfaceId,input.format));}
+        return send(404,{error:'Unknown live app action.'});
+      }
       const scopedMcp=url.pathname.match(/^\/api\/apps\/([a-z][a-z0-9-]{2,39})\/mcp$/);
       if(engine&&scopedMcp&&req.method==='POST'){engine.manifest(scopedMcp[1]);return await gateway.http(session,req,res,await body(req),scopedMcp[1]);}
       if(url.pathname.startsWith('/api/studio/')){
@@ -155,6 +174,8 @@ export async function createCollaborationServer(options={}){
   });
   server.workspaceStore=store;server.workspaceRegistry=registry;server.workspaceGateway=gateway;
   server.engineApps=engine;
-  server.on('close',()=>{for(const a of authors.values())a.close();registry.close();ws.close();store.close();});
+  server.liveApps=live;
+  server.dashboard=dashboard;server.modelSettings=models;
+  server.on('close',()=>{dashboard?.close();live?.close();for(const a of authors.values())a.close();registry.close();ws.close();store.close();});
   server.requestTimeout=5000;return server;
 }

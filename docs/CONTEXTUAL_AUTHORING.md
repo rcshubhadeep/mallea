@@ -1,6 +1,6 @@
 # Point-of-use authoring and Automation
 
-Accepted interaction model, October 30, 2026. Follow PROJECT_PLAN.v021.md. This specifies planned behavior; implementation is not claimed. Use the same shared builder/model tools throughout.
+Accepted interaction model, October 30, 2026. Follow PROJECT_PLAN.v023.md. This specifies planned behavior; implementation is not claimed. Use the same shared builder/model tools throughout.
 
 The framework supplies this menu and these panels through system-owned Surface UI, once for all apps. Apps declare element ownership, data and event capabilities; they do not implement bespoke agent menus. Invocation/selection context is transient UI state, separate from persistent Surface definitions.
 

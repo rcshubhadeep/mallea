@@ -63,13 +63,14 @@ export function validateSurface(value,contract){
   return artifact;
 }
 
+export{style as surfaceStyle};
 export function readBinding(snapshot,path){return path?.split('.').reduce((value,key)=>value&&Object.hasOwn(value,key)?value[key]:undefined,snapshot);}
 
 export function dispatchSurfaceAction(contract,permissions,name,args,invoke){
   const action=Object.hasOwn(contract.actions,name)?contract.actions[name]:null;
   if(!action||!permissions.includes(name))throw new Error('Action access is not declared.');
-  const expected=action.argument?[action.argument]:[];
-  if(!args||Object.keys(args).length!==expected.length||expected.some(k=>!Object.hasOwn(args,k)||typeof args[k]!=='string'||args[k].length>2000))throw new Error('Invalid action arguments.');
+  const expected=action.parameters?Object.keys(action.parameters):action.argument?[action.argument]:[];
+  if(!args||Object.keys(args).length!==expected.length||expected.some(k=>!Object.hasOwn(args,k)||typeof args[k]!==({text:'string',boolean:'boolean',number:'number'}[action.parameters?.[k]]??'string')||(typeof args[k]==='string'&&args[k].length>2000)))throw new Error('Invalid action arguments.');
   if(action.binding&&contract.fields[action.binding]==='color'&&!/^#[\da-f]{6}$/i.test(args[action.argument]))throw new Error('Invalid color value.');
   if(action.values&&!action.values.includes(args[action.argument]))throw new Error('Action value is not allowed.');
   return invoke(name,args);

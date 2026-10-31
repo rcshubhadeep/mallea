@@ -1,6 +1,6 @@
 # Desktop engine architecture: target and current gaps
 
-Governed by PROJECT_PLAN.v021.md. This guide describes implementation boundaries; it is not a completed-system claim.
+Governed by PROJECT_PLAN.v023.md. This guide describes implementation boundaries; it is not a completed-system claim.
 
 ## Runtime roles
 
@@ -9,7 +9,7 @@ Governed by PROJECT_PLAN.v021.md. This guide describes implementation boundaries
 - Core engine: local app/Surface/model registry, SQLite persistence, shared Meta inference, scoped sessions/grants, app-specific MCP facades, owner routing, subscriptions and Automation executor.
 - Dashboard: a Surface-based control app consuming actual Core metadata. It does not embed other app UIs or own their normal lifetimes.
 
-Current code to reuse: apps/desktop native shell; packages/sdk Surface schema/targeted transforms; packages/runtime renderer/builder; services/workspace Node/SQLite registry/author/gateway/owner connection; existing Fabric/review adapters. E001 now supplies native identity/manifest bootstrap, dynamic app registration, independent native Fieldnote/Parcel and a portable blank-project runtime. Artwork/review handlers remain specific registered adapters; grants remain predominantly app-level. Independent Surface/model composition and complete framework UI coverage are E002 gaps.
+Current code to reuse: apps/desktop native shell; packages/sdk Surface schema/targeted transforms; packages/runtime renderer/builder; services/workspace Node/SQLite registry/author/gateway/owner connection; existing Fabric/review adapters. E001 now supplies native identity/manifest bootstrap, dynamic app registration, independent native Fieldnote/Parcel and a portable blank-project runtime. Artwork/review handlers remain specific registered adapters; grants remain predominantly app-level. E002 now routes ordinary app and framework UI through independent Surface/model records and the same native LiveApp renderer; SDK 0.3 paths remain only for compatibility checks/recoverable migration.
 
 ## Persistent graph
 
@@ -31,4 +31,10 @@ Core can initially be launched explicitly from source. Automatic sidecar install
 
 ## Current verification boundary
 
-E001 Windows evidence: 39 sequential tests, TypeScript, independent native Fieldnote/Parcel with two-way manual exchange, a separately compiled portable blank app, live notes authoring and persisted state. The dashboard, session Surface expiry, Surface-level grants, automatic subscriptions and semantic Automations remain to be built and verified. Browser product support and Observer are parked; older guides are archived historical evidence.
+E002 Windows evidence includes the shared native runtime, scoped/global live editing, typed collections, session expiry and native export; user Surface-editing acceptance is in STATUS.md. E003 adds the Surface-based dashboard, actual registry cards/details, shared session Meta settings, original concept illustrations and a graphical creator reusing the portable scaffolder/Tauri compiler. Its native acceptance is tracked separately in STATUS.md. Surface-level sharing grants, automatic subscriptions and semantic Automations remain E004. Browser product support and Observer are parked.
+
+Dashboard app content uses the same LiveApp renderer and authoring tools. Engine-owned settings/creator/concept panels are stored as system Surfaces. Only a narrow password input is a credential primitive; the settings UI is not an opaque component. A dashboard-only native control capability protects settings/build routes and never enters app-facing records. Model jobs resolve the active configuration at job start; changing it affects subsequent jobs across apps, with no fallback. Session replacement keys are kept in Core memory; restarting restores the environment. This is a local single-user PoC boundary, not hostile-process isolation.
+
+Project creation serializes builds, uses a native-selected parent folder, refuses collisions, copies pinned runtime/native sources and compiles through the existing Tauri CLI. Compiler cache reuse stays local; the generated sources contain relative runtime references and their own Cargo lock. Build failure retains files. Private local project locations/host credentials live under ignored runtime configuration. Closing the dashboard does not close Core, other apps or an in-progress build. Stopping Core stops its managed build processes; there is no build queue, remote service or real catalogue distribution.
+
+Dashboard launching uses a registered Surface action and the same trusted native capability as engine settings/creation. Core resolves the app's private launch registration, uses the project's own compiled executable when recorded, and otherwise uses its registered shared host. It rejects unknown IDs, missing builds and mismatched local identities; already-running apps are not duplicated. The shared native-launch helper is reused by CLI launching and project creation. Launching does not install software or grant access to another app's data.

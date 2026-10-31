@@ -33,7 +33,7 @@ export function connect(onChange:()=>void,onAvailability:(online:boolean)=>void)
           if(message.capability!=='read_observation'||typeof message.arguments?.observationId!=='string')return;
           try{const value=await request(`observation?id=${encodeURIComponent(message.arguments.observationId)}`);socket?.send(JSON.stringify({type:'result',id:message.id,value}));}
           catch{socket?.send(JSON.stringify({type:'result',id:message.id,error:true}));}
-        }else if(['connected','presence','changed','tasks','studio'].includes(message.type)){
+        }else if(['connected','presence','changed','tasks','studio','live'].includes(message.type)){
           if(message.type==='connected'){delay=500;onAvailability(true);}onChange();
         }
       };

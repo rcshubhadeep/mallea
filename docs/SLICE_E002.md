@@ -1,8 +1,10 @@
 # E002: malleable application core
 
-State: defined, not started. Milestone E2. Depends on E001 native identity/registry and blank-host proof. Read active plan and verify the then-current baseline before implementation; current predecessor tests are not acceptance of this slice.
+State: implemented and agent-verified on Windows; user confirmed the four Surface-modification handoff tests worked. Milestone E2 accepted for that tested scope; optional lifecycle/export and fresh-machine checks retain their separate evidence and limits. Evidence: REHEARSAL_E002.md and STATUS.md. Depends on E001 native identity/registry and blank-host proof. Read active plan and verify the then-current baseline before implementation; current predecessor tests are not acceptance of this slice.
 
 ## Work units
+
+All three app paths must use this same core: Fieldnote, Parcel and blank-project apps. W1 migrates their existing definitions/data recoverably; W2 moves their bindings/actions onto the common model API while retaining registered domain adapters; W3 applies scoped/global editing and system-owned framework panels to each; W5 regresses all three. Preserve saved artwork, review feedback, notes, grants and compatible customizations. Do not leave the existing apps on a separate legacy implementation or require the user to recreate them from blank.
 
 | Unit | Work | Acceptance |
 | --- | --- | --- |
@@ -15,6 +17,8 @@ State: defined, not started. Milestone E2. Depends on E001 native identity/regis
 ## User acceptance target
 
 Create a small app from the blank host, add two independent Surfaces, enter/save data, right-click an element to edit only its Surface, use global Shape to rearrange the app, then reopen. Check session Surface removal separately. At handoff provide exact implemented commands/prompts/expected results in README. Do not claim an empty window plus metadata proves incremental app creation.
+
+Also demonstrate these same Surface editing/lifecycle mechanisms in migrated Fieldnote and Parcel, with their ordinary functionality and two-way exchange intact. A one-time runtime/native rebuild for this framework upgrade is acceptable; subsequent Surface edits must remain live and persistent without recompilation.
 
 ## Exclusions
 

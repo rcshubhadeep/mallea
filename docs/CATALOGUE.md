@@ -1,6 +1,6 @@
 # Concept catalogue content
 
-For E002's clearly illustrative app store. Planned content, not installed third-party apps. Use bundled original SVG/illustration artwork, not scraped brand assets or remote image dependencies. Label concept entries Preview concept; no fake downloads, ratings, users or working Install.
+E003's clearly illustrative app catalogue. Six bundled original SVG illustrations and preview descriptions are implemented in the dashboard, not installed third-party apps. Entries are labelled Preview concept; there are no downloads, ratings, users or working Install. No scraped brand assets or remote image dependencies.
 
 | Name | Purpose | Cover direction |
 | --- | --- | --- |

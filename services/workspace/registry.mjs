@@ -12,8 +12,8 @@ export class Registry {
   require(id){const session=this.sessions.get(id);if(!session)throw new Error('Session expired. Reconnect the app.');session.lastSeen=Date.now();return session;}
   ticket(session){const ticket=randomUUID();if(this.tickets.size>=128)this.tickets.delete(this.tickets.keys().next().value);this.tickets.set(ticket,{sessionId:session.id,expires:Date.now()+10000});return ticket;}
   attach(ticket,socket){const record=this.tickets.get(ticket);this.tickets.delete(ticket);if(!record||record.expires<Date.now())throw new Error('Invalid connection ticket.');
-    const session=this.require(record.sessionId);session.socket?.close();session.socket=socket;this.broadcast(session.workspaceId,{type:'presence'});
-    socket.on('close',()=>{if(session.socket===socket){session.socket=null;this.broadcast(session.workspaceId,{type:'presence'});}
+    const session=this.require(record.sessionId);session.socket?.close();session.socket=socket;this.onPresence?.(session.appId);this.broadcast(session.workspaceId,{type:'presence'});
+    socket.on('close',()=>{if(session.socket===socket){session.socket=null;this.onPresence?.(session.appId);this.broadcast(session.workspaceId,{type:'presence'});}
       for(const [id,p]of this.pending)if(p.sessionId===session.id){clearTimeout(p.timer);p.reject(new Error('Evidence owner disconnected.'));this.pending.delete(id);}});
     return session;
   }

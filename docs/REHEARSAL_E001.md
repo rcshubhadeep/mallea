@@ -25,6 +25,10 @@ Follow root README for prerequisites, explicit inference configuration, Core sta
 5. Write a note; wait for Local changes saved. Close/relaunch the generated project. Expect the installed field and saved note. Stop/restart Core against the same database and repeat; identities and data should remain.
 6. Run the documented sequential tests separately from compilation. Expect 39 passing tests. Optional live checks consume the explicitly selected model budget; no automatic production fallback.
 
+## User testing
+
+October 30: user reports testing the existing-window flow from the handoff, with no issue reported. They explicitly did not create a blank project or try Surface editing in this round. Keep those paths labelled agent-verified, not user-tested; this is not clean-machine setup acceptance.
+
 ## Remaining limits
 
 The two existing domain adapters remain specific to artwork/review data. Generic apps currently support the bounded local text/color/layout vocabulary, not arbitrary data models, collections, custom native code or unlimited workflows. Activation still versions one composed app workspace. Independent Surface composition/lifetime, richer typed models/actions, right-click editing and complete framework-panel Surface coverage belong to E002. Dashboard/settings/graphical creator/catalogue belong to E003. Surface grants, auto-sync and executable Automation belong to E004. Web delivery and Observer remain parked.

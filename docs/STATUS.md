@@ -2,39 +2,97 @@
 
 ## Active direction and work unit
 
-- Active plan: PROJECT_PLAN.v021.md (unchanged). E001 W1-W5 implemented and verified on Windows; user acceptance pending. Current work unit: W5 completed; E001 awaiting user acceptance. Do not start E002 silently.
-- Milestone advanced: E1 native foundation. Passed: persistent app descriptors/owner-event catalogue, native identity binding, independent Fieldnote/Parcel, app-scoped MCP, portable blank-project compile/launch, live Shape install/local save and regression checks. This does not complete the malleable-core/dashboard/Automation milestones.
-- Reused the existing Tauri/React/SQLite/MCP/Surface/authoring paths. Generated projects copy built runtime/native sources and install their own pinned CLI. No new service fleet or general plugin manager.
-- Main database retained, backed up before replacing the older companion. Core runs on port 4318; only the identified project companion/Core process was replaced. Model credentials stayed in the trusted engine; private app-host files are ignored.
+- E003 follow-up F1-F3 complete: reopening guidance, trusted local app launching, ordinary Surface button with one-time preserving upgrade, native checks and README handoff. Active plan v023 adds only local launch behavior in section 6; v022 and unaffected bytes were verified. Advances E3 only; E004 has not started. Fresh baseline: five dashboard tests and TypeScript; final suite 53/53, TypeScript and frontend/native build passed. At entry Core was running and no native app processes were found.
+- User feedback: dashboard generally and its other functions worked; the user has not tested new-app creation. This is partial E003 user feedback, not acceptance of scaffold/build/blank-app composition. The dashboard was stopped and the user requested a clear reopen command and in-dashboard app launching.
+- October 31: E003 W1-W5 complete with agent-operated Windows acceptance; user acceptance pending. Current unit W5 complete; E004 has not started. Milestone advanced: E3 dashboard and project creation. Native dashboard/metadata, shared profile selection, native folder choice, actual new-project compile/launch, model-authored notes input/Add/list, persistence, catalogue preview and direct-Meta scoped refinement passed. Fresh entry checks were 9/9 focused engine/live tests; the initial restricted connection run could not complete and is not counted as passing evidence. E002 user acceptance below remains separate.
+- Active plan: PROJECT_PLAN.v023.md. Original E002/E003 implementation followed unchanged v022; E002's four user Surface-modification tests were accepted. The v023 local-launch addition was explicitly requested by the user and does not change E004/E005 scope.
+- E2 foundation retained: Fieldnote, Parcel, blank-project apps and now the dashboard share one LiveApp host, independent Surface/model registry, renderer, event/action dispatch and scoped/global authoring. No separate legacy app-layout path remains in the native entry.
+- Domain behavior stays in registered adapters; their typed schemas/actions/primitives are persisted and included in the common inventory. App-owned Surfaces, including the canvas, may be removed/re-added without deleting their data. System recovery/approval UI is protected by ownership and uses the same Surface primitives.
+- The existing database and private identities were retained. A stopped-service backup preceded migration; live_backups retains predecessor workspace/local state. No model keys were migrated into app records or generated projects.
 
-## Fresh evidence — October 30, 2026
+### E003 local-launch follow-up evidence
 
-- Initial baseline: 36 tests and TypeScript passed. Final sequential suite: 39/39 passed; TypeScript and frontend/native builds passed. A parallel suite during Rust compilation hit four bounded worker deadlines/rejections; all passed sequentially after compilation with limits unchanged.
-- Windows native Fieldnote and Parcel had independent titles/identities and online owner connections. Saved revision 4 was fetched from Fieldnote in Parcel; Parcel's newly posted feedback returned to Fieldnote. Existing content, customization/disabled state and grants retained.
-- Three native apps connected simultaneously. Closing the blank app changed only its presence; both demo apps stayed online. Identity spoofing/control denial, app-specific MCP tools, grant denial/allow/revoke and registry restart are covered by focused tests.
-- Separate temporary-folder project installed its own pinned tooling and built a fresh native target outside the checkout: 3m09s compilation with dependency downloads cached (not clean-machine timing). Initial updated shared-host build 1m40s; final cached rebuild 50s. Blank native content was only Shape access.
-- Real development authoring added an Ideas/notes Surface, repaired two validation failures within the existing limit, previewed/approved/installed live, then persisted edited notes. No replay/template output substituted for generation.
-- After restarting Core and all three native windows, the blank project's installed Surface and edited note were visibly retained; the two demo apps reconnected with their original identities. Core and the three test windows are left running for user testing; stop them before dependency replacement or rebuilding their executable.
-- One explicitly selected direct-Meta service job passed on attempt 1 (about 7.4s, 6,535 input / 1,117 output tokens), including install/local edit and engine restart persistence. Development usage and private traces are ignored; no automatic production fallback.
-- Detailed evidence and user instructions: REHEARSAL_E001.md. User feedback/acceptance is pending and is separate from automated/native agent-run checks. Linux/macOS native execution remains untested.
-- README reviewed and updated: experience-first Core/two-app commands, portable CLI scaffold/build/registration/start, platform boundary, sequential regression command and bounded optional live-check steps. 178 shared files checked: no private development names or actual machine paths found; ignored secret/host files confirmed. Plan v019-v021 hashes unchanged.
+- F1: Core resolves registered private launch locations and validates app identity; no UI-selected executable/command/path is accepted. Shared native launch/environment handling is reused by CLI launching and project creation. Unit checks cover missing builds, malformed/unknown requests, startup deduplication, already-running apps and child credential exclusion.
+- F2: Open app is a declared button/action in the dashboard's ordinary item template. A one-time registry migration adds it without replacing other UI/model data; later user removal remains respected. Native settings/launch control remains restricted to the dashboard host.
+- F3: Native Open app launched Fieldnote and the existing Seed Notes project from its own compiled executable. The latter retained saved notes. Opening Fieldnote again reported already running and retained one window. Final full suite: 53/53. No model calls were needed for this follow-up.
+- Final handoff checks passed: active v023/prior v022 hashes, current guide links, 203 shared files without machine-path/private-name leaks, four rebuilt runtime files without configured model keys, unauthorized launch denial and persisted one-time upgrade marker. Core is in development mode; dashboard, Fieldnote and Seed Notes each show one connected window.
+- README reviewed and clarified: Open Mallea again comes before first-time Developer Setup, distinguishes Core running/stopped, and gives the dashboard reopen command for Windows/Linux/macOS. Ordinary reopening requires no reinstall/rebuild. In-dashboard launching and its limits are described; progress remains outside README.
+- User feedback remains partial: general dashboard functions work; project creation is explicitly untested by the user. New launch buttons and the creation flow await user testing. Exact steps are in REHEARSAL_E003.md. Core/dashboard/Fieldnote/Seed Notes are left running; Parcel can be opened from its card. Linux/macOS native execution remains untested. Missing/moved project builds need manual recovery; already-running windows are not automatically focused.
 
-## Remaining implementation boundaries
+## E003 work units and acceptance — October 31, 2026
 
-| Area | Working | Remaining |
-| --- | --- | --- |
-| Native foundation | Dynamic manifest/identity, registered native apps, scoped MCP endpoints, portable blank project | E003 graphical creator; E005 delivery/rehearsal |
-| Malleability | Surface workspace/targeted edits, local text/color fields, persistent live install | E002 independent Surface identity/lifetime/composition, app-defined models/collections/operations, contextual editing, full framework-panel Surface coverage |
-| Domain behavior | Fieldnote artwork and Parcel review adapters, permissioned manual two-way exchange | Domain adapters remain specific; no generic arbitrary workflow claim |
-| Model settings | Shared trusted engine inference through explicit environment configuration | E003 Meta-only catalogue/settings; no OS vault claim |
-| Communication/Automation | Owner routing, real presence, existing app-level grants | E004 Surface grants, auto-sync, semantic and deterministic Automation |
-| Dashboard/catalogue | No dashboard product yet | E003 actual registry dashboard/metadata, illustrative catalogue and creator |
+| Unit | Result |
+| --- | --- |
+| W1 | Five dashboard Surfaces, shared renderer/item templates and real app registry metadata/detail; Fieldnote inspection and app independence checked natively |
+| W2 | Registered Meta profiles, dashboard-only native control boundary and session key entry; subsequent jobs use selected configuration; public/registry/project records exclude keys |
+| W3 | Native parent-folder picker, exclusive scaffold, serialized compile and independent blank-app launch; collision/failure preservation checked; source-only output also compiled outside checkout |
+| W4 | Six original bundled SVG concepts, labelled previews, native Lumen preview checked; no fake marketplace operations |
+| W5 | New native app built through Shape with working input/Add/list; app/Core restart persistence, real two-way owner routing, direct-Meta refinement, final checks and documentation/handoff |
 
-## Next slice
+### Fresh E003 verification
 
-After E001 user testing, return to status/source/goal review and focused baseline checks, then E002 from SLICE_E002.md. Its units implement the malleable Surface/data foundation and contextual editing before the dashboard consumes it. Keep E001's source-only Core/CLI project delivery boundary explicit. Web product delivery and Observer remain parked.
+- Final full regression suite: 50/50; TypeScript and frontend/native build passed. A final registry-only refinement persists typed read-only collection declarations and avoids rewriting identical adapter schemas; all five dashboard tests and TypeScript passed after it. Prior E002 checks below are historical, not substituted for this slice.
+- Native creator produced a genuinely blank app from a selected folder and its own newly compiled executable. Development model authoring used three bounded attempts, then preview/approval/install; native Add saved a note across two independent Surfaces. Both Core and that project's own executable were restarted and retained the Surfaces/note.
+- Direct-Meta profile was explicitly selected through native dashboard settings. Muse Spark 1.3 refined one heading on its first attempt, one call/1,995 tokens. Installed style/bindings, unchanged other Surface and retained note were checked. Development authoring was separate; usage/traces remain private and no fallback occurred. Core was subsequently restarted in development mode for handoff.
+- Closing the dashboard left Fieldnote, Parcel and the generated app running. Both actual owner-routed manual data directions passed after restart under existing grants. Dashboard-only system panels remain limited to the dashboard after restart; the regression is tested.
+- The six concept illustrations were visually checked and Lumen preview opened with its illustrative label. A hidden root previously reserved an empty column; the shared layout fix removes that footprint.
+- A source-only project copy compiled outside checkout in 52.3 seconds with the existing compiler cache, without copying host credentials. This is not cold-machine/toolchain timing. Compiler/launch environments strip inference credentials. Keys were absent from eight checked runtime/native artifacts; active v022 remains unchanged.
+- README reviewed/updated: dashboard/model settings, graphical creator/reopen, session configuration, exact environment names, test count and parallel platform commands. No slice history was added. Linux/macOS and fresh-machine delivery remain untested.
+- Core, dashboard, Fieldnote, Parcel and Seed Notes are left running for user tests. Do not start another Core on port 4318; close identified project processes before npm ci or executable replacement. Private project locations/reports stay under ignored runtime data. Database/WAL/SHM were retained together in the stopped restart snapshot; no user data was reset.
 
-Feature window: October 30-November 1. Protect November 2-3 for setup/rehearsal/video/submission. User target: November 4 morning Eastern Time; exact cutoff hour remains unverified.
+### E003 user testing and next slice
+
+User acceptance is pending; no E002 feedback is reused as E003 acceptance. Exact tests/prompts/expected results and limits: REHEARSAL_E003.md. Run/setup/reopen commands: root README. Test actual app details, development profile selection, concept preview, new folder/project compilation, working Shape composition and reopening its saved data. Then re-read baseline/source, goal and E004 before starting permissioned Automations; do not silently expand this slice.
+
+## E002 work units and acceptance
+
+| Unit | Result |
+| --- | --- |
+| W1 | Independent app/Surface/element/model identities, registered adapter schemas, placement/version/lifetime and recoverable migration; all three app paths checked |
+| W2 | Typed fields/collections, model extension, input events and declared append/remove actions; native input/Add produced a saved item; invalid/stale writes denied |
+| W3 | One shared native host and system-Surface builder/context/preview/approval. Right-click ownership/focus, scoped edit enforcement and global composition verified; unrelated definitions/data retained |
+| W4 | Persistent/session lifecycle, real disconnect/reconnect-grace test, data retained after presentation removal. Native PNG and JSON save dialogs exercised; bytes and explicit JSON destination verified |
+| W5 | Real model-authored two-Surface app, live native edits/install, separate project rebuild, restart/owner-routing checks, documentation and user handoff |
+
+## Fresh verification — October 30, 2026
+
+- Starting baseline: 12 focused predecessor tests and TypeScript passed. Final suite: 45/45 sequential tests passed, plus TypeScript and frontend/native builds. A late socket-close callback initially queried a closed database; it was fixed and lifecycle/full-suite checks passed afterward. Execution limits were not weakened.
+- Live development authoring: a fresh two-Surface notes app plus scoped refinement; Fieldnote native right-click/preview/approval/install changed the versions font size; Parcel scoped note styling changed; the existing notes app gained independent input/list Surfaces while retaining its original Ideas note. Its native Add button saved a visible item. No scripted model output replaced generation.
+- A scoped model refinement removed a misleading literal empty-state label. JSON-only formatting fences are accepted without bypassing schema/scope checks; unknown targets and unsupported requests still fail or use bounded repair.
+- Direct-Meta isolated check: creation passed on attempt 1; scoped refinement on attempt 2 after correcting a target ID. Three calls, 10,470 total tokens. Typed input/append, approved installs, unaffected Surfaces and saved values retained. Development usage/traces remain private; no automatic production fallback.
+- Core and native app restarts retained definition edits, original notes and new collection items. Final owner-routed reads in both directions passed after migration: Fieldnote saved revision 6 reached Parcel, feedback returned, Surface-definition hashes unchanged.
+- The standalone notes project was refreshed/backed up with sync-project and rebuilt outside the checkout using only a shared compiler cache. Its own manifest/private identity/executable remain in its project. The updated shared host and standalone host built successfully; cache timings are not clean-machine performance claims.
+- Native PNG export matched the saved 640 x 420 image exactly (60,203 bytes). A separate native JSON export reached an explicitly typed ignored destination and parsed with the expected Surface bindings. Native save-picker behavior is separate from model filesystem access; generated code receives no arbitrary path bridge.
+- Runtime artifact scan: 10 files across the framework and generated-project runtimes, both configured model keys absent. Shared-file path/private-name and immutable-plan checks passed. Model credentials were never printed or committed.
+- README reviewed/updated: common runtime/editing flow, schema/collection behavior, temporary lifetime, export, generated-project upgrade, parallel Windows/Linux/macOS commands and live checks. Linux/macOS native execution remains untested. User feedback is separate below.
+
+- Registered canvas text/position events now traverse the same typed Core dispatch. Native drag testing produced Unsaved changes through that path; the temporary test move was discarded by reopening, leaving the saved artwork intact. Unknown primitive events/payloads and out-of-bounds values are rejected.
+
+## Remaining work and limitations
+
+- E3 implementation/agent acceptance complete; user acceptance pending. E4: Surface-sharing grants, approved auto-sync and executable Automations. E5: clean setup/platform checks, final rehearsal/video/submission. Web delivery and Observer remain parked.
+- Current vocabulary is bounded: registered adapters/primitives, typed fields/collections and declared operations; no arbitrary generated native code or universal expressions. Existing field types are retained; use new fields for changed types. Preview buttons do not write to Core; preview input edits stay separate.
+- Sharing remains the existing app-level manual flow; scoped editing enforcement is not a claim of completed Surface-sharing grants. Local app credentials remain developer bootstrap files, not production hostile-process isolation or a key vault.
+- Core and the three native apps are left running for testing. Reuse Core rather than starting a duplicate on port 4318. Stop project processes before npm ci or rebuilding their executables.
+
+## Historical E002 user testing
+
+The user confirmed all four E002 handoff flows worked: Fieldnote scoped typography, Parcel scoped styling, global addition of a separate notes Surface, and the existing notes app's Add/list behavior. This establishes user acceptance of those flows, not independent confirmation of every optional lifecycle/export test, project creation or clean-machine setup. Full test prompts and limits: REHEARSAL_E002.md; setup/run/upgrade commands: root README. Re-read status/source/goal and verify the baseline before E003. Do not silently expand this slice.
+
+### E002 user feedback — October 30, 2026
+
+- User: “All of them worked.” Recorded against the four Surface-modification tests in the immediately preceding handoff. Earlier E001 feedback below remains historical and separate.
+- Milestone advanced: E2 malleable application core. E3 dashboard/project creation is next; Surface-sharing grants and executable Automations remain E4.
+- Documentation-only acceptance update; no runtime changes or new test runs. The 45-test/build/native/model evidence above is retained from the implementation handoff. README reviewed; no changes needed because behavior, setup and supported limits are unchanged. Active plan unchanged.
+
+## User feedback — October 30, 2026
+
+- User reports testing the existing-window flow listed in the handoff: Fieldnote saved revision to Parcel, Parcel feedback to Fieldnote, and the already-running notes app. No issue was reported in this message.
+- User explicitly did not create a blank project or try Surface editing this time. Those paths retain their separate agent-operated evidence; this feedback does not establish user acceptance of them or a clean-machine setup test.
+- Documentation-only feedback update; no runtime changes or new test runs. README reviewed; no changes needed because behavior, setup and supported limits are unchanged. Active plan unchanged.
+
+
+## Historical planning evidence
 
 ## Rebase evidence
 

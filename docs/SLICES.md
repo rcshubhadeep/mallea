@@ -1,6 +1,6 @@
 # Dependency-ordered desktop-engine slices
 
-Follow PROJECT_PLAN.v021.md. Five milestones map one-to-one to E001-E005. Earlier web/Observer sequences and v019/v020 milestone numbering are historical. Every slice below is defined, not implemented by this planning update.
+Follow PROJECT_PLAN.v023.md. Five milestones map one-to-one to E001-E005. Earlier web/Observer sequences and v019/v020 milestone numbering are historical. Every slice below is defined, not implemented by this planning update.
 
 | Milestone | Slice | Deliverable | Exit gate |
 | --- | --- | --- | --- |

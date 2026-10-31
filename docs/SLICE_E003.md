@@ -1,6 +1,6 @@
 # E003: dashboard and project creation
 
-State: defined, not started. Milestone E3. Depends on E001 host/scaffold proof and E002 Surface/data composition. Read active plan and verify the current baseline at entry.
+State: W1-W5 implemented and agent-verified on Windows October 31; user reports general dashboard functions work, but new-app creation remains untested by the user. Milestone E3. User-authorized v023 follow-up adds reopening clarity and local app launching: F1 trusted launch routing; F2 shared Surface button with customization-preserving upgrade; F3 native regression and README handoff. Evidence and exact user tests: REHEARSAL_E003.md and STATUS.md. Depends on E001 host/scaffold proof and E002 Surface/data composition. Read active plan and verify the current baseline before the next slice.
 
 ## Work units
 

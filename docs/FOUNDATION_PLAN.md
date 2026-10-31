@@ -1,6 +1,6 @@
 # Engine foundation: implementation guide
 
-Follow PROJECT_PLAN.v021.md. This is the target architecture; STATUS.md alone records completion.
+Follow PROJECT_PLAN.v023.md. This is the target architecture; STATUS.md alone records completion.
 
 ## Keep and change
 

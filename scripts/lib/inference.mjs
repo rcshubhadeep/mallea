@@ -1,9 +1,9 @@
-export function inferenceConfig(production = false) {
+export function inferenceConfig(production = false, {allowMissingKey=false} = {}) {
   const names = production
     ? { key: 'PROD_LLM_KEY', base: 'PROD_BASE_URL', model: 'PROD_MODEL' }
     : { key: 'DEV_API_KEY', base: 'DEV_BASE_URL', model: 'DEV_MODEL' };
   for (const name of Object.values(names)) {
-    if (!process.env[name]?.trim()) throw new Error(`Missing configuration: ${name}`);
+    if ((!allowMissingKey||name!==names.key)&&!process.env[name]?.trim()) throw new Error(`Missing configuration: ${name}`);
   }
   let endpoint;
   try { endpoint = new URL(process.env[names.base]); }
@@ -14,7 +14,7 @@ export function inferenceConfig(production = false) {
   // Accept either an API root or a full endpoint copied from a working example.
   const root = endpoint.pathname.replace(/\/+$/, '').replace(/\/(?:responses|chat\/completions)$/, '');
   endpoint.pathname = `${root}/chat/completions`;
-  return { endpoint, key: process.env[names.key], model: process.env[names.model] };
+  return { endpoint, key: process.env[names.key]??'', model: process.env[names.model] };
 }
 
 export class InferenceError extends Error {

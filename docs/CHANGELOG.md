@@ -169,3 +169,19 @@
 - Copied v020 byte-for-byte; original and all unaffected ranges verified identical.
 - Previous SHA-256: 07d3ea831f34cfee5f1f716f61b580720187d9457e50620a73b665d1f91f49b7.
 - New SHA-256: c9803168f5a25bf9896d0bbff48719ac629a48478452f8ad98754288043c503e.
+
+
+## v022 - 2026-10-30: existing apps share the malleable core
+
+- User clarification: E002 migrates Fieldnote, Parcel and the blank-project app to the same runtime, not a separate framework for new apps. Added a localized section-2 paragraph and section-8 E2 acceptance clause; saved data, grants and compatible customizations must survive recoverably.
+- Copied v021 byte-for-byte, applied only these edits, verified all unchanged byte ranges and the original snapshot hash. No runtime migration is claimed in this documentation update.
+- Previous SHA-256: c9803168f5a25bf9896d0bbff48719ac629a48478452f8ad98754288043c503e.
+- New SHA-256: f9face866b475b91d21abb2865e9427676cf6915384a4731b779ad098e0bc986.
+
+
+## v023 - 2026-10-31: open local apps from the dashboard
+
+- User-requested E3 follow-up: add local app launching from actual dashboard cards; keep apps independent, refuse duplicates and use private registered locations. No Automation/marketplace scope added.
+- Copied v022 byte-for-byte, then inserted one sentence group in section 6 only. Prefix/suffix byte comparisons passed; all unaffected bytes are identical.
+- Previous SHA-256: f9face866b475b91d21abb2865e9427676cf6915384a4731b779ad098e0bc986.
+- New SHA-256: 5076e50f10a9e66fa7252f001e41ad1939c259e09fb1c44dc25acef5034c2a1d. Previous snapshot rechecked unchanged; active index/current guide links updated.

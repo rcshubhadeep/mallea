@@ -52,7 +52,7 @@ export function createAuthor(store, { production = false, infer = chat, config, 
           job.phase = 'ready'; return;
         } catch (error) {
           job.controller.signal.throwIfAborted();
-          const diagnostic = error instanceof SyntaxError ? 'Return valid JSON only, without Markdown fences.' : error.message;
+          const diagnostic = error instanceof SyntaxError ? 'Return valid JSON only. Parser: '+error.message.slice(0,220) : error.message;
           job.diagnostics.push({ attempt, message:diagnostic.slice(0,300) });
           if (attempt === 3) throw new Error('The package did not pass validation after two repair attempts. The installed version is unchanged.');
           messages.push({ role:'assistant', content:response.choice.message.content ?? '' }, { role:'user', content:`Validation failed: ${diagnostic}. Correct the package without changing the user's requested semantics. If the request cannot fit the SDK, return the unsupported response instead.` });

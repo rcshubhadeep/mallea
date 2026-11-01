@@ -7,7 +7,7 @@ export const systemSurfaces={
   {id:'builder-header',type:'row',children:[{...text('builder-title','Shape your app'),style:{fontSize:26,fontWeight:'bold'}},button('close-builder','Close','shape.close',{disabledBind:'system.running'})]},
   bound('builder-scope','system.scope'),{id:'builder-request',type:'textarea',label:'What would you like to change?',bind:'system.prompt',disabledBind:'system.running'},
   {id:'builder-actions',type:'row',children:[button('build','Build changes','shape.build',{disabledBind:'system.running'}),button('cancel','Cancel generation','shape.cancel',{disabledBind:'system.notRunning'})]},
-  bound('builder-outcome','system.outcome'),{id:'changes',type:'repeat',bind:'system.changes'},
+  bound('builder-outcome','system.outcome'),{id:'validation-details',type:'details',label:'Validation details',children:[{id:'validation-attempts',type:'repeat',bind:'system.diagnostics'}]},{id:'changes',type:'repeat',bind:'system.changes'},
   text('preview-heading','Preview — a separate copy; changes here are not saved.'),
   {id:'preview',type:'component',component:'app-preview',hiddenBind:'system.noPreview'},
   {id:'approve',type:'checkbox',label:'Allow these Surface definitions and declared data operations',bind:'system.approved',disabledBind:'system.noPreview'},

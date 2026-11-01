@@ -22,7 +22,7 @@ export async function createCollaborationServer(options={}){
   const engine=options.engine?new EngineApps(store):null;
   registry.studio=studio;
   const models=engine?new ModelSettings(options.author??{}):null;
-  const live=engine&&studio?new LiveApps(store,studio,engine,registry,{...options.author,config:()=>models.config()}):null;
+  const live=engine&&studio?new LiveApps(store,studio,engine,registry,{...options.author,config:()=>models.config()},{devMode:options.devMode===true}):null;
   const dashboard=live?new Dashboard({engine,live,registry,models,home:options.home}):null;
   store.dashboard=dashboard;
   const automations=live?new Automations({root:store,live,registry,engine,models,infer:options.author?.infer}):null;

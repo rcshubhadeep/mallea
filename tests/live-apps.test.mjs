@@ -13,6 +13,26 @@ const list={op:'addSurface',surface:{id:'list',title:'Saved notes',lifetime:'per
 async function fixture(options={}){const server=await createCollaborationServer({engine:true,studio:true,...options});for(const m of builtinManifests)server.engineApps.register(m);server.engineApps.register({version:1,id:'plain-study',name:'Plain study',author:'Test',purpose:'Generic app test',adapter:'surface'});return server;}
 function draft(server,id,proposal,scope=null){const current=server.liveApps.read(id),result=applyLiveChanges(current,proposal,server.liveApps.contract(id),{scope}),key='draft-'+Math.random();server.workspaceStore.db.prepare('INSERT INTO live_drafts VALUES(?,?,?,?,?,?)').run(key,id,current.revision,JSON.stringify(result.artifact),'test',scope);return key;}
 async function close(server){server.liveApps.close();server.workspaceStore.close();}
+test('collection selection loads editors atomically; updates retain fields and deletion repairs selection',async()=>{
+ const s=await fixture(),session={appId:'plain-study',workspaceId:'local-demo'};
+ const fields={...notes.fields,selected:{type:'number',initial:-1}};
+ fields.items={...fields.items,fields:{text:{type:'text',initial:''},tag:{type:'text',initial:'retained'}}};
+ const editable=structuredClone(list);editable.surface.ui.selectionBind='models.notes.selected';editable.surface.ui.template.children.push({id:'select',type:'button',label:'Edit',action:'collection.select',args:{binding:'models.notes.items',index:{bind:'item.index'},selectionBinding:'models.notes.selected',text:'models.notes.draft'}});
+ const editor=structuredClone(entry);editor.surface.ui.children.push({id:'update',type:'button',label:'Update',action:'collection.update',args:{binding:'models.notes.items',index:{bind:'models.notes.selected'},text:{bind:'models.notes.draft'}}},{id:'clear',type:'button',label:'Clear',action:'collection.clear',args:{binding:'models.notes.items'}});
+ const event=(surfaceId,elementId,event,extra={})=>s.liveApps.event(session,{surfaceId,elementId,event,expectedDataRevision:s.liveApps.info(session).dataRevision,...extra});
+ try{s.liveApps.install(session,draft(s,session.appId,{changes:[{...notes,fields},editor,editable]}),true);
+  for(const value of ['First','Second','Third']){event('entry','draft','change',{value});event('entry','add','click');}
+  event('list','select','click',{itemIndex:1});assert.equal(s.liveApps.read(session.appId).models.notes.values.selected,1);assert.equal(s.liveApps.read(session.appId).models.notes.values.draft,'Second');
+  const stale=s.liveApps.info(session).dataRevision;event('entry','draft','change',{value:'Edited second'});
+  assert.throws(()=>event('entry','update','click',{expectedDataRevision:stale}),/changed/);event('entry','update','click');
+  assert.deepEqual(s.liveApps.read(session.appId).models.notes.values.items,[{text:'First',tag:'retained'},{text:'Edited second',tag:'retained'},{text:'Third',tag:'retained'}]);
+  event('list','remove','click',{itemIndex:0});assert.equal(s.liveApps.read(session.appId).models.notes.values.selected,0);event('list','remove','click',{itemIndex:0});assert.equal(s.liveApps.read(session.appId).models.notes.values.selected,-1);assert.throws(()=>event('entry','update','click'),/Select an existing/);
+  event('list','select','click',{itemIndex:0});event('entry','clear','click');assert.equal(s.liveApps.read(session.appId).models.notes.values.selected,-1);assert.deepEqual(s.liveApps.read(session.appId).models.notes.values.items,[]);
+  const before=s.liveApps.read(session.appId);assert.throws(()=>event('list','select','click',{itemIndex:99}),/stale/);assert.deepEqual(s.liveApps.read(session.appId),before);
+  assert.throws(()=>draft(s,session.appId,{changes:[{op:'editSurface',id:'entry',changes:[{op:'set',id:'update',props:{args:{binding:'models.notes.items',index:0,unknown:'bad'}}}]}]}),/declared collection fields/);
+  assert.throws(()=>draft(s,session.appId,{changes:[{op:'editSurface',id:'list',changes:[{op:'set',id:'list-root',props:{selectionBind:'models.notes.draft'}}]}]}),/Selection requires/);
+ }finally{s.automations.close();s.dashboard.close();await close(s);}
+});
 test('every desktop app path uses inspectable Surfaces and cannot embed system or arbitrary app components',async()=>{
  const s=await fixture();s.engineApps.register(dashboardManifest);
  const walk=(n,fn)=>{fn(n);for(const c of n.children??[])walk(c,fn);if(n.template)walk(n.template,fn);};
@@ -27,6 +47,18 @@ test('every desktop app path uses inspectable Surfaces and cannot embed system o
   assert.equal(empty.surfaces.length,0);assert.deepEqual(empty.models,app.models);
  }
  }finally{s.automations.close();s.dashboard.close();await close(s);}
+});
+test('collection selection and edited records persist; incompatible editor copies cannot partially commit',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'mallea-selection-')),database=join(dir,'workspace.sqlite');let s=await fixture({database});const session={appId:'plain-study',workspaceId:'local-demo'};
+ try{const model={...notes,fields:{...notes.fields,selected:{type:'number',initial:-1},choice:{type:'enum',initial:'Allowed',options:['Allowed']}}},saved=structuredClone(list);
+  saved.surface.ui.selectionBind='models.notes.selected';saved.surface.ui.template.children.push({id:'select',type:'button',action:'collection.select',args:{binding:'models.notes.items',index:{bind:'item.index'},selectionBinding:'models.notes.selected',text:'models.notes.draft'}});
+  s.liveApps.install(session,draft(s,session.appId,{changes:[model,entry,saved]}),true);
+  const apply=(name,args)=>s.liveApps.operate(session,s.liveApps.read(session.appId),name,args,s.liveApps.info(session).dataRevision);
+  apply('collection.append',{binding:'models.notes.items',text:'Saved'});apply('collection.select',{binding:'models.notes.items',index:0,selectionBinding:'models.notes.selected',text:'models.notes.draft'});apply('collection.update',{binding:'models.notes.items',index:0,text:'Edited'});
+  const before=s.liveApps.read(session.appId);assert.throws(()=>apply('collection.update',{binding:'models.notes.items',index:0,text:42}),/bounded text/);assert.throws(()=>apply('collection.select',{binding:'models.notes.items',index:0,selectionBinding:'models.notes.selected',text:'models.notes.choice'}),/declared choices/);assert.deepEqual(s.liveApps.read(session.appId),before);
+  s.automations.close();s.dashboard.close();await close(s);s=await fixture({database});assert.equal(s.liveApps.read(session.appId).models.notes.values.selected,0);assert.equal(s.liveApps.read(session.appId).models.notes.values.items[0].text,'Edited');
+  s.liveApps.operate(session,s.liveApps.read(session.appId),'data.set',{binding:'models.notes.items',value:[{text:'Replacement'}]},s.liveApps.info(session).dataRevision);assert.equal(s.liveApps.read(session.appId).models.notes.values.selected,-1);
+ }finally{s.automations.close();s.dashboard.close();await close(s);await rm(dir,{recursive:true,force:true});}
 });
 test('registered primitive events use typed Core dispatch and cannot smuggle native operations',async()=>{const s=await fixture(),session={appId:'scratchpad-main',workspaceId:'local-demo'};try{const before=s.liveApps.studio.state();s.liveApps.read(session.appId);const emit=(event,value)=>s.liveApps.event(session,{surfaceId:'design-stage',elementId:'canvas',event,value,expectedDataRevision:0});assert.equal(emit('text.changed',{text:'Typed canvas edit'}).primitiveEvent.value.text,'Typed canvas edit');assert.equal(emit('position.changed',{x:36,y:226}).primitiveEvent.value.x,36);assert.throws(()=>emit('position.changed',{x:9999,y:0}),/bounds/);assert.throws(()=>emit('text.changed',{text:'ok',filePath:'escape'}),/payload/);assert.throws(()=>emit('native.execute',{command:'bad'}),/Unknown primitive/);const inventory=s.engineApps.describe(session.appId).surfaces.flatMap(s=>s.elements);assert(inventory.find(n=>n.id==='canvas').events.some(e=>e.id==='text.changed'));assert.deepEqual(s.liveApps.studio.state(),before);}finally{await close(s);}});
 test('session Surfaces tolerate reconnect grace, then expire on real owner disconnect without deleting data',async()=>{const s=await fixture();await new Promise(r=>s.listen(0,'127.0.0.1',r));let socket;const session=s.workspaceRegistry.register('plain-study'),id=session.appId;

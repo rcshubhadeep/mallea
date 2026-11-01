@@ -1,4 +1,20 @@
 import test from'node:test';import assert from'node:assert/strict';import{mkdtemp,readFile,rm}from'node:fs/promises';import{tmpdir}from'node:os';import{join}from'node:path';import{startEngine}from'../scripts/engine.mjs';
+test('text/JSON exports require explicit Core dev mode and revert on a normal restart',async()=>{
+ const home=await mkdtemp(join(tmpdir(),'mallea-dev-export-'));let server;
+ async function stop(){if(!server)return;server.workspaceRegistry.close();server.closeAllConnections();await new Promise(done=>server.close(done));server=null;}
+ try{for(const devMode of [false,true,false]){
+  server=await startEngine({home,port:0,devMode});
+  for(const appId of ['scratchpad-main','review-main','mallea-core']){
+   const session=server.workspaceRegistry.register(appId),info=server.liveApps.info(session),actions=info.systemSurfaces.context.ui.children.map(n=>n.action);
+   assert.equal(actions.includes('context.text'),devMode);assert.equal(actions.includes('context.json'),devMode);assert(actions.includes('context.image'));
+   const surfaceId=info.model.surfaces[0].id;
+   for(const format of ['text','json']){const response=await fetch(`http://127.0.0.1:${server.address().port}/api/live/export`,{method:'POST',headers:{'Content-Type':'application/json','X-Mallea-Session':session.id},body:JSON.stringify({surfaceId,format})});const result=await response.json();assert.equal(response.status,devMode?200:400);if(devMode)assert.equal(result.format,format==='json'?'json':'txt');else assert.match(result.error,/--dev/);}
+  }
+  assert.throws(()=>server.liveApps.export({appId:'review-main'},'missing','image'),/app-owned Surface/,'Image export must still reach ordinary Surface checks');
+  const persisted=JSON.parse(server.workspaceStore.db.prepare('SELECT value FROM live_system_surfaces WHERE id=?').get('context').value);assert.equal(persisted.ui.children.some(n=>n.action==='context.json'),devMode);
+  await stop();
+ }}finally{await stop();await rm(home,{recursive:true,force:true});}
+});
 test('a failed duplicate Core start preserves native connection files and the running dashboard capability',async()=>{
  const home=await mkdtemp(join(tmpdir(),'mallea-core-start-'));let server;
  try{

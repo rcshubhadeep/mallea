@@ -12,7 +12,7 @@ Start at the dashboard: open and inspect local apps, select the shared Meta prof
 
 **Working prototype:** a local Core and dashboard, independent native apps on one Surface/model runtime, point-of-use editing, typed data and collections, local persistence, owner-approved Surface sharing, executable local/Muse Automations, shared Meta settings and graphical blank-project compilation/launch.
 
-**Validation:** Windows is the reference; macOS testing/fixes are next, and Linux validation can wait. Web product support and Observer are parked. See the [desktop demo plan](docs/DEMO_PLAN.md).
+**Validation:** Windows is the reference. macOS source builds/local launch and reported basic flows work; full Mac acceptance remains pending. Linux validation can wait. Web product support and Observer are parked. See the [desktop demo plan](docs/DEMO_PLAN.md).
 
 ## Open Mallea again
 
@@ -60,7 +60,7 @@ Build the current native host in another terminal:
 | Fieldnote | `node scripts/launch-app.mjs scratchpad-main` | `node scripts/launch-app.mjs scratchpad-main` |
 | Parcel | `node scripts/launch-app.mjs review-main` | `node scripts/launch-app.mjs review-main` |
 
-Linux/macOS native launch is untested. Platform-specific installers are not supplied yet. Once built, this release host needs Core running. Each launch uses its own ignored host configuration; a URL or frontend switch cannot select another app identity. These local credentials are not production process isolation.
+macOS native builds and local launch have been checked; full workflow acceptance remains pending. Linux native launch is untested. Platform-specific installers are not supplied yet. Once built, this release host needs Core running. Each launch uses its own ignored host configuration; a URL or frontend switch cannot select another app identity. These local credentials are not production process isolation.
 
 In the dashboard, **Inspect app** shows registered metadata, Surface/model inventory and declared sharing. **Close details** or closing the dashboard leaves other apps running. The six catalogue entries are illustrated concepts with previews, not installable products.
 
@@ -72,7 +72,7 @@ In Fieldnote, edit the headline/color/note and save a revision. Right-click an e
 
 **Sharing & Automations** is available in every app. Share a Surface to make its resources available for access requests. The app owning a resource must approve each requesting app/Surface read, write or supported data action. Revocation blocks later operations and retains already copied data. The old receiver-side app-level access switch is replaced by this owner-approved flow. Apps exchange data, not running interfaces.
 
-Try “Make this list's text larger, keeping its layout and bindings” in scoped Shape. In global Shape, add an independent notes Surface or compose an input, button and collection. Persistent Surfaces/data survive restart; temporary Surfaces expire after a short reconnect grace. Removing a Surface retains its model data. Right-click export offers text/JSON or saved PNG through a native save picker.
+Try “Make this list's text larger, keeping its layout and bindings” in scoped Shape. In global Shape, add an independent notes Surface or compose an input, button and collection. Collection apps can save records, select one to load its fields into an editor, update it and delete it. Selection follows removal of earlier rows and clears when its record is deleted. Editing uses ordinary model-bound fields; direct editing inside list rows is not supported. If Shape fails, expand **Validation details** to see each attempt’s reason. Persistent Surfaces/data survive restart; temporary Surfaces expire after a short reconnect grace. Removing a Surface retains its model data. Right-click saved-image export uses a native save picker. Text/JSON export appears only when Core starts with `--dev`; Core also rejects those export requests in normal mode.
 
 Right-click an input or explicitly observable output and choose **Set Automation**: select an English trigger, choose input/processor, then select a compatible destination and approve activation. Copy and email extraction run locally; Muse receives only the selected text and transformation instruction. Typing waits for a brief pause. The manager shows outcomes and offers Run now and Pause/resume. For another app’s destination, share it there, request write access from the wizard, then approve in the owning app. Source reads from another app need their own approval. Nothing executes before activation.
 
@@ -105,6 +105,8 @@ Existing generated apps need that one-time upgrade to get Sharing & Automations 
 
 ### Configuration and prerequisites
 
+For developer text/JSON exports, start Core with `node --env-file=.env scripts/engine.mjs --dev` (the same command in Windows PowerShell and Linux/macOS Bash/Zsh). Without `--dev`, those context-menu entries are omitted for every app. Restart Core without the switch to disable them again; reopen the dashboard after a restart. This flag is independent of the development/demo model profile and can be combined with `--production` to select the demo profile explicitly. Saved-image export remains available in either mode.
+
 Use the official Tauri prerequisite guide for Windows C++ tools/WebView2, macOS Xcode tools and Linux system packages; Rust and Node are required for source builds. First builds can take time and need dependency downloads. No claim of instant cold compilation.
 
 Keep `.env` ignored; copy `.env.example` only when no local file exists. Development uses `DEV_API_KEY`, `DEV_BASE_URL`, `DEV_MODEL`; demo uses `PROD_LLM_KEY`, `PROD_BASE_URL`, `PROD_MODEL`. Only registered Meta model identities appear in dashboard settings. Configure each desired profile's HTTPS API base and model in the environment; its key can come from the environment or session-only dashboard entry. Start Core with `--production` only to explicitly select the demo profile initially. There is no automatic fallback. The inference adapter remains generic internally; model/profile registration is enforced by Core. No persistent OS key storage is implemented.
@@ -124,7 +126,7 @@ On a busy machine, run the suite sequentially, after native compilation finishes
 node --test --test-concurrency=1 tests/*.test.mjs
 ```
 
-Expected: 68 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
+Expected: 71 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
 
 These cover dashboard/settings boundaries, project collision/failure handling, owner-scoped permissions, executable Automations and two-way data sync. Optional model checks use isolated services, not the live database (same commands in all shells):
 

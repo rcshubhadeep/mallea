@@ -1,6 +1,6 @@
 # E005: reproducibility, demo and submission
 
-State: defined, not started. Milestone E5. Depends on accepted core flow from E001-E004. November 2-3 is protected for this work; exact November 4 morning Eastern submission cutoff remains to be confirmed.
+State: W1 README/source-run documentation delivered at the user's request; Windows/macOS working behavior confirmed by the user. Fresh clean-machine installation was not repeated for the documentation rewrite. W2-W4 are not started. Milestone E5. Detailed evidence and remaining acceptance are in STATUS.md. November 2-3 is protected for delivery work; exact November 4 morning Eastern submission cutoff remains to be confirmed.
 
 ## Work units
 

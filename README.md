@@ -1,169 +1,225 @@
 # Mallea
 
-Software that takes your shape.
+**Software that takes your shape.**
 
-Mallea is a desktop application framework for the age of agents. Apps are built from live, editable Surfaces. A shared local engine supplies Meta-powered authoring, typed data, permissions, MCP discovery and Automations. Each app runs in its own Tauri window and can exchange permitted data with other Mallea apps.
+Mallea’s vision is software that adapts to the person using it. Describe what you need, reshape an interface while you work, and let your apps cooperate through explicit permissions.
 
-Fieldnote, Parcel, the Core dashboard and newly created apps use the same Surface renderer, including menus, Shape, sharing, Automation and settings panels. App Surfaces are editable; system-owned approval, credential and recovery controls remain protected. A Surface carries identity, ownership, bindings, events and lifetime as well as its element tree. Canvas/control internals and OS windows/file pickers are renderer/native boundaries.
+Mallea is a desktop application framework built around **Surfaces**: editable interfaces with their own data bindings, events and actions. **Mallea Core** runs locally and supplies shared Meta Muse-powered authoring, persistence and communication. Each app runs in its own native window. Start with a blank app, then use **Shape this app** to build it in plain English.
 
-## Product and demo scope
+## First-Time Setup
 
-Start at the dashboard: open and inspect local apps, select the shared Meta profile, browse an illustrative app catalogue and create a project. A new project compiles to a blank native app with Shape Your App; build it incrementally. Surfaces and their data can persist or have an explicit session lifetime.
+Windows and macOS have been tested. Use PowerShell on Windows and Terminal with Bash or Zsh on macOS. Linux is untested; the Bash commands below also apply after installing its platform prerequisites.
 
-**Working prototype:** a local Core and dashboard, independent native apps on one Surface/model runtime, point-of-use editing, typed data and collections, local persistence, owner-approved Surface sharing, executable local/Muse Automations, shared Meta settings and graphical blank-project compilation/launch.
+### 1. Install the prerequisites
 
-**Validation:** Windows is the reference. macOS source builds/local launch and reported basic flows work; full Mac acceptance remains pending. Linux validation can wait. Web product support and Observer are parked. See the [desktop demo plan](docs/DEMO_PLAN.md).
+Install these tools before continuing:
 
-## Open Mallea again
+- **[Git](https://git-scm.com/downloads)** to download the source.
+- **[Node.js 24](https://nodejs.org/en/download)**, including npm. Select version 24; Mallea requires this major version.
+- **[Rust](https://rust-lang.org/tools/install/)**, including Cargo, using the stable toolchain.
+- **[Tauri’s platform prerequisites](https://v2.tauri.app/start/prerequisites/)** for your operating system:
 
-Already installed and built? From the repository root, with Core still running, reopen the dashboard:
+| Windows | macOS |
+| --- | --- |
+| Microsoft C++ Build Tools with **Desktop development with C++**, and Microsoft Edge WebView2. Follow Tauri’s Windows instructions. | Xcode Command Line Tools. Follow Tauri’s macOS instructions. |
+
+Open a new terminal after installation and check:
+
+```sh
+node --version
+cargo --version
+```
+
+The Node version must begin with `v24.`. Cargo should print its version. If either command is unavailable, finish installing the tools before continuing.
+
+### 2. Download Mallea
+
+```sh
+git clone https://github.com/rcshubhadeep/mallea.git
+cd mallea
+```
+
+If you already have the source, open a terminal in its root folder instead. Run all remaining terminal commands from this folder unless instructed otherwise.
+
+### 3. Configure the model
+
+Create a local `.env` file from the supplied template. These commands preserve an existing `.env` file.
+
+**Windows — PowerShell**
+
+```powershell
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+```
+
+**macOS / Linux — Bash or Zsh**
+
+```sh
+if [ ! -f .env ]; then cp .env.example .env; fi
+```
+
+Open `.env` in a text editor and fill in these three settings for a Meta model supported by Mallea:
+
+| Setting | What to enter |
+| --- | --- |
+| `DEV_BASE_URL` | The API End Point, such as `https://api.meta.ai/v1/responses` |
+| `DEV_API_KEY` | Your API key. |
+| `DEV_MODEL` | The exact identifier for a supported Muse model, such as  `muse-spark-1.3` or `muse-wonder-1.0`. If using Muse Spark Open then check with the provider |
+
+You need access to that model through your provider; inference may incur usage charges. Keep `.env` private. It is ignored by Git, and no model key belongs in a generated app project. The optional `PROD_` settings can remain empty for this setup.
+
+### 4. Install dependencies and build
+
+Close any existing Mallea app windows and stop Core before installing dependencies. Run the commands for your platform in order.
+
+**Windows — PowerShell**
+
+```powershell
+npm.cmd ci
+npm.cmd --script-shell=cmd.exe run build
+npm.cmd --script-shell=cmd.exe run desktop -- build
+```
+
+**macOS / Linux — Bash or Zsh**
+
+```sh
+npm ci
+npm run build
+npm run desktop -- build
+```
+
+Wait for each command to finish successfully before running the next. The first native build downloads dependencies and can take several minutes. Once it completes, continue below.
+
+## Run Mallea Core
+
+### First launch
+
+**1. Start Engine.** In a terminal at the repository root, run:
+
+```sh
+node --env-file=.env scripts/engine.mjs
+```
+
+Wait for `Mallea Core: http://127.0.0.1:4318`. Leave this terminal open; Engine must stay running while you use Mallea apps.
+
+**2. Open the dashboard.** Open a second terminal in the same repository folder and run:
 
 ```sh
 node scripts/launch-app.mjs mallea-core
 ```
 
-If Core is stopped, first start it in a terminal and leave that terminal open:
+These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the configured model profile. You can open the included Fieldnote and Parcel apps using **Open app** on their cards.
+
+### Subsequent launches
+
+You do not need to reinstall dependencies or rebuild just to reopen Mallea.
+
+- **If Core is stopped:** run the Core command above, then open the dashboard from a second terminal.
+- **If Core is already running:** run only the dashboard command. Start just one Core instance.
+- **To reopen a created app:** use **Open app** on its dashboard card. If it is already running, switch to its existing window.
+
+Closing the dashboard leaves Core and other apps running. To stop Core, save your work, close the app windows and press **Ctrl+C** in its terminal. After restarting Core, reopen the dashboard too.
+
+For developer text/JSON export options, add `--dev` to the Core command:
 
 ```sh
-node --env-file=.env scripts/engine.mjs
+node --env-file=.env scripts/engine.mjs --dev
 ```
 
-Then run the dashboard command in another terminal. Both commands are the same in Windows PowerShell and Linux/macOS Bash/Zsh. If your model selection is in ignored `docs/private/smoke.env`, start Core with `node --env-file=.env --env-file=docs/private/smoke.env scripts/engine.mjs` instead. Reopening needs no reinstall or rebuild. Closing the dashboard leaves Core and other apps running; after restarting Core, reopen the dashboard too.
+Without `--dev`, those right-click options are hidden. This switch is separate from model selection.
 
-Use **Open app** on a dashboard card to launch a registered local app. An already-running app reports that it is open and avoids another window; switch to its existing window. Dashboard-created projects use their own compiled executable. Missing builds/registration show a message instead of starting a rebuild. Concept catalogue entries remain previews only.
+## Build Your First App
 
-## First-time Developer Setup
+Keep Core running and open the dashboard. This walkthrough creates a small notes app without writing application code.
 
-Run commands from the repository root. You need Node 24, Rust and the [Tauri platform prerequisites](https://v2.tauri.app/start/prerequisites/). Core runs separately from its dashboard and app windows.
+### 1. Create a blank app
 
-Install locked dependencies once, after stopping this project's previews/native windows:
+1. Click **Create an app**.
+2. Enter **My Notes** as the name.
+3. Click **Choose parent folder** and select an existing folder where you want to keep the project.
+4. Click **Create, compile and open**.
+5. Wait for compilation to finish. A new native app window opens with Mallea’s framework controls and no app content yet.
 
-| Windows PowerShell | Linux/macOS Bash or Zsh |
-| --- | --- |
-| `npm.cmd ci` | `npm ci` |
+Mallea creates a new `my-notes` subfolder inside your chosen folder. If that folder already exists, choose a different app name or parent folder. Keep Core running throughout compilation.
 
-Start Core in one terminal, using ignored configuration for live authoring (same command in all three shells):
+### 2. Describe the interface
 
-```sh
-node --env-file=.env scripts/engine.mjs
-```
+In the new app, click **Shape this app** and enter:
 
-Configure `DEV_API_KEY`, `DEV_BASE_URL` and `DEV_MODEL` for the selected Meta development model. If model selection is in optional ignored `docs/private/smoke.env`, add `--env-file=docs/private/smoke.env` after the first env-file argument. Keys remain in the service. Without model configuration, `node scripts/engine.mjs` runs the starting app but cannot author changes.
+> Create a simple notes app with two persistent Surfaces side by side. On the left, add a multiline text editor labelled New note and a Save note button. Clicking Save note should append the editor text to a saved notes collection. On the right, display that collection as a list. Keep the notes when I close and reopen the app.
 
-Build the current native host in another terminal:
+Click **Build changes** and wait for **Ready to preview**. Generation may take time. If it fails, expand **Validation details** to see the reason; no failed proposal is installed.
 
-| Step | Windows PowerShell | Linux/macOS Bash or Zsh |
-| --- | --- | --- |
-| Frontend | `npm.cmd --script-shell=cmd.exe run build` | `npm run build` |
-| Native shell | `npm.cmd --script-shell=cmd.exe run desktop -- build` | `npm run desktop -- build` |
-| Dashboard | `node scripts/launch-app.mjs mallea-core` | `node scripts/launch-app.mjs mallea-core` |
-| Fieldnote | `node scripts/launch-app.mjs scratchpad-main` | `node scripts/launch-app.mjs scratchpad-main` |
-| Parcel | `node scripts/launch-app.mjs review-main` | `node scripts/launch-app.mjs review-main` |
+### 3. Preview and install
 
-macOS native builds and local launch have been checked; full workflow acceptance remains pending. Linux native launch is untested. Platform-specific installers are not supplied yet. Once built, this release host needs Core running. Each launch uses its own ignored host configuration; a URL or frontend switch cannot select another app identity. These local credentials are not production process isolation.
+1. Review the proposed editor, button and saved list in the preview.
+2. Select the approval checkbox.
+3. Click **Install changes**.
 
-In the dashboard, **Inspect app** shows registered metadata, Surface/model inventory and declared sharing. **Close details** or closing the dashboard leaves other apps running. The six catalogue entries are illustrated concepts with previews, not installable products.
+The interface updates in the running app. You do not need to rebuild its native executable for Surface changes.
 
-**Model settings** selects one configured Meta profile for all apps. You can enter a replacement key for this Core session; leaving it empty keeps the configured key. Keys are not stored in app models or generated projects. Restarting Core restores environment settings, so reopen the dashboard afterward. “Ready” means configured, not a successful inference probe; no request is charged just by selecting a profile.
+### 4. Use and reshape it
 
-Choose **Create an app**, enter a name, pick an existing parent folder, then **Create, compile and open**. Mallea creates a new subfolder, refuses collisions, compiles a blank native app and opens it. Builds run one at a time and reuse the local compiler cache; first builds need downloads and can take minutes. Closing the creator keeps its build running; keep Core running. Failed builds retain the project for diagnosis. In the new app, use **Shape this app** to add working Surfaces. To reopen it later, run `node project-host.mjs start` from that generated project's folder (same command on all platforms).
+Type a note and click **Save note**. It should appear in the saved list. Save a second note and check that both are present.
 
-In Fieldnote, edit the headline/color/note and save a revision. Right-click an element and choose **Modify this surface** for a scoped change. **Shape this app** gives app-wide editing: add Surfaces, create models or rearrange the app. Inspect the preview, approve the declared changes and install. Updates appear without reloading or rebuilding. Existing app data remains separate from presentation. The first upgrade retains a recoverable snapshot of the older workspace and local fields; the old workspace toggle is replaced by the common Surface model.
+To change the list’s appearance, right-click its text and choose **Modify this surface**. Ask:
 
-**Sharing & Automations** is available in every app. Share a Surface to make its resources available for access requests. The app owning a resource must approve each requesting app/Surface read, write or supported data action. Revocation blocks later operations and retains already copied data. The old receiver-side app-level access switch is replaced by this owner-approved flow. Apps exchange data, not running interfaces.
+> Make the saved notes text larger. Keep the layout, data bindings and behavior unchanged.
 
-Try “Make this list's text larger, keeping its layout and bindings” in scoped Shape. In global Shape, add an independent notes Surface or compose an input, button and collection. Collection apps can save records, select one to load its fields into an editor, update it and delete it. Selection follows removal of earlier rows and clears when its record is deleted. Editing uses ordinary model-bound fields; direct editing inside list rows is not supported. If Shape fails, expand **Validation details** to see each attempt’s reason. Persistent Surfaces/data survive restart; temporary Surfaces expire after a short reconnect grace. Removing a Surface retains its model data. Right-click saved-image export uses a native save picker. Text/JSON export appears only when Core starts with `--dev`; Core also rejects those export requests in normal mode.
+Build, review and install the change as before. The notes should remain intact.
 
-Right-click an input or explicitly observable output and choose **Set Automation**: select an English trigger, choose input/processor, then select a compatible destination and approve activation. Copy and email extraction run locally; Muse receives only the selected text and transformation instruction. Typing waits for a brief pause. The manager shows outcomes and offers Run now and Pause/resume. For another app’s destination, share it there, request write access from the wizard, then approve in the owning app. Source reads from another app need their own approval. Nothing executes before activation.
+### 5. Reopen your app
 
-For the artwork example, configure Fieldnote’s **Save revision** trigger to copy its saved-artwork resource into Parcel’s published-artwork resource. Approve that destination in Parcel. In reverse, configure Parcel’s observable review list to copy review data into Fieldnote’s feedback resource, approved by Fieldnote. Saving/reviewing then updates the other app automatically without replacing its interface or deleting feedback. [Detailed tests and limits](docs/REHEARSAL_E004.md).
+Wait for **Local changes saved**, then close the app window. In the dashboard, find **My Notes** and click **Open app**. Your interface and saved notes should still be there.
 
-### Command-line project creation
 
-After the frontend build, create a new folder (the parent must exist; existing targets are refused):
+### 6. Add an Automation
 
-```sh
-node scripts/create-project.mjs .mallea/my-app my-app "My app"
-```
+Turn the text you type into a list of ideas. In **My Notes**, open **Shape this app** and ask:
 
-Set the Core data folder before changing directories, then install the generated project's own tooling, register, build and launch it:
+> Add a persistent Surface called Ideas without changing my existing notes or editor. Give it a list backed by a new, empty collection. Each item must have one text field named text. Display that field and expose a data-change trigger on the list so it can start an Automation.
 
-| Step | Windows PowerShell | Linux/macOS Bash or Zsh |
-| --- | --- | --- |
-| Locate running Core | `$env:MALLEA_HOME = (Resolve-Path .mallea).Path` | `export MALLEA_HOME="$PWD/.mallea"` |
-| Enter project | `cd .mallea/my-app` | `cd .mallea/my-app` |
-| Install tooling | `npm.cmd install` | `npm install` |
-| Register | `npm.cmd --script-shell=cmd.exe run register` | `npm run register` |
-| Compile | `npm.cmd --script-shell=cmd.exe run build` | `npm run build` |
-| Launch | `npm.cmd --script-shell=cmd.exe start` | `npm start` |
+Build, preview, approve and install the change. Then connect the editor to the new list:
 
-The initial window has only **Shape this app**. Try adding a local notes field; preview and install. Type a note and wait for “Local changes saved”; reopen to verify it persists. Shape edits need no native rebuild. The project copies the built runtime and native sources and can be moved outside this checkout. Keep Core on the same machine; register again on a different machine. Generated private host credentials and Core model keys are never included in the portable source. Keep the generated lockfile after installing tooling. Source-level changes to the framework require rebuilding and recopying its runtime; live Surface edits do not.
+1. Right-click the **New note** editor and choose **Set Automation**.
+2. Under **When should it run?**, select **When I type**, then click **Next**.
+3. Under **Which data should it read?**, select the **New note** editor in My Notes. Under **What should happen?**, select **Ask Meta Muse**.
+4. In **Describe the transformation for Muse**, enter: “Extract the key ideas and constraints from this note as short list items.” Click **Next**.
+5. Under **Where should the result go?**, select the list in **My Notes / Ideas**. Choose **Replace the current value or list** and name the Automation **Note to ideas**.
+6. Review the summary, select the approval checkbox and click **Enable Automation**.
 
-For an existing generated project, close its window, rebuild the framework frontend, then run `node scripts/sync-project.mjs <project-folder>` from this repository root. This updates framework-managed runtime/Rust files and keeps a private backup; it preserves the app manifest, identity and Core data. Rebuild from that project with its documented Windows or Linux/macOS build command, then start it. Use this only for generated projects; custom edits to framework-managed files must be reconciled with the backup. No rebuild is needed for later Surface edits.
+Type a note such as “Plan a community garden poster with monochrome colors and no photographs.” Pause briefly. Ideas should fill with model-generated items. Change the note to request bright colors and photographs; after another pause, the list should reflect the new constraints.
 
-Existing generated apps need that one-time upgrade to get Sharing & Automations and the new owner protocol. If the project has no node_modules yet, run `npm.cmd install` on Windows or `npm install` on macOS/Linux before its build. Keep Core’s existing database; there is no need to recreate your notes or Surfaces. A fresh checkout on another machine does not include ignored Core data. [macOS acceptance guide](docs/MACOS_TEST.md).
+Open **Sharing & Automations** to see the latest outcome. **Pause / resume** controls whether the Automation runs, and **Run now** starts it manually. Typing waits for a short pause rather than making a request for every keypress. Muse requests use your configured model and may incur usage charges; pause the Automation when you finish experimenting.
 
-### Configuration and prerequisites
+### 7. Share the result with another app
 
-For developer text/JSON exports, start Core with `node --env-file=.env scripts/engine.mjs --dev` (the same command in Windows PowerShell and Linux/macOS Bash/Zsh). Without `--dev`, those context-menu entries are omitted for every app. Restart Core without the switch to disable them again; reopen the dashboard after a restart. This flag is independent of the development/demo model profile and can be combined with `--production` to select the demo profile explicitly. Saved-image export remains available in either mode.
+Keep My Notes open. From the dashboard, create a second blank app named **Notes Inbox**, following step 1 above. In that app’s **Shape this app**, ask:
 
-Use the official Tauri prerequisite guide for Windows C++ tools/WebView2, macOS Xcode tools and Linux system packages; Rust and Node are required for source builds. First builds can take time and need dependency downloads. No claim of instant cold compilation.
+> Add a persistent Surface called Received Ideas with a list backed by a new, empty collection. Each item must have one text field named text. Display that field. This list will receive ideas from another app.
 
-Keep `.env` ignored; copy `.env.example` only when no local file exists. Development uses `DEV_API_KEY`, `DEV_BASE_URL`, `DEV_MODEL`; demo uses `PROD_LLM_KEY`, `PROD_BASE_URL`, `PROD_MODEL`. Only registered Meta model identities appear in dashboard settings. Configure each desired profile's HTTPS API base and model in the environment; its key can come from the environment or session-only dashboard entry. Start Core with `--production` only to explicitly select the demo profile initially. There is no automatic fallback. The inference adapter remains generic internally; model/profile registration is enforced by Core. No persistent OS key storage is implemented.
+Build, preview, approve and install. Keep both apps and Core running throughout the following steps.
 
-There is one active local database, ignored `.mallea/workspace.sqlite`; set `MALLEA_DB=.mallea/workspace.sqlite` if overriding configuration. Older test data may exist under ignored archives. Do not create a new active database for every test. Back up with the service stopped and retain WAL/SHM companions when present.
+**Make the destination available**
 
-### Reproduce checks
+1. In **Notes Inbox**, open **Sharing & Automations**.
+2. Find **Received Ideas** and click **Change sharing**. Its title should now show **shared**.
 
-| Check | Windows PowerShell | Linux/macOS Bash or Zsh |
-| --- | --- | --- |
-| Automated suite, no inference | `npm.cmd --script-shell=cmd.exe test` | `npm test` |
-| TypeScript | `npm.cmd --script-shell=cmd.exe run check` | `npm run check` |
+Sharing makes the Surface available for access requests. It does not grant another app permission to write to it.
 
-On a busy machine, run the suite sequentially, after native compilation finishes (same command in all supported shells):
+**Request access from My Notes**
 
-```sh
-node --test --test-concurrency=1 tests/*.test.mjs
-```
+1. Switch to **My Notes**. Right-click the **Ideas** list and choose **Set Automation**.
+2. Select **When this data changes**, then click **Next**.
+3. Select the Ideas list as the input and **Copy unchanged** as the processor. Click **Next**.
+4. Select **Notes Inbox / Received Ideas** as the destination and **Replace the current value or list** as the update mode.
+5. Click **Request write access**. Leave the wizard open and switch to Notes Inbox.
 
-Expected: 71 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
+**Approve and enable the connection**
 
-These cover dashboard/settings boundaries, project collision/failure handling, owner-scoped permissions, executable Automations and two-way data sync. Optional model checks use isolated services, not the live database (same commands in all shells):
+1. In **Notes Inbox → Sharing & Automations**, find the write request from My Notes for Received Ideas. Check that it names the intended apps and Surfaces, then click **Allow**.
+2. Return to the wizard in **My Notes**. Once access is available, name the Automation **Send ideas to inbox**, review the summary, select the approval checkbox and click **Enable Automation**.
+3. In My Notes’ **Sharing & Automations**, click **Run now** for this copy Automation. The ideas should appear in Notes Inbox.
 
-```sh
-node --env-file=.env scripts/verify-malleability.mjs
-node --env-file=.env scripts/verify-local-surface.mjs --desktop
-node --env-file=.env scripts/verify-native-foundation.mjs
-node --env-file=.env scripts/verify-live-core.mjs
-node --env-file=.env scripts/verify-automation.mjs
-# Explicit budget-consuming direct Meta compatibility check:
-node --env-file=.env scripts/verify-malleability.mjs --production
-node --env-file=.env scripts/verify-native-foundation.mjs --production
-node --env-file=.env scripts/verify-live-core.mjs --production
-node --env-file=.env scripts/verify-automation.mjs --production
-```
+Later changes to Ideas should copy automatically while both apps are running. Copying unchanged data runs locally and makes no model request; generating new Ideas through Muse still uses the model.
 
-Each authoring job has an initial request plus at most two repairs, a 60-second request timeout and bounded output; there is no automatic environment fallback. Expected: targeted changes, retained unrelated model/data, then PASS. The foundation check verifies legacy-host compatibility and engine restart persistence. The live-core check creates a two-Surface app using new models/operations, then performs a scoped refinement. Both use isolated data and are service checks, separate from native visual verification. Artifacts/reports stay under ignored `.mallea/`. Add the optional smoke.env argument only if configured locally.
-
-Automation transforms make one bounded model request per run, without automatic repair/retry. The Automation check uses synthetic isolated Surfaces and genuine Muse output: two changed-constraint runs in development, or one run with explicit `--production`. It verifies approved owner transfer; the development check also verifies revocation. Reports stay ignored. App-scoped MCP exposes permitted resource schemas, reads/writes and a small set of declared local data actions; it does not offer arbitrary scripts or native commands.
-
-### Troubleshooting and stopping
-
-If port 4318 is occupied, identify its listener first. If it is this project's Core, reopen the dashboard; an older companion must be stopped from its own terminal before starting Core. The companion and Core cannot run together on this port. Do not kill unrelated Node processes. Authentication, quota, rate-limit, network and timeout failures are distinct; correct the selected configuration and retry deliberately. A failed generation leaves the installed app unchanged.
-
-If Core is already running, use the dashboard reopen command instead of starting another engine. A failed duplicate start preserves the running engine's connection files. If the dashboard reports a connection error or shows empty app/catalogue lists, close that dashboard, restart the verified Core once, then reopen the dashboard. Existing app data stays in the same database.
-
-If Core was started without a visible terminal, save work and close its apps, then identify the listener before stopping it:
-
-| Windows PowerShell | Linux/macOS Bash or Zsh |
-| --- | --- |
-| `$malleaCorePid = (Get-NetTCPConnection -LocalPort 4318 -State Listen).OwningProcess` | `lsof -nP -iTCP:4318 -sTCP:LISTEN` |
-| `Get-CimInstance Win32_Process -Filter "ProcessId=$malleaCorePid" \| Select-Object Name,CommandLine` | `ps -p <listener-pid> -o command=` |
-
-Only after confirming it is this project's Core, stop that process with `Stop-Process -Id $malleaCorePid` (PowerShell) or `kill -INT <verified-pid>` (Bash/Zsh), then use the normal Core start command. Linux/macOS commands remain untested; Linux systems without lsof can inspect the listener with `ss -lptn 'sport = :4318'`.
-
-Stop the companion/dev terminals with Ctrl+C and close native windows before `npm ci` or replacing dependencies, especially on Windows. After a Windows EPERM interrupted install, stop the identified project processes, complete `npm ci`, then restart. Keep one editing instance for predictable unsaved-draft behavior.
-
-Current limits include a bounded Surface vocabulary and registered operations, no general expressions/native code, no production multi-user isolation and no remote routing. Automations have one transformer, with no general scheduler or pipeline editor. Unsaved canvas drafts are not recovered after close; save revisions explicitly. Catalogue entries are illustrative previews. Core and the apps trust the same local OS user; this is not hostile-process isolation.
-
-[Project documentation](docs/README.md) · [Automation ideas](docs/AUTOMATION_IDEAS.md) · [Current implementation contract](docs/SURFACE_API_004.md)
+To stop the connection, open **Notes Inbox → Sharing & Automations** and click **Deny / revoke** on that grant. A subsequent Run now in My Notes should report blocked access. Previously copied ideas remain in Notes Inbox.

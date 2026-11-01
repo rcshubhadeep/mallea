@@ -4,6 +4,8 @@ Software that takes your shape.
 
 Mallea is a desktop application framework for the age of agents. Apps are built from live, editable Surfaces. A shared local engine supplies Meta-powered authoring, typed data, permissions, MCP discovery and Automations. Each app runs in its own Tauri window and can exchange permitted data with other Mallea apps.
 
+Fieldnote, Parcel, the Core dashboard and newly created apps use the same Surface renderer, including menus, Shape, sharing, Automation and settings panels. App Surfaces are editable; system-owned approval, credential and recovery controls remain protected. A Surface carries identity, ownership, bindings, events and lifetime as well as its element tree. Canvas/control internals and OS windows/file pickers are renderer/native boundaries.
+
 ## Product and demo scope
 
 Start at the dashboard: open and inspect local apps, select the shared Meta profile, browse an illustrative app catalogue and create a project. A new project compiles to a blank native app with Shape Your App; build it incrementally. Surfaces and their data can persist or have an explicit session lifetime.
@@ -122,7 +124,7 @@ On a busy machine, run the suite sequentially, after native compilation finishes
 node --test --test-concurrency=1 tests/*.test.mjs
 ```
 
-Expected: 67 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
+Expected: 68 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
 
 These cover dashboard/settings boundaries, project collision/failure handling, owner-scoped permissions, executable Automations and two-way data sync. Optional model checks use isolated services, not the live database (same commands in all shells):
 

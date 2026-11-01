@@ -10,6 +10,16 @@ Core stores records in live_apps, approved proposal drafts in live_drafts, pre-m
 
 The same LiveApp host, Surface renderer, model/action dispatch and authoring tools run Fieldnote, Parcel and generated apps. Domain adapters implement canvas/save/review behavior only. Recovery, context menu, builder, preview and approval controls are system-owned Surface definitions; ordinary application headers/footers are app-owned Surfaces. System records cannot be edited by app proposals. Primitive internals and native window/save-dialog chrome remain implementation boundaries.
 
+## Desktop Surface coverage
+
+The native entry is `apps/desktop/src/main.tsx` -> `NativeApp` -> `LiveApp`. It selects app identity, not an alternate renderer. Fieldnote and Parcel migrate their ordinary headers, workspaces, inspectors and footers into app-owned Surface records. The dashboard's cards, details and catalogue are Surface trees too. Blank projects copy that same built runtime and start with no app-owned Surfaces; creation adds records rather than a separate UI implementation.
+
+Recovery, contextual actions, Shape/approval, Sharing & Automations, model settings, project creation and concept preview use system-owned Surface definitions. These are inspectable but cannot be changed by app-owned proposals. The startup connection message also uses the Surface renderer before Core records are available.
+
+Code-backed boundaries are deliberately narrow: `design-canvas` renders the registered canvas primitive; `credential-entry` is the dashboard's system-only password control; `app-preview` renders an isolated copy of the proposed Surface trees. Generic color/control internals, layout/overlay wrappers and OS chrome/folder/save pickers are renderer/native implementation. They are not independent app panels. App validation rejects unregistered components and rejects use of the credential/preview primitives inside app-owned trees. Parked browser/predecessor components are not on the native or generated-project entry path.
+
+The regression in `tests/live-apps.test.mjs` checks all four desktop app paths, declared app/system inventories, protected system records, rejection of opaque/system component injection and removal of app presentation without model deletion. This is source/registry evidence; it does not claim arbitrary third-party native code is sandboxed.
+
 ## Supported vocabulary
 
 - Layout: stack, row, split, grid and collapsible details.

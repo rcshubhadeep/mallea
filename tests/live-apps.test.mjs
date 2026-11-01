@@ -2,6 +2,10 @@ import test from'node:test';import assert from'node:assert/strict';import{mkdtem
 import{createCollaborationServer}from'../services/workspace/collaboration.mjs';import{builtinManifests}from'../services/workspace/engine-apps.mjs';import{applyLiveChanges,validateLive}from'../packages/sdk/live-model.mjs';
 import{parseProposal}from'../services/workspace/author.mjs';
 import WebSocket from'ws';
+import{dashboardManifest}from'../packages/sdk/dashboard.mjs';
+import{liveNode}from'../packages/sdk/live-model.mjs';
+import{systemSurfaces}from'../packages/sdk/framework-live.mjs';
+import{automationPanels}from'../packages/sdk/automation-ui.mjs';
 test('JSON formatting envelopes do not relax proposal or scope validation',()=>{assert.deepEqual(parseProposal('```json\n{"changes":[]}\n```'),{changes:[]});assert.throws(()=>parseProposal('Here is the JSON: {"changes":[]}'));assert.throws(()=>parseProposal('```javascript\nprocess.exit()\n```'));assert.throws(()=>parseProposal('```json\n{"changes":[]}\n```\nMore text'));});
 const notes={op:'createModel',id:'notes',fields:{draft:{type:'text',initial:''},items:{type:'collection',fields:{text:{type:'text',initial:''}},initial:[]}}};
 const entry={op:'addSurface',surface:{id:'entry',title:'Write a note',lifetime:'persistent',slot:'main',width:'wide',ui:{id:'entry-root',type:'stack',children:[{id:'draft',type:'textarea',label:'Note',bind:'models.notes.draft'},{id:'add',type:'button',label:'Add note',action:'collection.append',args:{binding:'models.notes.items',text:{bind:'models.notes.draft'}}}]}}};
@@ -9,6 +13,21 @@ const list={op:'addSurface',surface:{id:'list',title:'Saved notes',lifetime:'per
 async function fixture(options={}){const server=await createCollaborationServer({engine:true,studio:true,...options});for(const m of builtinManifests)server.engineApps.register(m);server.engineApps.register({version:1,id:'plain-study',name:'Plain study',author:'Test',purpose:'Generic app test',adapter:'surface'});return server;}
 function draft(server,id,proposal,scope=null){const current=server.liveApps.read(id),result=applyLiveChanges(current,proposal,server.liveApps.contract(id),{scope}),key='draft-'+Math.random();server.workspaceStore.db.prepare('INSERT INTO live_drafts VALUES(?,?,?,?,?,?)').run(key,id,current.revision,JSON.stringify(result.artifact),'test',scope);return key;}
 async function close(server){server.liveApps.close();server.workspaceStore.close();}
+test('every desktop app path uses inspectable Surfaces and cannot embed system or arbitrary app components',async()=>{
+ const s=await fixture();s.engineApps.register(dashboardManifest);
+ const walk=(n,fn)=>{fn(n);for(const c of n.children??[])walk(c,fn);if(n.template)walk(n.template,fn);};
+ try{for(const id of ['scratchpad-main','review-main','plain-study','mallea-core']){
+  const app=s.liveApps.read(id),contract=s.liveApps.contract(id),inventory=s.liveApps.inventory(id);
+  validateLive(app,contract);
+  for(const surface of app.surfaces){assert(inventory.some(v=>v.id===surface.id&&v.ownership==='app'));walk(surface.ui,n=>{if(n.type==='component')assert.equal(n.component,'design-canvas');});}
+  const panels=[...Object.values(systemSurfaces),...Object.values(automationPanels),...(id==='mallea-core'?Object.values(s.dashboard.panels):[])];
+  for(const panel of panels){liveNode.parse(panel.ui);assert.equal(panel.ownership,'system');assert(inventory.some(v=>v.id===panel.id&&v.ownership==='system'));assert(s.workspaceStore.db.prepare("SELECT 1 FROM live_system_surfaces WHERE json_extract(value, '$.id')=?").get(panel.id));assert.throws(()=>applyLiveChanges(app,{changes:[{op:'removeSurface',id:panel.id}]},contract),/Unknown Surface/);}
+  for(const component of ['opaque-app','credential-entry','app-preview'])assert.throws(()=>applyLiveChanges(app,{changes:[{op:'addSurface',surface:{id:'escape',title:'Escape',lifetime:'persistent',slot:'main',width:'wide',ui:{id:'hidden-app',type:'component',component}}}]},contract),/Unknown registered primitive/);
+  const empty=app.surfaces.length?applyLiveChanges(app,{changes:app.surfaces.map(surface=>({op:'removeSurface',id:surface.id}))},contract).artifact:app;
+  assert.equal(empty.surfaces.length,0);assert.deepEqual(empty.models,app.models);
+ }
+ }finally{s.automations.close();s.dashboard.close();await close(s);}
+});
 test('registered primitive events use typed Core dispatch and cannot smuggle native operations',async()=>{const s=await fixture(),session={appId:'scratchpad-main',workspaceId:'local-demo'};try{const before=s.liveApps.studio.state();s.liveApps.read(session.appId);const emit=(event,value)=>s.liveApps.event(session,{surfaceId:'design-stage',elementId:'canvas',event,value,expectedDataRevision:0});assert.equal(emit('text.changed',{text:'Typed canvas edit'}).primitiveEvent.value.text,'Typed canvas edit');assert.equal(emit('position.changed',{x:36,y:226}).primitiveEvent.value.x,36);assert.throws(()=>emit('position.changed',{x:9999,y:0}),/bounds/);assert.throws(()=>emit('text.changed',{text:'ok',filePath:'escape'}),/payload/);assert.throws(()=>emit('native.execute',{command:'bad'}),/Unknown primitive/);const inventory=s.engineApps.describe(session.appId).surfaces.flatMap(s=>s.elements);assert(inventory.find(n=>n.id==='canvas').events.some(e=>e.id==='text.changed'));assert.deepEqual(s.liveApps.studio.state(),before);}finally{await close(s);}});
 test('session Surfaces tolerate reconnect grace, then expire on real owner disconnect without deleting data',async()=>{const s=await fixture();await new Promise(r=>s.listen(0,'127.0.0.1',r));let socket;const session=s.workspaceRegistry.register('plain-study'),id=session.appId;
  async function attach(){const ticket=s.workspaceRegistry.ticket(session);socket=new WebSocket(`ws://127.0.0.1:${s.address().port}/api/events`);await new Promise(r=>socket.once('open',r));const ready=new Promise(r=>socket.on('message',raw=>{if(JSON.parse(raw).type==='connected')r();}));socket.send(JSON.stringify({type:'hello',ticket}));await ready;}

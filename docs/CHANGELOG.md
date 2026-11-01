@@ -185,3 +185,11 @@
 - Copied v022 byte-for-byte, then inserted one sentence group in section 6 only. Prefix/suffix byte comparisons passed; all unaffected bytes are identical.
 - Previous SHA-256: f9face866b475b91d21abb2865e9427676cf6915384a4731b779ad098e0bc986.
 - New SHA-256: 5076e50f10a9e66fa7252f001e41ad1939c259e09fb1c44dc25acef5034c2a1d. Previous snapshot rechecked unchanged; active index/current guide links updated.
+
+
+## v024 - 2026-10-31: Windows then macOS acceptance gate
+
+- User directs Windows tests, then macOS tests/fixes before the next slice. Linux validation can wait. E004 scope is unchanged.
+- Copied v023 byte-for-byte; inserted one paragraph in section 9 only. Unaffected prefix/suffix bytes verified identical.
+- Previous SHA-256: 5076e50f10a9e66fa7252f001e41ad1939c259e09fb1c44dc25acef5034c2a1d.
+- New SHA-256: 3643ae1a89b99d7706f319c5c200e148871e90c925740107ce47d6bc16fc7f23. Active guide/index links updated; v023 unchanged.

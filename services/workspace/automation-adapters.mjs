@@ -1,0 +1,9 @@
+// Registered domain data adapters. They supply typed resources, not app UI.
+export const domainResources={
+ fieldnote:[{match:n=>n.action==='document.save',binding:'$savedDesign',label:'Saved artwork · image, note and revision',spec:{type:'design'},read:true,write:false,events:[{id:'resource.changed',label:'When I save a revision'}]},
+ {match:n=>n.bind==='feedback.items',binding:'$feedback',label:'Received review feedback',spec:{type:'review'},read:true,write:true,events:[]}],
+ parcel:[{match:n=>n.bind==='asset.image',binding:'$publishedDesign',label:'Published artwork · image, note and revision',spec:{type:'design'},read:true,write:true,events:[]},
+ {match:n=>n.bind==='review.items',binding:'$review',label:'Review status and feedback',spec:{type:'review'},read:true,write:false,events:[{id:'resource.changed',label:'When review feedback changes'}]}]
+};
+export function readDomain(studio,binding){const s=studio.state();if(binding==='$savedDesign')return structuredClone(s.saved);if(binding==='$publishedDesign')return{...s.asset,revision:s.asset.sourceRevision};if(binding==='$review')return{assetId:s.asset.id,status:s.review.status,revision:s.review.revision,items:s.review.items.map(i=>i.text)};if(binding==='$feedback')return structuredClone(s.feedback);throw new Error('Unknown registered resource.');}
+export function writeDomain(studio,appId,binding,value){if(binding==='$publishedDesign'){if(typeof value?.image!=='string'||!/^data:image\/(png|svg\+xml);base64,[a-z\d+/=]+$/i.test(value.image)||value.image.length>1500000||typeof value.note!=='string'||value.note.length>2000||!Number.isInteger(value.revision))throw new Error('Invalid saved-artwork result.');return studio.publishRead({appId},value);}if(binding==='$feedback')return studio.cacheFeedback({appId},value);throw new Error('Registered resource is not writable.');}

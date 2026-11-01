@@ -21,7 +21,7 @@ export class StudioStore{
   // Validate PNG signature and IHDR dimensions, not only a user-controlled data URL prefix.
   const bytes=Buffer.from(input.image.split(',')[1],'base64');if(bytes.length<33||bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a'||bytes.toString('ascii',12,16)!=='IHDR'||bytes.readUInt32BE(16)!==640||bytes.readUInt32BE(20)!==420)throw new Error('Expected a 640 x 420 PNG export.');
   s.draft=input.draft;s.saved={id:'design-moon',revision:s.saved.revision+1,image:input.image,note:input.draft.note,history:[`Revision ${s.saved.revision+1} · ${input.draft.note.slice(0,70)}`,...s.saved.history].slice(0,8)};
-  if(Object.keys(s.operations).length>=50)delete s.operations[Object.keys(s.operations)[0]];s.operations[input.operationId]={input:fingerprint};this.write(s);return s.saved;
+  if(Object.keys(s.operations).length>=50)delete s.operations[Object.keys(s.operations)[0]];s.operations[input.operationId]={input:fingerprint};this.write(s);this.root.automations?.dataChanged(session.appId);return s.saved;
  }
  allowed(from,to,capability){return this.root.state().grants.some(g=>g.from===from&&g.to===to&&g.capability===capability);}
  grant(session,allowed){this.own(session,'review-board');if(typeof allowed!=='boolean')throw new Error('Boolean grant required.');const s=this.root.state();s.grants=s.grants.filter(g=>!(g.from===session.appId&&g.to==='scratchpad-main'&&g.capability==='design.saved.read'));if(allowed)s.grants.push({from:session.appId,to:'scratchpad-main',capability:'design.saved.read'});this.root.write(s);}
@@ -35,7 +35,7 @@ export class StudioStore{
   if(s.review.revision!==input.expectedRevision)throw new Error('Review changed in another window. Refresh before posting.');
   if(input.type==='comment'){if(!input.text.trim())throw new Error('Write feedback before posting.');if(s.review.items.length>=50)throw new Error('This demo supports 50 comments.');s.review.items.push({id:input.operationId,text:input.text.trim()});}
   else s.review.status=z.enum(reviewStatuses).parse(input.text);
-  s.review.revision++;if(Object.keys(s.review.operations).length>=100)delete s.review.operations[Object.keys(s.review.operations)[0]];s.review.operations[input.operationId]=fingerprint;this.write(s);
+  s.review.revision++;if(Object.keys(s.review.operations).length>=100)delete s.review.operations[Object.keys(s.review.operations)[0]];s.review.operations[input.operationId]=fingerprint;this.write(s);this.root.automations?.dataChanged(session.appId);
  }
  publishRead(session,saved){this.own(session,'review-board');const s=this.state();if(saved.revision<s.asset.sourceRevision)throw new Error('Source revision is older.');if(saved.revision>s.asset.sourceRevision){s.asset={...s.asset,image:saved.image,note:saved.note,sourceRevision:saved.revision,revision:s.asset.revision+1};this.write(s);}return s.asset;}
  enable(session,enabled){if(typeof enabled!=='boolean')throw new Error('Boolean enabled required.');const s=this.state();s.enabled[session.appId]=enabled;this.write(s);}

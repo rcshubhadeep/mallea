@@ -1,6 +1,6 @@
 # Dashboard and project-creation acceptance
 
-Windows reference, October 31, 2026. Original E003 evidence advances E3 under v022; the user-requested v023 local-launch follow-up is recorded below. The user reports general dashboard success but has not tested project creation. Agent-operated checks remain separate from that partial user feedback.
+Windows reference, October 31, 2026. Original E003 evidence advances E3 under v022; the v023 local-launch follow-up is recorded below. The user subsequently confirmed blank-app creation, incremental notetaker composition, scoped Surface editing and app launching. Agent-operated checks and optional platform/restart cases remain separate from that reported acceptance.
 
 ## Evidence
 
@@ -19,7 +19,7 @@ Windows reference, October 31, 2026. Original E003 evidence advances E3 under v0
 
 ### Local app launching follow-up
 
-Under plan v023, dashboard cards also have an ordinary Surface **Open app** button. Native testing opened Fieldnote and the previously generated notes project from their registered local hosts. Reopening a running Fieldnote reported that it was already running and kept one window. New project creation remains untested by the user; the user's reported dashboard success is general feedback, not acceptance of that flow or these new launch buttons.
+Under plan v023, dashboard cards also have an ordinary Surface **Open app** button. Native testing opened Fieldnote and the previously generated notes project from their registered local hosts. Reopening a running Fieldnote reported that it was already running and kept one window. The user later confirmed both launching and the blank-app creation/notetaker/scoped-edit flow; see STATUS.md for the acceptance scope.
 
 The launcher accepts only a registered app ID through the dashboard's protected native control path. Core resolves private project locations/credentials; it accepts no UI-supplied executable or command. Repeated startup requests share a short guard; live owner presence prevents duplicate running windows. Missing builds/registration report a remedy. Catalogue concepts remain previews. The shared CLI/project-creator launch helper also strips inference credentials from child environments. A one-time upgrade adds the button while preserving existing dashboard content/data; later Shape removal or rearrangement remains respected.
 

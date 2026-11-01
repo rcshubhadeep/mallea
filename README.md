@@ -8,9 +8,9 @@ Mallea is a desktop application framework for the age of agents. Apps are built 
 
 Start at the dashboard: open and inspect local apps, select the shared Meta profile, browse an illustrative app catalogue and create a project. A new project compiles to a blank native app with Shape Your App; build it incrementally. Surfaces and their data can persist or have an explicit session lifetime.
 
-**Working prototype:** a local Core and dashboard, independent native apps on one Surface/model runtime, point-of-use editing, typed data and collections, local persistence, permissioned manual data exchange, shared Meta settings and graphical blank-project compilation/launch.
+**Working prototype:** a local Core and dashboard, independent native apps on one Surface/model runtime, point-of-use editing, typed data and collections, local persistence, owner-approved Surface sharing, executable local/Muse Automations, shared Meta settings and graphical blank-project compilation/launch.
 
-**Planned:** Surface-scoped sharing and executable Automations with simple trigger/transformation/destination setup. Web product support and Observer are parked. Windows is the tested reference; Linux/macOS await actual native validation. See the [desktop demo plan](docs/DEMO_PLAN.md).
+**Validation:** Windows is the reference; macOS testing/fixes are next, and Linux validation can wait. Web product support and Observer are parked. See the [desktop demo plan](docs/DEMO_PLAN.md).
 
 ## Open Mallea again
 
@@ -68,9 +68,13 @@ Choose **Create an app**, enter a name, pick an existing parent folder, then **C
 
 In Fieldnote, edit the headline/color/note and save a revision. Right-click an element and choose **Modify this surface** for a scoped change. **Shape this app** gives app-wide editing: add Surfaces, create models or rearrange the app. Inspect the preview, approve the declared changes and install. Updates appear without reloading or rebuilding. Existing app data remains separate from presentation. The first upgrade retains a recoverable snapshot of the older workspace and local fields; the old workspace toggle is replaced by the common Surface model.
 
-In Parcel, allow saved-design access and refresh to fetch Fieldnote’s saved image/note. Post feedback in Parcel; in Fieldnote, allow review feedback and check it. These are manual, app-level grants. Automatic sync and Surface-scoped grants are planned. Closing an app changes its Core presence; the other window stays running.
+**Sharing & Automations** is available in every app. Share a Surface to make its resources available for access requests. The app owning a resource must approve each requesting app/Surface read, write or supported data action. Revocation blocks later operations and retains already copied data. The old receiver-side app-level access switch is replaced by this owner-approved flow. Apps exchange data, not running interfaces.
 
-Try “Make this list's text larger, keeping its layout and bindings” in scoped Shape. In global Shape, try “Add an independent Follow-ups Surface with an editable notes field” or create an input, Add button and saved-item list across two Surfaces. Persistent Surfaces/data survive restart. Explicit temporary Surfaces expire after the app closes with a short reconnect grace; removing a Surface retains its model data. Right-click export offers text/JSON and saved PNG data through a native save picker. Set Automation is visibly unavailable until its execution flow is implemented.
+Try “Make this list's text larger, keeping its layout and bindings” in scoped Shape. In global Shape, add an independent notes Surface or compose an input, button and collection. Persistent Surfaces/data survive restart; temporary Surfaces expire after a short reconnect grace. Removing a Surface retains its model data. Right-click export offers text/JSON or saved PNG through a native save picker.
+
+Right-click an input or explicitly observable output and choose **Set Automation**: select an English trigger, choose input/processor, then select a compatible destination and approve activation. Copy and email extraction run locally; Muse receives only the selected text and transformation instruction. Typing waits for a brief pause. The manager shows outcomes and offers Run now and Pause/resume. For another app’s destination, share it there, request write access from the wizard, then approve in the owning app. Source reads from another app need their own approval. Nothing executes before activation.
+
+For the artwork example, configure Fieldnote’s **Save revision** trigger to copy its saved-artwork resource into Parcel’s published-artwork resource. Approve that destination in Parcel. In reverse, configure Parcel’s observable review list to copy review data into Fieldnote’s feedback resource, approved by Fieldnote. Saving/reviewing then updates the other app automatically without replacing its interface or deleting feedback. [Detailed tests and limits](docs/REHEARSAL_E004.md).
 
 ### Command-line project creation
 
@@ -95,6 +99,8 @@ The initial window has only **Shape this app**. Try adding a local notes field; 
 
 For an existing generated project, close its window, rebuild the framework frontend, then run `node scripts/sync-project.mjs <project-folder>` from this repository root. This updates framework-managed runtime/Rust files and keeps a private backup; it preserves the app manifest, identity and Core data. Rebuild from that project with its documented Windows or Linux/macOS build command, then start it. Use this only for generated projects; custom edits to framework-managed files must be reconciled with the backup. No rebuild is needed for later Surface edits.
 
+Existing generated apps need that one-time upgrade to get Sharing & Automations and the new owner protocol. If the project has no node_modules yet, run `npm.cmd install` on Windows or `npm install` on macOS/Linux before its build. Keep Core’s existing database; there is no need to recreate your notes or Surfaces. A fresh checkout on another machine does not include ignored Core data. [macOS acceptance guide](docs/MACOS_TEST.md).
+
 ### Configuration and prerequisites
 
 Use the official Tauri prerequisite guide for Windows C++ tools/WebView2, macOS Xcode tools and Linux system packages; Rust and Node are required for source builds. First builds can take time and need dependency downloads. No claim of instant cold compilation.
@@ -116,26 +122,32 @@ On a busy machine, run the suite sequentially, after native compilation finishes
 node --test --test-concurrency=1 tests/*.test.mjs
 ```
 
-Expected: 53 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
+Expected: 67 passing tests. Concurrent native compilation can exhaust the bounded extension-worker deadlines; do not weaken those limits to compensate for build load.
 
-These cover the current implementation, including dashboard/settings boundaries and project collision/failure handling; Automations remain planned. Optional model checks use isolated services, not the live database (same commands in all shells):
+These cover dashboard/settings boundaries, project collision/failure handling, owner-scoped permissions, executable Automations and two-way data sync. Optional model checks use isolated services, not the live database (same commands in all shells):
 
 ```sh
 node --env-file=.env scripts/verify-malleability.mjs
 node --env-file=.env scripts/verify-local-surface.mjs --desktop
 node --env-file=.env scripts/verify-native-foundation.mjs
 node --env-file=.env scripts/verify-live-core.mjs
+node --env-file=.env scripts/verify-automation.mjs
 # Explicit budget-consuming direct Meta compatibility check:
 node --env-file=.env scripts/verify-malleability.mjs --production
 node --env-file=.env scripts/verify-native-foundation.mjs --production
 node --env-file=.env scripts/verify-live-core.mjs --production
+node --env-file=.env scripts/verify-automation.mjs --production
 ```
 
-Each job has an initial request plus at most two repairs, a 60-second request timeout and bounded output; there is no automatic environment fallback. Expected: targeted changes, retained unrelated model/data, then PASS. The foundation check verifies legacy-host compatibility and engine restart persistence. The live-core check creates a two-Surface app using new models/operations, then performs a scoped refinement. Both use isolated data and are service checks, separate from native visual verification. Artifacts/reports stay under ignored `.mallea/`. Add the optional smoke.env argument only if configured locally.
+Each authoring job has an initial request plus at most two repairs, a 60-second request timeout and bounded output; there is no automatic environment fallback. Expected: targeted changes, retained unrelated model/data, then PASS. The foundation check verifies legacy-host compatibility and engine restart persistence. The live-core check creates a two-Surface app using new models/operations, then performs a scoped refinement. Both use isolated data and are service checks, separate from native visual verification. Artifacts/reports stay under ignored `.mallea/`. Add the optional smoke.env argument only if configured locally.
+
+Automation transforms make one bounded model request per run, without automatic repair/retry. The Automation check uses synthetic isolated Surfaces and genuine Muse output: two changed-constraint runs in development, or one run with explicit `--production`. It verifies approved owner transfer; the development check also verifies revocation. Reports stay ignored. App-scoped MCP exposes permitted resource schemas, reads/writes and a small set of declared local data actions; it does not offer arbitrary scripts or native commands.
 
 ### Troubleshooting and stopping
 
-If port 4318 is already occupied, stop its own terminal before starting Core. The older companion and Core cannot run together on this port. Do not kill unrelated Node processes. Authentication, quota, rate-limit, network and timeout failures are distinct; correct the selected configuration and retry deliberately. A failed generation leaves the installed app unchanged.
+If port 4318 is occupied, identify its listener first. If it is this project's Core, reopen the dashboard; an older companion must be stopped from its own terminal before starting Core. The companion and Core cannot run together on this port. Do not kill unrelated Node processes. Authentication, quota, rate-limit, network and timeout failures are distinct; correct the selected configuration and retry deliberately. A failed generation leaves the installed app unchanged.
+
+If Core is already running, use the dashboard reopen command instead of starting another engine. A failed duplicate start preserves the running engine's connection files. If the dashboard reports a connection error or shows empty app/catalogue lists, close that dashboard, restart the verified Core once, then reopen the dashboard. Existing app data stays in the same database.
 
 If Core was started without a visible terminal, save work and close its apps, then identify the listener before stopping it:
 
@@ -148,6 +160,6 @@ Only after confirming it is this project's Core, stop that process with `Stop-Pr
 
 Stop the companion/dev terminals with Ctrl+C and close native windows before `npm ci` or replacing dependencies, especially on Windows. After a Windows EPERM interrupted install, stop the identified project processes, complete `npm ci`, then restart. Keep one editing instance for predictable unsaved-draft behavior.
 
-Current limits include a bounded Surface vocabulary and registered operations, no general expressions/native code, no production multi-user isolation and no remote routing. Unsaved canvas drafts are not recovered after close; save revisions explicitly. The graphical creator/catalogue/dashboard remain planned. Core and the apps trust the same local OS user; this is not hostile-process isolation.
+Current limits include a bounded Surface vocabulary and registered operations, no general expressions/native code, no production multi-user isolation and no remote routing. Automations have one transformer, with no general scheduler or pipeline editor. Unsaved canvas drafts are not recovered after close; save revisions explicitly. Catalogue entries are illustrative previews. Core and the apps trust the same local OS user; this is not hostile-process isolation.
 
 [Project documentation](docs/README.md) · [Automation ideas](docs/AUTOMATION_IDEAS.md) · [Current implementation contract](docs/SURFACE_API_004.md)

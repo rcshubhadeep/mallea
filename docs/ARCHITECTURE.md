@@ -1,6 +1,6 @@
 # Desktop engine architecture: target and current gaps
 
-Governed by PROJECT_PLAN.v023.md. This guide describes implementation boundaries; it is not a completed-system claim.
+Governed by PROJECT_PLAN.v024.md. This guide describes implementation boundaries; it is not a completed-system claim.
 
 ## Runtime roles
 
@@ -9,7 +9,7 @@ Governed by PROJECT_PLAN.v023.md. This guide describes implementation boundaries
 - Core engine: local app/Surface/model registry, SQLite persistence, shared Meta inference, scoped sessions/grants, app-specific MCP facades, owner routing, subscriptions and Automation executor.
 - Dashboard: a Surface-based control app consuming actual Core metadata. It does not embed other app UIs or own their normal lifetimes.
 
-Current code to reuse: apps/desktop native shell; packages/sdk Surface schema/targeted transforms; packages/runtime renderer/builder; services/workspace Node/SQLite registry/author/gateway/owner connection; existing Fabric/review adapters. E001 now supplies native identity/manifest bootstrap, dynamic app registration, independent native Fieldnote/Parcel and a portable blank-project runtime. Artwork/review handlers remain specific registered adapters; grants remain predominantly app-level. E002 now routes ordinary app and framework UI through independent Surface/model records and the same native LiveApp renderer; SDK 0.3 paths remain only for compatibility checks/recoverable migration.
+Reused code: apps/desktop native shell; packages/sdk Surface schema/targeted transforms; packages/runtime renderer/builder; services/workspace Node/SQLite registry/author/gateway/owner connection; existing Fabric/review adapters. E001 supplies native identity/manifest bootstrap, dynamic app registration, independent native Fieldnote/Parcel and a portable blank-project runtime. Artwork/review handlers remain specific registered adapters. E002 routes ordinary app and framework UI through independent Surface/model records and the same native LiveApp renderer; SDK 0.3 paths remain only for compatibility checks/recoverable migration. E004 adds owner-approved requesting/providing Surface resource grants; engine-mode legacy app access switches cannot authorize data transfer.
 
 ## Persistent graph
 
@@ -31,7 +31,9 @@ Core can initially be launched explicitly from source. Automatic sidecar install
 
 ## Current verification boundary
 
-E002 Windows evidence includes the shared native runtime, scoped/global live editing, typed collections, session expiry and native export; user Surface-editing acceptance is in STATUS.md. E003 adds the Surface-based dashboard, actual registry cards/details, shared session Meta settings, original concept illustrations and a graphical creator reusing the portable scaffolder/Tauri compiler. Its native acceptance is tracked separately in STATUS.md. Surface-level sharing grants, automatic subscriptions and semantic Automations remain E004. Browser product support and Observer are parked.
+E002 Windows evidence includes the shared native runtime, scoped/global live editing, typed collections, session expiry and native export; user Surface-editing acceptance is in STATUS.md. E003 adds the Surface-based dashboard, actual registry cards/details, shared session Meta settings, original concept illustrations and a graphical creator reusing the portable scaffolder/Tauri compiler. E004 adds resource metadata, owner-approved Surface read/write/action grants, approved two-way data subscriptions and executable local/Muse Automations. Native evidence and pending user acceptance are separated in STATUS.md and REHEARSAL_E004.md. Browser product support and Observer are parked.
+
+Automation definitions and permissions live in Core's existing SQLite store. services/workspace/automations.mjs derives resources from the same app definitions, uses existing owner sockets for cross-app I/O, and rechecks scope before commit. automation-adapters.mjs supplies only bounded artwork/review transformations. The runtime's shared automation-adapter.tsx renders the three-step builder and manager from system-owned Surface definitions. No additional workflow engine or transport framework was introduced. Source/destination stamps, pause/revoke checks, debounce, output bounds, deduplication and copy-origin tracking constrain execution. This is one-transformer local-host composition, not an unrestricted agent executor. See SURFACE_API_004.md for the implemented contract.
 
 Dashboard app content uses the same LiveApp renderer and authoring tools. Engine-owned settings/creator/concept panels are stored as system Surfaces. Only a narrow password input is a credential primitive; the settings UI is not an opaque component. A dashboard-only native control capability protects settings/build routes and never enters app-facing records. Model jobs resolve the active configuration at job start; changing it affects subsequent jobs across apps, with no fallback. Session replacement keys are kept in Core memory; restarting restores the environment. This is a local single-user PoC boundary, not hostile-process isolation.
 

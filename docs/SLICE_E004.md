@@ -1,6 +1,6 @@
 # E004: permissioned data and Automation
 
-State: defined, not started. Milestone E4. Depends on registered native apps/Surfaces/models/events, shared authoring and engine settings. Review active plan/current baseline at entry. Do not treat prior manual app-level sharing as Surface-scoped or automatic acceptance.
+State: W1-W6 implemented with automated/agent-operated Windows evidence; user Windows and macOS acceptance/fixes pending. Milestone E4. Active plan v024 retains the scope below and adds the user-directed Windows then macOS acceptance/fix gate before E005; Linux validation may wait. Fresh baseline/results are in STATUS.md; exact tests/limits in REHEARSAL_E004.md and MACOS_TEST.md. Prior manual app-level sharing is not reused as Surface-scoped or automatic acceptance. Owner permission UI clicks and user live-artwork checks remain explicitly pending; E005 has not started.
 
 ## Work units
 

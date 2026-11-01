@@ -1,6 +1,6 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v023.md](PROJECT_PLAN.v023.md).
+Active project plan: [PROJECT_PLAN.v024.md](PROJECT_PLAN.v024.md).
 
 The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 
@@ -24,6 +24,8 @@ The October 30 desktop-engine vision supersedes the earlier browser/Observer-fir
 - [SURFACE_API_004.md](SURFACE_API_004.md): shared live app records, vocabulary, events, authoring and lifecycle.
 - [REHEARSAL_E002.md](REHEARSAL_E002.md): malleable-core checks and user Surface-modification tests.
 - [REHEARSAL_E003.md](REHEARSAL_E003.md): dashboard/settings/new-project evidence, user tests and limits.
+- [REHEARSAL_E004.md](REHEARSAL_E004.md): Automation, sharing, upgrade and two-way sync tests, evidence and limits.
+- [MACOS_TEST.md](MACOS_TEST.md): Mac setup and acceptance after Windows testing.
 - [CHANGELOG.md](CHANGELOG.md): plan decisions and preservation evidence.
 
 ## Reusable predecessor evidence

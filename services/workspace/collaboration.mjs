@@ -14,6 +14,7 @@ import{EngineApps}from'./engine-apps.mjs';
 import{LiveApps}from'./live-apps.mjs';
 import{ModelSettings}from'./model-settings.mjs';
 import{Dashboard}from'./dashboard.mjs';
+import{Automations}from'./automations.mjs';
 
 export async function createCollaborationServer(options={}){
   const store=options.store??new CollaborationStore(options.database??':memory:');
@@ -24,7 +25,8 @@ export async function createCollaborationServer(options={}){
   const live=engine&&studio?new LiveApps(store,studio,engine,registry,{...options.author,config:()=>models.config()}):null;
   const dashboard=live?new Dashboard({engine,live,registry,models,home:options.home}):null;
   store.dashboard=dashboard;
-  registry.onPresence=id=>{if(live&&!live.closed&&engine?.has(id))live.presence(id);};
+  const automations=live?new Automations({root:store,live,registry,engine,models,infer:options.author?.infer}):null;
+  registry.onPresence=id=>{if(live&&!live.closed&&engine?.has(id)){live.presence(id);automations?.presence(id);}};
   const gateway=createGateway(registry,studio?studioCapabilities:[]),token=randomUUID(),authors=new Map(),previews=new Map(),frames=new Map();
   const origins=['http://127.0.0.1:5173','http://127.0.0.1:5174','http://tauri.localhost','https://tauri.localhost','tauri://localhost'];
   if(options.artifact){const packages=store.packages('board-main');if(!packages.active()){packages.saveDraft(randomUUID(),options.artifact,null,'Explicit fixture');const row=store.db.prepare('SELECT id FROM app_drafts WHERE app_id=? ORDER BY rowid DESC LIMIT 1').get('board-main');await packages.install(row.id);}}
@@ -50,7 +52,8 @@ export async function createCollaborationServer(options={}){
       bindings:app.tasks.map(t=>({taskId:t.id,...t.evidence})),instructions:'Data stays in the host. The host resolves observation bindings through the authorized read_observation MCP capability. Never embed source data in static UI text.'};
   }
   function author(session){if(!authors.has(session.appId))authors.set(session.appId,createAuthor(store.packages(session.appId),{...options.author,context:()=>authorContext(session)}));return authors.get(session.appId);}
-  const server=createServer(async(req,res)=>{
+  const server=options.httpServer??createServer();
+  server.on('request',async(req,res)=>{
     res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
     const send=(status,value)=>{res.writeHead(status);res.end(JSON.stringify(value));};
     try{
@@ -87,6 +90,19 @@ export async function createCollaborationServer(options={}){
       }
       let session;try{session=registry.require(req.headers['x-mallea-session']);}catch(error){return send(403,{error:error.message});}
       const app=store.app(session.appId),packages=store.packages(app.id);
+      if(automations&&url.pathname.startsWith('/api/automation/')){
+        const route=url.pathname.slice('/api/automation/'.length);
+        if(route==='state'&&req.method==='GET')return send(200,automations.state(session));
+        const input=await body(req);
+        if(route==='share')return send(200,automations.share(session,input));
+        if(route==='request')return send(200,automations.request(session,input));
+        if(route==='decide')return send(200,automations.decide(session,input));
+        if(route==='install')return send(200,automations.install(session,input));
+        if(route==='toggle')return send(200,automations.toggle(session,input));
+        if(route==='owner')return send(200,automations.owner(session,input));
+        if(route==='run'){const a=automations.rows().find(a=>a.id===input.id&&a.ownerAppId===session.appId);if(!a)throw new Error('Automation is not owned by this app.');void automations.run(a.id);return send(200,{queued:true});}
+        return send(404,{error:'Unknown Automation action.'});
+      }
       if(live&&url.pathname.startsWith('/api/live/')){
         if(req.method==='GET'&&url.pathname==='/api/live/state')return send(200,live.info(session));
         if(req.method==='POST'&&url.pathname==='/api/live/event')return send(200,live.event(session,await body(req)));
@@ -99,6 +115,9 @@ export async function createCollaborationServer(options={}){
       }
       const scopedMcp=url.pathname.match(/^\/api\/apps\/([a-z][a-z0-9-]{2,39})\/mcp$/);
       if(engine&&scopedMcp&&req.method==='POST'){engine.manifest(scopedMcp[1]);return await gateway.http(session,req,res,await body(req),scopedMcp[1]);}
+      if(automations&&url.pathname==='/mcp')throw new Error('Use the app-scoped MCP endpoint.');
+      if(automations&&['/api/studio/access','/api/studio/feedback/access'].includes(url.pathname))throw new Error('Use Surface sharing and owner-approved access.');
+      if(automations&&req.method==='POST'&&['/api/studio/refresh','/api/studio/feedback/refresh'].includes(url.pathname))return send(200,await automations.manual(session,await body(req),url.pathname.endsWith('/feedback/refresh')?'feedback.refresh':'asset.refresh'));
       if(url.pathname.startsWith('/api/studio/')){
         if(!studio||!store.definition(app.id).contract)throw new Error('Start the service with --studio and open the matching app.');
         if(url.pathname==='/api/studio/state'&&req.method==='GET')return send(200,{...studio.info(session),readAllowed:studio.allowed(app.id,'scratchpad-main','design.saved.read'),feedbackAllowed:studio.allowed(app.id,'review-main','asset.feedback.read'),sourceOnline:registry.online('scratchpad-main'),reviewOnline:registry.online('review-main')});
@@ -175,7 +194,8 @@ export async function createCollaborationServer(options={}){
   server.workspaceStore=store;server.workspaceRegistry=registry;server.workspaceGateway=gateway;
   server.engineApps=engine;
   server.liveApps=live;
+  server.automations=automations;
   server.dashboard=dashboard;server.modelSettings=models;
-  server.on('close',()=>{dashboard?.close();live?.close();for(const a of authors.values())a.close();registry.close();ws.close();store.close();});
+  server.on('close',()=>{automations?.close();dashboard?.close();live?.close();for(const a of authors.values())a.close();registry.close();ws.close();store.close();});
   server.requestTimeout=5000;return server;
 }

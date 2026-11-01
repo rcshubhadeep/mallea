@@ -1,6 +1,6 @@
 # Point-of-use authoring and Automation
 
-Accepted interaction model, October 30, 2026. Follow PROJECT_PLAN.v023.md. This specifies planned behavior; implementation is not claimed. Use the same shared builder/model tools throughout.
+Accepted interaction model, October 30, 2026. Follow PROJECT_PLAN.v024.md. Scoped/global Shape and the contextual three-step Automation flow are implemented; evidence and bounded limits are in REHEARSAL_E004.md and STATUS.md. Use the same shared builder/model tools throughout.
 
 The framework supplies this menu and these panels through system-owned Surface UI, once for all apps. Apps declare element ownership, data and event capabilities; they do not implement bespoke agent menus. Invocation/selection context is transient UI state, separate from persistent Surface definitions.
 
@@ -66,6 +66,6 @@ When you leave Notes, find email addresses on this machine. Add them to the appr
 
 Persist owner/source, event preset and runtime mapping, permitted inputs, transformer, output schema, destination binding, replace/append policy, enabled state and latest outcome. Keep definitions separate from data values. Run permissions and source/destination existence are checked again at execution; pause/revocation/deletion blocks future runs. Reject stale model output rather than overwriting a newer revision.
 
-## Required tests when implemented
+## Required acceptance tests
 
 Right-click two elements in different Surfaces and verify the correct owner context; global Shape still sees the permitted app inventory. A scoped proposal targeting another Surface is rejected. Static non-trigger elements disable Set Automation; declared observable read-only data can enable it. Trigger labels contain no internal event code. A button can trigger a read of another permitted field. Destination choices respect type and write grants across apps. No transformation/output runs until reviewed and enabled. Persistent definitions survive restart; declared session Surfaces follow their lifecycle. Record actual model, native and user evidence separately.

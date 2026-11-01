@@ -1,7 +1,7 @@
 const text=(id,text)=>({id,type:'text',text}),bound=(id,bind)=>({id,type:'text',bind}),button=(id,label,action,props={})=>({id,type:'button',label,action,...props});
 const surface=(id,title,children)=>({id,title,ownership:'system',ui:{id:id+'-root',type:'stack',children}});
 export const systemSurfaces={
- recovery:surface('system-recovery','Mallea controls',[{id:'recovery-row',type:'row',children:[bound('save-outcome','system.saveStatus'),button('open-shape','✧ Shape this app','shape.open')]}]),
+ recovery:surface('system-recovery','Mallea controls',[{id:'recovery-row',type:'row',children:[bound('save-outcome','system.saveStatus'),button('open-automations','Sharing & Automations','automations.open'),button('open-shape','✧ Shape this app','shape.open')]}]),
  notice:surface('system-notice','Outcome',[bound('notice-message','system.notice')]),
  builder:surface('system-builder','Shape your app',[
   {id:'builder-header',type:'row',children:[{...text('builder-title','Shape your app'),style:{fontSize:26,fontWeight:'bold'}},button('close-builder','Close','shape.close',{disabledBind:'system.running'})]},

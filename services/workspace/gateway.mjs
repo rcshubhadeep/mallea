@@ -11,7 +11,15 @@ export function createGateway(registry,capabilities=[]){
     if(targetId){
       const target=registry.store.app(targetId);if(target.workspaceId!==session.workspaceId)throw new Error('App is outside this workspace.');
       mcp.registerTool('describe_app',{description:'Inspect this app declarations without reading its data.',inputSchema:z.object({}).strict()},async()=>({content:[{type:'text',text:JSON.stringify(registry.store.describe(targetId))}]}));
-      for(const capability of capabilities.filter(c=>c.ownerKind===target.kind))mcp.registerTool(capability.name,{description:capability.description,inputSchema:capability.schema},async args=>{
+      const automation=registry.store.automations;
+      if(automation){const resource=z.object({surfaceId:z.string().max(60),elementId:z.string().max(60),binding:z.string().max(150)}).strict();
+       const result=async fn=>{try{return{content:[{type:'text',text:JSON.stringify(await fn())}]};}catch(error){return{isError:true,content:[{type:'text',text:error.message}]};}};
+       mcp.registerTool('list_surface_resources',{description:'Discover this app shared resource schemas, not values.',inputSchema:z.object({}).strict()},()=>result(()=>automation.catalogue(session).filter(r=>r.appId===targetId)));
+       mcp.registerTool('read_surface_resource',{description:'Read an approved Surface resource through its owner.',inputSchema:z.object({requesterSurfaceId:z.string().max(60),resource}).strict()},input=>result(()=>automation.read(session.appId,input.requesterSurfaceId,{appId:targetId,...input.resource})));
+       mcp.registerTool('invoke_surface_action',{description:'Execute one explicitly approved local data action; returns no private model data.',inputSchema:z.object({requesterSurfaceId:z.string().max(60),resource}).strict()},input=>result(()=>automation.invoke(session.appId,input.requesterSurfaceId,{appId:targetId,...input.resource})));
+       mcp.registerTool('write_surface_resource',{description:'Write an approved typed resource with a current stamp.',inputSchema:z.object({requesterSurfaceId:z.string().max(60),resource,value:z.unknown(),expected:z.string().length(64)}).strict()},input=>result(()=>automation.write(session.appId,input.requesterSurfaceId,{appId:targetId,...input.resource},input.value,input.expected)));
+      }
+      for(const capability of capabilities.filter(c=>c.ownerKind===target.kind&&!registry.store.automations))mcp.registerTool(capability.name,{description:capability.description,inputSchema:capability.schema},async args=>{
         try{return {content:[{type:'text',text:JSON.stringify(await registry.readRegistered(session,targetId,capability.name,args))}]};}catch(error){return {isError:true,content:[{type:'text',text:error.message}]};}
       });return mcp;
     }
@@ -31,7 +39,7 @@ export function createGateway(registry,capabilities=[]){
     try{await mcp.connect(b);await client.connect(a);return await action(client);}finally{await client.close();await mcp.close();}
   }
   return {
-    discover:session=>withClient(session,async client=>({tools:(await client.listTools()).tools,instances:registry.list(session)})),
+    discover:session=>registry.store.automations?Promise.resolve({tools:[],instances:registry.list(session)}):withClient(session,async client=>({tools:(await client.listTools()).tools,instances:registry.list(session)})),
     read:(session,targetAppId,observationId)=>withClient(session,async client=>{
       const result=await client.callTool({name:'read_observation',arguments:{targetAppId,observationId}});
       if(result.isError)throw new Error(result.content[0].text);return JSON.parse(result.content[0].text);

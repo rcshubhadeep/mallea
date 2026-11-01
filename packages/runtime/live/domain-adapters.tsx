@@ -8,14 +8,14 @@ export function useDomainAdapter(info:any,refresh:()=>Promise<void>,emitPrimitiv
   const calls:Record<string,()=>Promise<unknown>>={
    'document.save':async()=>{if(!canvas.current||!draft)throw new Error('The canvas is not ready.');return request('studio/save',{draft,image:canvas.current.exportPng(),expectedRevision:info.data.saved.revision,operationId:crypto.randomUUID()});},
    'asset.access':()=>request('studio/access',{allowed:!info.readAllowed}),
-   'asset.refresh':()=>request('studio/refresh',{}),
+   'asset.refresh':()=>request('studio/refresh',{surfaceId:args.surfaceId,elementId:args.elementId}),
    'feedback.access':()=>request('studio/feedback/access',{allowed:!info.feedbackAllowed}),
-   'feedback.refresh':()=>request('studio/feedback/refresh',{}),
+   'feedback.refresh':()=>request('studio/feedback/refresh',{surfaceId:args.surfaceId,elementId:args.elementId}),
    'review.status':()=>request('studio/review',{type:'status',text:args.status,expectedRevision:info.data.review.revision,operationId:crypto.randomUUID()}),
    'review.comment':async()=>{await request('studio/review',{type:'comment',text:reviewText,expectedRevision:info.data.review.revision,operationId:crypto.randomUUID()});setReviewText('');},
   };if(!calls[name])throw new Error('Unknown registered adapter action.');await calls[name]();await refresh();
  }finally{setBusy(false);}}
- const data=info?{...info.data,...(draft?{draft:{...draft,alignment:draft.x<100?'Left':draft.x<240?'Center':'Right'}}:{}),reviewDraft:{text:reviewText},runtime:{busy,cannotSave:busy||!ready,cannotRead:busy||(scratch?!info.feedbackAllowed:!info.readAllowed),saveState:draft&&JSON.stringify(draft)!==JSON.stringify(info.data.draft)?'Unsaved changes':`Revision ${info.data.saved?.revision??1}`,connection:(scratch?info.reviewOnline:info.sourceOnline)?'Connected to the source app':'Source app is offline',designAccess:info.readAllowed?'Saved-design access allowed':'Saved-design access not allowed',feedbackAccess:info.feedbackAllowed?'Review feedback access allowed':'Review feedback access not allowed'}}:{};
+ const data=info?{...info.data,...(draft?{draft:{...draft,alignment:draft.x<100?'Left':draft.x<240?'Center':'Right'}}:{}),reviewDraft:{text:reviewText},runtime:{busy,cannotSave:busy||!ready,cannotRead:busy,saveState:draft&&JSON.stringify(draft)!==JSON.stringify(info.data.draft)?'Unsaved changes':`Revision ${info.data.saved?.revision??1}`,connection:(scratch?info.reviewOnline:info.sourceOnline)?'Connected to the source app':'Source app is offline',designAccess:'Access uses owner-approved Surface grants',feedbackAccess:'Manage access in Sharing & Automations'}}:{};
  const components={'design-canvas':scratch&&draft?<DesignCanvas draft={draft} onChange={value=>{if(value.text!==draft.text)void emitPrimitive('design-canvas','text.changed',{text:value.text});if(value.x!==draft.x||value.y!==draft.y)void emitPrimitive('design-canvas','position.changed',{x:value.x,y:value.y});}} onReady={h=>{canvas.current=h;setReady(!!h);}}/>:null};
  function primitive(component:string,event:string,value:unknown){if(component!=='design-canvas'||!['text.changed','position.changed'].includes(event))throw new Error('Unregistered adapter event.');setDraft(current=>current?draftSchema.parse({...current,...value as object}):current);}
  return{data,components,invoke,local,primitive};

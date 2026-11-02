@@ -60,3 +60,34 @@ export async function chat(config, messages, options = {}, signal) {
   }
   return { choice: result.choices[0], usage };
 }
+
+// Image generation is a separately enabled production capability: PROD_IMAGE_MODEL must be set; there is no dev fallback.
+export function imageConfig() {
+  const model = process.env.PROD_IMAGE_MODEL?.trim();
+  if (!model) return null;
+  const { endpoint, key } = inferenceConfig(true);
+  endpoint.pathname = endpoint.pathname.replace(/\/chat\/completions$/, '/responses');
+  return { endpoint, key, model };
+}
+
+const imageTypes = [['image/webp', b => b.subarray(0, 4).toString() === 'RIFF' && b.subarray(8, 12).toString() === 'WEBP'], ['image/png', b => b[0] === 0x89 && b.subarray(1, 4).toString() === 'PNG'], ['image/jpeg', b => b[0] === 0xff && b[1] === 0xd8]];
+export async function generateImage(config, prompt, signal) {
+  let response;
+  const requestSignal = signal ? AbortSignal.any([signal, AbortSignal.timeout(120_000)]) : AbortSignal.timeout(120_000);
+  try {
+    response = await fetch(config.endpoint, { method: 'POST', redirect: 'error', signal: requestSignal, headers: { Authorization: `Bearer ${config.key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: config.model, input: prompt }) });
+  } catch { throw new InferenceError(signal?.aborted ? 'cancelled' : requestSignal.aborted ? 'timeout' : 'network'); }
+  if (!response.ok) { const status = response.status; await response.body?.cancel(); throw new InferenceError([401, 403].includes(status) ? 'authentication' : status === 402 ? 'quota' : status === 429 ? 'rate_limit' : status >= 500 ? 'unavailable' : 'request', status); }
+  let result;
+  try { result = await response.json(); } catch { throw new InferenceError('response'); }
+  const encoded = result.output?.find(o => o.type === 'image_generation_call' && typeof o.result === 'string')?.result;
+  const bytes = encoded ? Buffer.from(encoded, 'base64') : null;
+  const type = bytes && bytes.length <= 4_000_000 ? imageTypes.find(([, test]) => test(bytes))?.[0] : null;
+  if (!type) throw new InferenceError('response');
+  return { type, bytes, usage: { total_tokens: result.usage?.total_tokens } };
+}
+
+// One house style keeps generated icons consistent across apps.
+export function iconPrompt(name, purpose, colour) {
+  return `A polished desktop app icon for an app named "${name}": ${purpose}. Full-bleed square artwork: a soft ${colour} gradient fills the entire canvas edge to edge, with one simple, bold symbolic glyph centred on it with generous padding and gentle depth. Do not draw a rounded tile, frame, outer margin, drop shadow around the canvas or border; the platform applies its own mask. Modern flat vector style, clean edges, harmonious muted palette, high contrast glyph. No text, no letters, no words, no photograph, no busy detail.`;
+}

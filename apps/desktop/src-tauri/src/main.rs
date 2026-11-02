@@ -53,6 +53,28 @@ async fn choose_project_folder(app: tauri::AppHandle, host: tauri::State<'_, Nat
     }).await.map_err(|_|"Folder selection interrupted.".to_string())?
 }
 
+// The runtime supplies the app's own icon as a PNG: window/taskbar icon everywhere, Dock icon on macOS (unbundled binaries otherwise show a generic one).
+#[tauri::command]
+fn set_app_icon(app: tauri::AppHandle, window: tauri::WebviewWindow, png: String) -> Result<(),String> {
+    let bytes = base64::engine::general_purpose::STANDARD.decode(png).map_err(|_| "Invalid icon.".to_string())?;
+    if bytes.len() > 2_000_000 || !bytes.starts_with(b"\x89PNG") { return Err("Invalid icon.".into()); }
+    let image = tauri::image::Image::from_bytes(&bytes).map_err(|_| "Invalid icon.".to_string())?;
+    window.set_icon(image).map_err(|_| "Could not set the window icon.".to_string())?;
+    #[cfg(target_os = "macos")]
+    app.run_on_main_thread(move || {
+        use objc2::{AllocAnyThread, MainThreadMarker};
+        use objc2_app_kit::{NSApplication, NSImage};
+        use objc2_foundation::NSData;
+        if let Some(mtm) = MainThreadMarker::new() {
+            let data = NSData::with_bytes(&bytes);
+            if let Some(icon) = NSImage::initWithData(NSImage::alloc(), &data) { unsafe { NSApplication::sharedApplication(mtm).setApplicationIconImage(Some(&icon)) }; }
+        }
+    }).map_err(|_| "Could not set the Dock icon.".to_string())?;
+    #[cfg(not(target_os = "macos"))]
+    let _ = app;
+    Ok(())
+}
+
 // Only an explicit user-selected save destination can leave the Surface runtime.
 #[tauri::command]
 async fn save_export(app: tauri::AppHandle, format: String, data: String) -> Result<bool,String> {
@@ -75,7 +97,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .manage(NativeHost { config: read_host_config(), client })
-        .invoke_handler(tauri::generate_handler![native_context,native_connect,save_export,core_dashboard,choose_project_folder])
+        .invoke_handler(tauri::generate_handler![native_context,native_connect,save_export,core_dashboard,choose_project_folder,set_app_icon])
         .run(tauri::generate_context!())
         .expect("Unable to start Mallea desktop");
 }

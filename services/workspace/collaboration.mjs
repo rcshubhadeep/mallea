@@ -5,6 +5,7 @@ import { CollaborationStore } from './collaboration-store.mjs';
 import { Registry } from './registry.mjs';
 import { createGateway } from './gateway.mjs';
 import { createAuthor } from './author.mjs';
+import { AppIcons } from './app-icons.mjs';
 import { describeApp, appDefinition } from '../../apps/definitions/index.mjs';
 import { runReview } from '../../packages/runner/index.mjs';
 import { compilePanel } from '../../packages/sdk/document.mjs';
@@ -22,6 +23,7 @@ export async function createCollaborationServer(options={}){
   const engine=options.engine?new EngineApps(store):null;
   registry.studio=studio;
   const models=engine?new ModelSettings(options.author??{}):null;
+  store.icons=engine?new AppIcons({home:options.home,...options.icons}):null;
   const live=engine&&studio?new LiveApps(store,studio,engine,registry,{...options.author,config:()=>models.config()},{devMode:options.devMode===true}):null;
   const dashboard=live?new Dashboard({engine,live,registry,models,home:options.home}):null;
   store.dashboard=dashboard;
@@ -110,6 +112,7 @@ export async function createCollaborationServer(options={}){
         const job=url.pathname.match(/^\/api\/live\/jobs\/([a-z0-9-]+)(\/cancel)?$/);if(job)return send(200,live.job(session,job[1],!!job[2]));
         if(req.method==='GET'&&url.pathname==='/api/live/draft')return send(200,live.draft(session,url.searchParams.get('id')).artifact);
         if(req.method==='POST'&&url.pathname==='/api/live/install'){const input=await body(req);return send(200,live.install(session,input.draftId,input.approved));}
+        if(req.method==='POST'&&url.pathname==='/api/live/undo')return send(200,live.undo(session));
         if(req.method==='POST'&&url.pathname==='/api/live/export'){const input=await body(req);return send(200,live.export(session,input.surfaceId,input.format));}
         return send(404,{error:'Unknown live app action.'});
       }

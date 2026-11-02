@@ -73,3 +73,32 @@ test('typed item operations resolve declared bindings, reject stale/forged event
  const extended=draft(s,session.appId,{changes:[{op:'extendModel',id:'notes',fields:{urgent:{type:'boolean',initial:false}}}]});event('entry','draft','change',{value:'Still retained'});s.liveApps.install(session,extended,true);assert.equal(s.liveApps.read(session.appId).models.notes.values.urgent,false);assert.equal(s.liveApps.read(session.appId).models.notes.values.draft,'Still retained');assert.throws(()=>draft(s,session.appId,{changes:[{op:'extendModel',id:'notes',fields:{draft:{type:'number',initial:0}}}]}),/existing field/);
  }finally{await close(s);}});
 test('presentation removal keeps model data; session definitions expire on restart; migration is recoverable',async()=>{const dir=await mkdtemp(join(tmpdir(),'mallea-live-')),database=join(dir,'workspace.sqlite');let s=await fixture({database});try{const id='plain-study',session={appId:id,workspaceId:'local-demo'};s.liveApps.install(session,draft(s,id,{changes:[notes,entry,list]}),true);s.liveApps.event(session,{surfaceId:'entry',elementId:'draft',event:'change',value:'Retain this',expectedDataRevision:0});s.liveApps.install(session,draft(s,id,{changes:[{op:'removeSurface',id:'list'},{op:'setSurface',id:'entry',props:{lifetime:'session'}}]}),true);await close(s);s=await fixture({database});const app=s.liveApps.read(id);assert.equal(app.surfaces.length,0);assert.equal(app.models.notes.values.draft,'Retain this');assert(s.workspaceStore.db.prepare('SELECT value FROM live_backups WHERE app_id=?').get(id));}finally{await close(s);await rm(dir,{recursive:true,force:true});}});
+test('app theme, Surface chrome and style tokens are validated registry data; scoped Shape cannot restyle the app',async()=>{
+ const s=await fixture(),id='plain-study',session={appId:id,workspaceId:'local-demo'},contract=s.liveApps.contract(id);
+ try{const themed=s.liveApps.info(session).model.theme;assert.deepEqual(Object.keys(themed).sort(),['accent','density','mode']);assert.equal(s.liveApps.read(id).theme,undefined);
+  s.liveApps.install(session,draft(s,id,{changes:[notes,entry]}),true);
+  const tokens={op:'editSurface',id:'entry',changes:[{op:'set',id:'add',props:{appearance:'ghost',style:{color:'accent',fontSize:'lg',padding:'md',borderRadius:'full'}}}]};
+  const next=applyLiveChanges(s.liveApps.read(id),{changes:[tokens,{op:'setApp',theme:{accent:'teal',mode:'dark'}},{op:'setSurface',id:'entry',props:{chrome:'plain'}}]},contract).artifact;
+  assert.deepEqual(next.theme,{accent:'teal',mode:'dark',density:'comfortable'});assert.equal(next.surfaces[0].chrome,'plain');assert.equal(next.layout,s.liveApps.read(id).layout);
+  for(const bad of [{op:'setApp',theme:{accent:'neon'}},{op:'setApp'},{op:'editSurface',id:'entry',changes:[{op:'set',id:'add',props:{style:{color:'brand'}}}]},{op:'editSurface',id:'entry',changes:[{op:'set',id:'add',props:{appearance:'shiny'}}]}])assert.throws(()=>applyLiveChanges(s.liveApps.read(id),{changes:[bad]},contract));
+  assert.throws(()=>applyLiveChanges(s.liveApps.read(id),{changes:[{op:'setApp',theme:{mode:'dark'}}]},contract,{scope:'entry'}),/scope/);
+  assert(validateLive({...next,surfaces:[{...next.surfaces[0],ui:{...next.surfaces[0].ui,style:{background:'#123abc',gap:12}}}]},contract));
+ }finally{await close(s);}
+});
+test('undo restores previous Surfaces, layout and theme while keeping data; history is bounded and stale drafts stay rejected',async()=>{
+ const s=await fixture(),id='plain-study',session={appId:id,workspaceId:'local-demo'};
+ const event=(surfaceId,elementId,event,extra={})=>s.liveApps.event(session,{surfaceId,elementId,event,expectedDataRevision:s.liveApps.info(session).dataRevision,...extra});
+ try{assert.equal(s.liveApps.info(session).undo,false);assert.throws(()=>s.liveApps.undo(session),/nothing|no installed/i);
+  s.liveApps.install(session,draft(s,id,{changes:[notes,entry]}),true);event('entry','draft','change',{value:'Keep me'});event('entry','add','click');
+  const before=s.liveApps.read(id),pending=draft(s,id,{changes:[{op:'setApp',layout:'rows',theme:{accent:'rose'}}]});
+  s.liveApps.install(session,draft(s,id,{changes:[list,{op:'setApp',layout:'rows',theme:{accent:'rose',mode:'dark'}}]}),true);
+  const changed=s.liveApps.read(id);assert.equal(changed.surfaces.length,2);assert.equal(changed.theme.accent,'rose');assert.equal(s.liveApps.info(session).undo,true);
+  const restored=s.liveApps.undo(session).model;
+  assert.deepEqual(restored.surfaces,before.surfaces);assert.equal(restored.layout,before.layout);assert.notEqual(restored.theme.accent==='rose'&&restored.theme.mode==='dark',true);assert(restored.revision>changed.revision);
+  assert.deepEqual(s.liveApps.read(id).models.notes.values.items,[{text:'Keep me'}]);
+  assert.throws(()=>s.liveApps.install(session,pending,true),/stale/);
+  assert.equal(s.liveApps.info(session).undo,true);s.liveApps.undo(session);assert.equal(s.liveApps.read(id).surfaces.length,0);assert.deepEqual(s.liveApps.read(id).models.notes.values.items,[{text:'Keep me'}]);assert.equal(s.liveApps.info(session).undo,false);
+  for(let i=0;i<25;i++)s.liveApps.install(session,draft(s,id,{changes:[{op:'setApp',layout:i%2?'rows':'columns'}]}),true);
+  assert.equal(s.workspaceStore.db.prepare('SELECT COUNT(*) AS n FROM live_revisions WHERE app_id=?').get(id).n,20);
+ }finally{await close(s);}
+});

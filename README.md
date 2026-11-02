@@ -67,6 +67,8 @@ Open `.env` in a text editor and fill in these three settings for a Meta model s
 
 You need access to that model through your provider; inference may incur usage charges. Keep `.env` private. It is ignored by Git, and no model key belongs in a generated app project. The optional `PROD_` settings can remain empty for this setup.
 
+**Optional: generated app icons.** Each new app can get its own icon from Meta Muse Image. To turn this on, fill `PROD_BASE_URL` and `PROD_LLM_KEY` for the Meta API and set `PROD_IMAGE_MODEL` to an image model such as `muse-image-1.0`. Each icon is one paid image request, made when the app is created. Without these settings, new apps use the Mallea icon. To give an existing app an icon, run `node --env-file=.env scripts/generate-icons.mjs app <app-id>` with Core's app ID (shown in **Inspect app**).
+
 ### 4. Install dependencies and build
 
 Close any existing Mallea app windows and stop Core before installing dependencies. Run the commands for your platform in order.
@@ -107,7 +109,7 @@ Wait for `Mallea Core: http://127.0.0.1:4318`. Leave this terminal open; Engine 
 node scripts/launch-app.mjs mallea-core
 ```
 
-These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the configured model profile. You can open the included Fieldnote and Parcel apps using **Open app** on their cards.
+These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the configured model profile. You can open the included Fieldnote and Parcel apps using **Open app** on their cards. The **Mallea App Store** section shows planned example apps; they are previews only and cannot be installed yet.
 
 ### Subsequent launches
 
@@ -166,6 +168,12 @@ To change the list’s appearance, right-click its text and choose **Modify this
 > Make the saved notes text larger. Keep the layout, data bindings and behavior unchanged.
 
 Build, review and install the change as before. The notes should remain intact.
+
+To restyle the whole app, open **Shape this app** and ask:
+
+> Make the whole app dark with a teal accent.
+
+Every Surface, button and field changes together, because all Mallea apps share one design system with a per-app accent colour, light, dark or system mode, and density. Ask for app-wide changes like this in **Shape this app**; **Modify this surface** only changes one Surface and offers **Edit the whole app instead**. If you don't like an installed change, click **Undo last change** in the top bar. It restores the previous Surfaces, layout and theme; your saved notes stay.
 
 ### 5. Reopen your app
 

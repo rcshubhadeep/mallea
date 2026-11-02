@@ -1,10 +1,11 @@
-const entries=[
- ['lumen','Lumen','A writing desk whose notes grow into connected ideas.','#f5e8cb','#c4893c'],
- ['daylight','Daylight','A flexible planning desk for dates and available slots.','#dceefa','#588cb2'],
- ['threadboard','Threadboard','Review feedback becomes an actionable workspace.','#eadce9','#955c86'],
- ['folio','Folio','A personal collection of references and project material.','#dce8df','#467863'],
- ['relay','Relay','A workspace for explicitly permitted app-to-app data.','#dfe5f5','#536ba1'],
- ['stillroom','Stillroom','Focus sessions with disposable working Surfaces.','#e9e1f4','#8c72a7']
+import{bundledIcon}from'./app-icons.mjs';
+export const entries=[
+ ['lumen','Lumen','A writing desk whose notes grow into connected ideas.','#f5e8cb','#c4893c','Writing'],
+ ['daylight','Daylight','A flexible planning desk for dates and available slots.','#dceefa','#588cb2','Planning'],
+ ['threadboard','Threadboard','Review feedback becomes an actionable workspace.','#eadce9','#955c86','Review'],
+ ['folio','Folio','A personal collection of references and project material.','#dce8df','#467863','Collections'],
+ ['relay','Relay','A workspace for explicitly permitted app-to-app data.','#dfe5f5','#536ba1','Connections'],
+ ['stillroom','Stillroom','Focus sessions with disposable working Surfaces.','#e9e1f4','#8c72a7','Focus']
 ];
 // Original bundled, code-native illustrations: no remote assets or brand artwork.
 function cover(index,bg,ink){const motifs=[
@@ -15,4 +16,4 @@ function cover(index,bg,ink){const motifs=[
  '<path d="M75 60h90v80H75z M235 60h90v80h-90z M175 100h50 M205 90l20 10-20 10"/>',
  '<circle cx="200" cy="100" r="65"/><circle cx="200" cy="100" r="42"/><path d="M200 70v32l25 15"/>'
  ];return'data:image/svg+xml;base64,'+Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200"><rect width="400" height="200" rx="18" fill="${bg}"/><g fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${motifs[index]}</g></svg>`).toString('base64');}
-export const catalogue=entries.map(([id,name,purpose,bg,ink],i)=>({id,name,purpose,cover:cover(i,bg,ink)}));
+export const catalogue=entries.map(([id,name,purpose,bg,ink,category],i)=>({id,name,purpose,category,cover:bundledIcon('store-'+id)??cover(i,bg,ink)}));

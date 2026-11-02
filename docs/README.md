@@ -1,6 +1,6 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v024.md](PROJECT_PLAN.v024.md).
+Active project plan: [PROJECT_PLAN.v025.md](PROJECT_PLAN.v025.md).
 
 The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 

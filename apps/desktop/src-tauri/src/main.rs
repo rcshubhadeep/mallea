@@ -39,7 +39,7 @@ async fn native_connect(host: tauri::State<'_, NativeHost>) -> Result<Value,Stri
 async fn core_dashboard(host: tauri::State<'_, NativeHost>, action: String, args: Value) -> Result<Value,String> {
     let c=host.config.as_ref().filter(|c|c.app_id=="mallea-core").ok_or("Only the Core dashboard can manage engine settings and projects.")?;
     let token=c.control_token.as_ref().ok_or("Restart Core and reopen its dashboard.")?;
-    if !["state","settings","project","launch"].contains(&action.as_str()) {return Err("Unknown Core operation.".into());}
+    if !["state","settings","project","launch","delete"].contains(&action.as_str()) {return Err("Unknown Core operation.".into());}
     let response=host.client.post(format!("{}/api/engine/dashboard",c.engine_url)).header("X-Mallea-Control",token).json(&json!({"action":action,"args":args})).send().await.map_err(|_|"Core is unavailable.".to_string())?;
     let status=response.status();let value:Value=response.json().await.map_err(|_|"Invalid Core response.".to_string())?;
     if !status.is_success(){return Err(value.get("error").and_then(Value::as_str).unwrap_or("Core rejected the operation.").to_string());}Ok(value)

@@ -139,6 +139,8 @@ You do not need to reinstall dependencies or rebuild just to reopen Mallea.
 - **If Core is already running:** run only the dashboard command. Start just one Core instance.
 - **To reopen a created app:** use **Open app** on its dashboard card. If it is already running, switch to its existing window.
 
+To delete an app you created, close its windows, click **Delete app** on its dashboard card, type its name exactly and confirm **Delete app permanently**. This removes its saved Core data and registration; its project folder stays on disk. Automations in other apps that depend on it are paused. Core, Fieldnote and Parcel cannot be deleted.
+
 Closing the dashboard leaves Core and other apps running. To stop Core, save your work, close the app windows and press **Ctrl+C** in its terminal. After restarting Core, reopen the dashboard too.
 
 For developer text/JSON export options, add `--dev` to the Core command:

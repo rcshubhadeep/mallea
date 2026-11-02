@@ -193,3 +193,11 @@
 - Copied v023 byte-for-byte; inserted one paragraph in section 9 only. Unaffected prefix/suffix bytes verified identical.
 - Previous SHA-256: 5076e50f10a9e66fa7252f001e41ad1939c259e09fb1c44dc25acef5034c2a1d.
 - New SHA-256: 3643ae1a89b99d7706f319c5c200e148871e90c925740107ce47d6bc16fc7f23. Active guide/index links updated; v023 unchanged.
+
+
+## v025 - 2026-11-02: delete created apps from the dashboard
+
+- User-requested E3 lifecycle follow-up during delivery: named confirmation, closed-app deletion, Core data/grant cleanup, stale identity denial and dependent-Automation pausing; project files retained and built-ins protected.
+- Copied v024 byte-for-byte, then inserted one paragraph in section 6 only. Previous hash and all unaffected bytes verified identical.
+- Previous SHA-256: 3643ae1a89b99d7706f319c5c200e148871e90c925740107ce47d6bc16fc7f23.
+- New SHA-256: ad91394f41065fe7aba56ff36dfdbfff9dc401313ae480bfe3bdee6c678e5d25. Active documentation index updated; v024 unchanged.

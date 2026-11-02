@@ -1,10 +1,30 @@
 # Mallea
 
-**Software that takes your shape.**
+**Software that takes your shape. Powered By Meta Muse**
 
 Mallea’s vision is software that adapts to the person using it. Describe what you need, reshape an interface while you work, and let your apps cooperate through explicit permissions.
 
+We think this is how software will be made next. Today, the people who build an app decide how everyone uses it. Mallea lets the person using an app change it while they use it, in plain English.
+
+In 1913, Henry Ford’s moving assembly line changed how cars were built and who could afford one. Mallea aims to change how software is built and who gets to build it. If you can describe what you want, you can shape the software you use. And your apps can work together, sharing data only with the permission you give.
+
+**No more 'Connectors', 'Agents', 'Computer Use Permission'. Yet, all the good things of having a powerful AI model by your side.**
+
 Mallea is a desktop application framework built around **Surfaces**: editable interfaces with their own data bindings, events and actions. **Mallea Core** runs locally and supplies shared Meta Muse-powered authoring, persistence and communication. Each app runs in its own native window. Start with a blank app, then use **Shape this app** to build it in plain English.
+
+## Contents
+
+- [First-Time Setup](#first-time-setup): [prerequisites](#1-install-the-prerequisites), [download](#2-download-mallea), [model configuration](#3-configure-the-model), [install and build](#4-install-dependencies-and-build)
+- [Run Mallea Core](#run-mallea-core): [first launch](#first-launch), [subsequent launches](#subsequent-launches)
+- [Build Your First App](#build-your-first-app)
+  - [Create a blank app](#1-create-a-blank-app)
+  - [Describe the interface](#2-describe-the-interface)
+  - [Preview and install](#3-preview-and-install)
+  - [Use and reshape it](#4-use-and-reshape-it)
+  - [Reopen your app](#5-reopen-your-app)
+  - [Add an Automation](#6-add-an-automation)
+  - [Share the result with another app](#7-share-the-result-with-another-app)
+- [Present and Future](#present-and-future)
 
 ## First-Time Setup
 
@@ -231,3 +251,11 @@ Sharing makes the Surface available for access requests. It does not grant anoth
 Later changes to Ideas should copy automatically while both apps are running. Copying unchanged data runs locally and makes no model request; generating new Ideas through Muse still uses the model.
 
 To stop the connection, open **Notes Inbox → Sharing & Automations** and click **Deny / revoke** on that grant. A subsequent Run now in My Notes should report blocked access. Previously copied ideas remain in Notes Inbox.
+
+## Present and Future
+
+**Today.** Mallea is a working proof of concept. You can build simple apps for everyday use and keep reshaping them in plain English while you use them. Mallea Core, a small local engine process, runs your apps, keeps their data and connects them only where you allow it.
+
+**Next (planned).** Mallea becomes a properly installable framework that anyone can download and use, without a developer setup.
+
+**Further ahead (our aspiration).** We want to go one level deeper: from an engine process to a new kind of operating system, with a global app store where people and AI agents work on equal footing, and people stay in charge. To return to Ford's analogy: you decide what gets built, AI agents are the assembly line, and apps are the cars. Imagine a photo editor or a code editor built for you in minutes, from the ground up, with only the controls you want, and able to share data across app and network boundaries. Peer-to-peer discovery and data sharing come next.

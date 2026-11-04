@@ -5,7 +5,7 @@ const manifest=validateAppManifest({version:1,id,name,author:'Local creator',pur
 await access(join(root,'apps/desktop/dist/index.html'));await mkdir(target); // No recursive mkdir: existing folders are never overwritten.
 await mkdir(join(target,'src-tauri/src'),{recursive:true});await cp(join(root,'apps/desktop/dist'),join(target,'runtime'),{recursive:true});
 await cp(join(root,'apps/desktop/src-tauri/icons'),join(target,'src-tauri/icons'),{recursive:true});
-for(const path of ['src/main.rs','build.rs','Cargo.lock'])await cp(join(root,'apps/desktop/src-tauri',path),join(target,'src-tauri',path));
+for(const path of ['src/main.rs','src/platform_host.rs','build.rs','Cargo.lock'])await cp(join(root,'apps/desktop/src-tauri',path),join(target,'src-tauri',path));
 const cargo=(await readFile(join(root,'apps/desktop/src-tauri/Cargo.toml'),'utf8')).replace('name = "mallea-desktop"','name = "mallea-project"');await writeFile(join(target,'src-tauri/Cargo.toml'),cargo);
 const config=JSON.parse(await readFile(join(root,'apps/desktop/src-tauri/tauri.conf.json'),'utf8'));config.productName=name;config.identifier='dev.mallea.'+id;config.build={frontendDist:'../runtime'};config.app.windows[0].title=name;
 await writeFile(join(target,'src-tauri/tauri.conf.json'),JSON.stringify(config,null,2)+'\n');await cp(join(root,'scripts/project-host.mjs'),join(target,'project-host.mjs'));

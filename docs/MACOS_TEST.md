@@ -1,5 +1,7 @@
 # macOS acceptance pass
 
+Post-hackathon installer gate: follow [INSTALLER.md](INSTALLER.md) and [SLICE_I001.md](SLICE_I001.md) after Windows I001. Build on macOS 13.5 or newer with official architecture-matched Node 24.19.0; verify the .app/.dmg, private runtime, independent Fieldnote/Parcel windows, session model setup, disabled creator, shutdown and retained data. Nested Node signing/notarization and clean-Mac execution require actual checks. macOS is mandatory before any work outside this installer slice. The source/demo checklist below remains a separate historical acceptance path.
+
 Run this after the Windows acceptance steps in [REHEARSAL_E004.md](REHEARSAL_E004.md). macOS execution is not yet verified. Linux testing can wait. Required Mac fixes come before the next delivery/video slice.
 
 ## Build and open

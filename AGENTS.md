@@ -1,5 +1,9 @@
 # Mallea project guidance
 
+Hackathon judging protection: through November 9, 2026 inclusive, perform all new work on a development branch, never on `main`. Do not merge into or push changes to `main` during this period. The post-hackathon installer work starts on `codex/installable-runtime`. After this period, merging still requires user direction.
+
+Post-hackathon slice I001: installable dashboard/Core with bundled Fieldnote/Parcel, replaceable Tauri host boundary, user-supplied session model access and no installed app creation. Preserve source/developer creation. Windows first, then mandatory macOS packaging/native verification before work beyond this installer slice. See docs/SLICE_I001.md and docs/INSTALLER.md. The old submission freeze does not prohibit this user-authorized branch work.
+
 Active product direction: desktop Core engine, independently running Tauri apps, Surface-defined interfaces/data/events/actions, shared Meta-powered authoring, app-specific MCP interfaces, app/Surface grants, executable Automations, dashboard/catalogue and portable blank-project creation. Web product delivery and Observer are parked. Read docs/README.md, its active plan, docs/FOUNDATION.md and detailed slice before implementation.
 
 The October 30 user-authorized documentation rebase created v019 and archived prior mutable guides. Future plan decisions resume immutable snapshots: copy active plan byte-for-byte to next number, make localized edits only, verify previous hash and unaffected bytes, append CHANGELOG and update active index. Routine progress belongs in docs/STATUS.md. Do not follow superseded web/Observer-first slices.

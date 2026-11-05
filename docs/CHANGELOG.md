@@ -201,3 +201,9 @@
 - Copied v024 byte-for-byte, then inserted one paragraph in section 6 only. Previous hash and all unaffected bytes verified identical.
 - Previous SHA-256: 3643ae1a89b99d7706f319c5c200e148871e90c925740107ce47d6bc16fc7f23.
 - New SHA-256: ad91394f41065fe7aba56ff36dfdbfff9dc401313ae480bfe3bdee6c678e5d25. Active documentation index updated; v024 unchanged.
+
+## v026 - 2026-11-04
+
+- Added only section 8a for user-authorized installer slice I001, Windows then mandatory macOS. Previous snapshot and unaffected bytes verified.
+- Previous SHA-256: ad91394f41065fe7aba56ff36dfdbfff9dc401313ae480bfe3bdee6c678e5d25
+- New SHA-256: bc13cf06e186ab6dbc2dc9e608114ea6c783646b371298269c1bb4ab2081ddcf

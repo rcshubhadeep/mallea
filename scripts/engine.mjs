@@ -3,12 +3,12 @@ import{createCollaborationServer}from'../services/workspace/collaboration.mjs';i
 import{dashboardManifest}from'../packages/sdk/dashboard.mjs';
 import{createServer}from'node:http';
 // Publish native connection capabilities only after this process owns its listener.
-export async function startEngine({home=resolve(process.env.MALLEA_HOME??'.mallea'),database=process.env.MALLEA_DB??join(home,'workspace.sqlite'),production=false,devMode=false,port=4318}={}){
+export async function startEngine({home=resolve(process.env.MALLEA_HOME??'.mallea'),database=process.env.MALLEA_DB??join(home,'workspace.sqlite'),production=false,devMode=false,port=4318,runtime=null}={}){
  const controlToken=randomUUID();await mkdir(home,{recursive:true});
  let server=createServer();
  try{
   await new Promise((done,fail)=>{server.once('error',fail);server.listen(port,'127.0.0.1',()=>{server.removeListener('error',fail);done();});});
-  server=await createCollaborationServer({httpServer:server,studio:true,engine:true,home,controlToken,database,devMode,author:{production}});
+  server=await createCollaborationServer({httpServer:server,studio:true,engine:true,home,controlToken,database,devMode,runtime,author:{production,installed:!!runtime}});
   const url='http://127.0.0.1:'+server.address().port;await mkdir(join(home,'hosts'),{recursive:true});
   for(const manifest of [...builtinManifests,dashboardManifest]){
    const result=server.engineApps.register(manifest),path=join(home,'hosts',manifest.id+'.json');let credential=result.credential;

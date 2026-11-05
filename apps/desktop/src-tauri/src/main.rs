@@ -4,15 +4,18 @@ use serde_json::{json, Value};
 use tauri_plugin_dialog::DialogExt;
 use base64::Engine;
 use std::{path::PathBuf, time::Duration};
+use tauri::Manager;
+mod platform_host;
 
 #[derive(Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct HostConfig { version: u32, app_id: String, engine_url: String, credential: String, control_token: Option<String> }
 struct NativeHost { config: Option<HostConfig>, client: reqwest::Client }
-fn read_host_config() -> Option<HostConfig> {
+fn requested_host_path() -> Option<PathBuf> {
     let args: Vec<String> = std::env::args().collect();
-    let path = args.windows(2).find(|a| a[0] == "--host-config").map(|a| PathBuf::from(&a[1]))
-        .or_else(|| std::env::var_os("MALLEA_HOST_CONFIG").map(PathBuf::from))?;
+    args.windows(2).find(|a| a[0] == "--host-config").map(|a| PathBuf::from(&a[1]))
+}
+fn read_host_config(path: PathBuf) -> Option<HostConfig> {
     let config: HostConfig = serde_json::from_slice(&std::fs::read(path).ok()?).ok()?;
     if config.version != 1 || config.engine_url != "http://127.0.0.1:4318" || config.credential.len() != 64 { return None; }
     Some(config)
@@ -36,13 +39,13 @@ async fn native_connect(host: tauri::State<'_, NativeHost>) -> Result<Value,Stri
 
 // Dashboard control never exposes its local capability token to Surface code.
 #[tauri::command]
-async fn core_dashboard(host: tauri::State<'_, NativeHost>, action: String, args: Value) -> Result<Value,String> {
+async fn core_dashboard(app: tauri::AppHandle, host: tauri::State<'_, NativeHost>, action: String, args: Value) -> Result<Value,String> {
     let c=host.config.as_ref().filter(|c|c.app_id=="mallea-core").ok_or("Only the Core dashboard can manage engine settings and projects.")?;
     let token=c.control_token.as_ref().ok_or("Restart Core and reopen its dashboard.")?;
-    if !["state","settings","project","launch","delete"].contains(&action.as_str()) {return Err("Unknown Core operation.".into());}
+    if !["state","settings","project","launch","delete","quit"].contains(&action.as_str()) {return Err("Unknown Core operation.".into());}
     let response=host.client.post(format!("{}/api/engine/dashboard",c.engine_url)).header("X-Mallea-Control",token).json(&json!({"action":action,"args":args})).send().await.map_err(|_|"Core is unavailable.".to_string())?;
     let status=response.status();let value:Value=response.json().await.map_err(|_|"Invalid Core response.".to_string())?;
-    if !status.is_success(){return Err(value.get("error").and_then(Value::as_str).unwrap_or("Core rejected the operation.").to_string());}Ok(value)
+    if !status.is_success(){return Err(value.get("error").and_then(Value::as_str).unwrap_or("Core rejected the operation.").to_string());}if action == "quit" { app.exit(0); }Ok(value)
 }
 #[tauri::command]
 async fn choose_project_folder(app: tauri::AppHandle, host: tauri::State<'_, NativeHost>) -> Result<Option<String>,String> {
@@ -96,7 +99,22 @@ fn main() {
     let client = reqwest::Client::builder().timeout(Duration::from_secs(10)).no_proxy().redirect(reqwest::redirect::Policy::none()).build().expect("Unable to initialize local Core connection");
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .manage(NativeHost { config: read_host_config(), client })
+        .setup(move |app| {
+            let path = match requested_host_path() {
+                Some(path) => Some(path),
+                None => match platform_host::installed_dashboard_config(app.handle()) {
+                    Ok(Some(path)) => Some(path),
+                    Ok(None) => std::env::var_os("MALLEA_HOST_CONFIG").map(PathBuf::from),
+                    Err(message) => {
+                        app.dialog().message(message).title("Mallea could not start").kind(tauri_plugin_dialog::MessageDialogKind::Error).blocking_show();
+                        app.handle().exit(1);
+                        return Ok(());
+                    }
+                }
+            };
+            app.manage(NativeHost { config: path.and_then(read_host_config), client });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![native_context,native_connect,save_export,core_dashboard,choose_project_folder,set_app_icon])
         .run(tauri::generate_context!())
         .expect("Unable to start Mallea desktop");

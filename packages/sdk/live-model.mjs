@@ -1,3 +1,4 @@
+import {enforceAuthoringPolicy} from './authoring-policy.mjs';
 import{z}from'zod';import{surfaceStyle,readBinding,dispatchSurfaceAction}from'./surface.mjs';import{applySurfaceChanges}from'./surface-edits.mjs';
 // Theme and style tokens keep generated apps on one design system; hex remains valid for existing definitions.
 export const accents=['olive','indigo','teal','rose','amber','slate'],colorTokens=['accent','accent-soft','ink','muted','subtle','canvas','surface','raised','line','success','warning','danger'],sizeTokens=['xs','sm','md','lg','xl','2xl','3xl'],spaceTokens=['none','xs','sm','md','lg','xl'],radiusTokens=['none','sm','md','lg','full'];
@@ -11,7 +12,7 @@ const field=z.union([scalar,z.object({type:z.literal('collection'),fields:z.reco
 export const modelSchema=z.object({fields:z.record(identifier,field),values:z.record(z.string(),z.unknown())}).strict();
 const argument=z.union([z.string().max(2000),z.number().finite(),z.boolean(),z.object({bind:z.string().max(150)}).strict()]);
 export const liveNode=z.lazy(()=>z.object({id:identifier,optionsBind:z.string().max(150).optional(),selectionBind:z.string().max(150).optional(),observe:z.boolean().optional(),type:z.enum(['stack','row','split','grid','details','text','image','repeat','component','input','textarea','color','choice','checkbox','date','number','button']),label:z.string().max(100).optional(),text:z.string().max(400).optional(),bind:z.string().max(150).optional(),action:z.string().max(80).optional(),argument:z.string().max(50).optional(),value:z.string().max(2000).optional(),args:z.record(z.string().max(50),argument).optional(),disabledBind:z.string().max(150).optional(),hiddenBind:z.string().max(150).optional(),appearance:z.enum(['workspace','sidebar','card','toolbar','title','heading','muted','eyebrow','badge','primary','ghost','danger']).optional(),component:z.string().max(60).optional(),options:z.array(z.object({label:z.string().max(50),value:z.string().max(2000)}).strict()).min(1).max(20).optional(),style:liveStyle.optional(),children:z.array(liveNode).max(20).optional(),template:liveNode.optional()}).strict());
-export const liveSurface=z.object({id:identifier,title:z.string().min(1).max(80),version:z.number().int().positive(),lifetime:z.enum(['persistent','session']),slot:z.enum(['header','main','footer']),width:z.enum(['narrow','wide','auto']),hidden:z.boolean(),chrome:z.enum(['card','plain']).optional(),ui:liveNode}).strict();
+export const liveSurface=z.object({id:identifier,title:z.string().min(1).max(80),version:z.number().int().positive(),lifetime:z.enum(['persistent','session']),slot:z.enum(['header','main','footer']),width:z.enum(['narrow','wide','auto']),hidden:z.boolean(),placement:z.enum(['flow','independent']).optional(),chrome:z.enum(['card','plain']).optional(),ui:liveNode}).strict();
 export const liveApp=z.object({manifest:z.object({id:z.string(),title:z.string().max(80),version:z.string(),sdkVersion:z.literal('0.4'),permissions:z.array(z.string())}).strict(),revision:z.number().int().min(0),layout:z.enum(['columns','rows','grid']),theme:themeSchema.optional(),surfaces:z.array(liveSurface).max(24),models:z.record(identifier,modelSchema)}).strict();
 export function validateValue(spec,value){
  if(spec.type==='collection'){if(!Array.isArray(value)||value.length>100)throw new Error('Collection supports at most 100 items.');for(const item of value){if(!item||Object.keys(item).some(k=>!Object.hasOwn(spec.fields,k)))throw new Error('Unknown collection field.');for(const[k,s]of Object.entries(spec.fields))validateValue(s,item[k]);}return;}
@@ -60,22 +61,23 @@ export function validateLive(value,contract){
  }walk(surface.ui,0);}
  for(const c of contract.requiredComponents??[])if(components.filter(v=>v===c).length!==1)throw new Error('Keep exactly one '+c+' primitive.');return app;
 }
-const change=z.discriminatedUnion('op',[
+export const liveChange=z.discriminatedUnion('op',[
  z.object({op:z.literal('createModel'),id:identifier,fields:z.record(identifier,field)}).strict(),
  z.object({op:z.literal('extendModel'),id:identifier,fields:z.record(identifier,field)}).strict(),
  z.object({op:z.literal('addSurface'),surface:liveSurface.omit({version:true,hidden:true}).extend({version:z.number().int().positive().optional(),hidden:z.boolean().optional()})}).strict(),
  z.object({op:z.literal('editSurface'),id:identifier,changes:z.array(z.unknown()).min(1).max(20)}).strict(),
- z.object({op:z.literal('setSurface'),id:identifier,props:liveSurface.pick({title:true,lifetime:true,slot:true,width:true,hidden:true,chrome:true}).partial()}).strict(),
+ z.object({op:z.literal('setSurface'),id:identifier,props:liveSurface.pick({title:true,lifetime:true,slot:true,width:true,hidden:true,chrome:true,placement:true}).partial()}).strict(),
  z.object({op:z.literal('moveSurface'),id:identifier,index:z.number().int().min(0).max(23)}).strict(),
  z.object({op:z.literal('removeSurface'),id:identifier}).strict(),
  z.object({op:z.literal('setApp'),layout:z.enum(['columns','rows','grid']).optional(),theme:themeSchema.partial().optional()}).strict(),
 ]);
-export function applyLiveChanges(current,input,contract,{scope=null}={}){
- const parsed=z.object({changes:z.array(change).min(1).max(30)}).strict().parse(input),app=structuredClone(current),summary=[];
+export const liveProposal=z.object({changes:z.array(liveChange).min(1).max(30)}).strict();
+export function applyLiveChanges(current,input,contract,{scope=null,policy=null}={}){
+ const parsed=liveProposal.parse(input),app=structuredClone(current),summary=[];
  for(const op of parsed.changes){if(scope&&!['createModel','extendModel'].includes(op.op)&&(op.id!==scope||!['editSurface','setSurface'].includes(op.op)))throw new Error('This proposal exceeds the selected Surface scope. Use global Shape for app-wide changes.');
   if(op.op==='createModel'){if(app.models[op.id])throw new Error('Model already exists.');app.models[op.id]={fields:op.fields,values:Object.fromEntries(Object.entries(op.fields).map(([k,s])=>[k,structuredClone(s.initial)]))};}
   else if(op.op==='extendModel'){const model=app.models[op.id];if(!model)throw new Error('Unknown model.');for(const[k,s]of Object.entries(op.fields)){if(Object.hasOwn(model.fields,k))throw new Error('Keep existing field types/data; use a new field name.');model.fields[k]=s;model.values[k]=structuredClone(s.initial);}}
-  else if(op.op==='addSurface'){if(app.surfaces.some(s=>s.id===op.surface.id))throw new Error('Surface already exists.');app.surfaces.push({...op.surface,version:1,hidden:op.surface.hidden??false});}
+  else if(op.op==='addSurface'){if(app.surfaces.some(s=>s.id===op.surface.id))throw new Error('Surface already exists.');app.surfaces.push({...op.surface,...(policy?.intent==='add'?{placement:'independent'}:{}),version:1,hidden:op.surface.hidden??false});}
   else if(op.op==='setApp'){if(!op.layout&&!op.theme)throw new Error('setApp needs a layout or theme.');if(op.layout)app.layout=op.layout;if(op.theme)app.theme={...defaultTheme('surface'),...app.theme,...op.theme};}
   else{const index=app.surfaces.findIndex(s=>s.id===op.id),s=app.surfaces[index];if(!s)throw new Error('Unknown Surface.');
    if(op.op==='removeSurface')app.surfaces.splice(index,1);
@@ -83,7 +85,7 @@ export function applyLiveChanges(current,input,contract,{scope=null}={}){
    if(op.op==='setSurface'){Object.assign(s,op.props);s.version++;}
    if(op.op==='editSurface'){const result=applySurfaceChanges({manifest:{id:'surface-edit',version:'1.0.0',permissions:[]},ui:s.ui},{changes:op.changes},{},{id:'surface-edit',version:'1.0.1',validate:v=>v});s.ui=result.artifact.ui;s.version++;}
   }const title=app.surfaces.find(s=>s.id===op.id)?.title??op.id;summary.push(['createModel','extendModel'].includes(op.op)?'Add model fields: '+op.id:op.op==='addSurface'?'Add Surface: '+op.surface.title:op.op==='setApp'?[op.layout&&'Arrange app: '+op.layout,op.theme&&'Theme: '+Object.values(op.theme).join(', ')].filter(Boolean).join(' · '):({editSurface:'Edit Surface: ',setSurface:'Update Surface: ',moveSurface:'Move Surface: ',removeSurface:'Remove Surface: '}[op.op]??'Change: ')+title);
- }app.revision++;app.manifest.version='0.4.'+app.revision;return{artifact:validateLive(app,contract),summary};
+ }enforceAuthoringPolicy(current,app,policy);app.revision++;app.manifest.version='0.4.'+app.revision;return{artifact:validateLive(app,contract),summary};
 }
 // Selection is declared in Surface data; no app-specific selection store.
 export function repairCollectionSelections(app,binding,removedIndex=null){

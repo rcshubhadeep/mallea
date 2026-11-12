@@ -18,6 +18,7 @@
 [data-mallea-theme]{--accent-soft:color-mix(in srgb,var(--accent) 12%,transparent);--panel:var(--surface);--muted:var(--ink-2);--bg:var(--canvas)}
 
 /* Base */
+html:has(.live-runtime){scrollbar-gutter:stable}
 .live-runtime{min-height:100vh;background:var(--canvas);color:var(--ink);font-family:var(--font-sans);font-size:var(--text-md);line-height:1.5;-webkit-font-smoothing:antialiased;font-feature-settings:'cv11','ss01'}
 .live-runtime .live-surface{padding:0}
 .live-runtime .live-surface p{margin:0;line-height:1.55;overflow-wrap:anywhere}
@@ -41,6 +42,8 @@
 .live-runtime .layout-columns .slot-main>.width-wide{flex:3 1 420px;min-width:280px}
 .live-runtime .layout-columns .slot-main>.width-auto{flex:1 1 280px}
 .live-runtime .live-contribution{min-width:0}
+.live-runtime .live-independent{display:flex;flex-direction:column;gap:var(--space-5);width:100%;min-width:0}
+.live-runtime .live-independent>.live-contribution{width:100%;flex:none}
 .live-runtime .chrome-card>.live-surface{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-5)}
 .live-runtime .surface-stack{display:flex;flex-direction:column;gap:var(--space-4);min-width:0}
 .live-runtime .surface-row{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2)}

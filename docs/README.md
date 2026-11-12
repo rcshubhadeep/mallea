@@ -1,6 +1,8 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v025.md](PROJECT_PLAN.v025.md).
+Active project plan: [PROJECT_PLAN.v027.md](PROJECT_PLAN.v027.md).
+
+Current Core slice: [SLICE_C001.md](SLICE_C001.md). Checks and user tests: [REHEARSAL_C001.md](REHEARSAL_C001.md).
 
 The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 

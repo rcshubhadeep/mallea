@@ -1,6 +1,6 @@
 import test from'node:test';import assert from'node:assert/strict';import{mkdtemp,mkdir,writeFile,readFile,rm}from'node:fs/promises';import{tmpdir}from'node:os';import{join}from'node:path';
 import{createCollaborationServer}from'../services/workspace/collaboration.mjs';import{dashboardManifest}from'../packages/sdk/dashboard.mjs';import{builtinManifests}from'../services/workspace/engine-apps.mjs';import{ModelSettings}from'../services/workspace/model-settings.mjs';import{ProjectCreator,projectEnvironment}from'../services/workspace/project-creator.mjs';
-const config={endpoint:new URL('https://example.com/v1/chat/completions'),model:'muse-spark-open',key:'unit-only-initial-key'};
+const config={endpoint:new URL('https://example.com/v1/chat/completions'),model:'muse-spark-open',mode:'json',key:'unit-only-initial-key'};
 const wait=async job=>{for(let n=0;n<100&&!['ready','failed','unsupported'].includes(job().phase);n++)await new Promise(r=>setTimeout(r,10));return job();};
 test('dashboard uses registered Surface lists, actual metadata and protected Core operations',async()=>{
  const s=await createCollaborationServer({engine:true,studio:true,controlToken:'unit-core-control',author:{config}});for(const m of [...builtinManifests,dashboardManifest])s.engineApps.register(m);const session=s.workspaceRegistry.register('mallea-core');
@@ -13,8 +13,8 @@ test('dashboard uses registered Surface lists, actual metadata and protected Cor
   assert(!s.workspaceStore.db.prepare('SELECT value FROM live_apps').all().some(r=>r.value.includes('unit-new-session-key')));assert.throws(()=>s.liveApps.event(session,{surfaceId:'core-settings',elementId:'apply-settings',event:'click',expectedDataRevision:0}),/Unknown Surface/);
  }finally{s.workspaceRegistry.close();s.closeAllConnections();await new Promise(r=>s.close(r));}
 });
-test('shared settings reject arbitrary models/profiles and existing authors resolve session changes',async()=>{
- const rejected=new ModelSettings({config:{...config,model:'unregistered-model'}});assert.equal(rejected.public().ready,false);assert.throws(()=>rejected.config());const seen=[];
+test('shared settings accept arbitrary model identities, reject unknown profiles and existing authors resolve session changes',async()=>{
+ const rejected=new ModelSettings({config:{...config,model:'unregistered-model'}});assert.equal(rejected.public().ready,true);assert.equal(rejected.config().model,'unregistered-model');const seen=[];
  const s=await createCollaborationServer({engine:true,studio:true,author:{config,infer:async c=>{seen.push(c.key);return{choice:{finish_reason:'stop',message:{content:JSON.stringify({changes:[{op:'createModel',id:'notes',fields:{text:{type:'text',initial:''}}}]})}},usage:{}};}}});
  try{for(const id of ['first-study','second-study'])s.engineApps.register({version:1,id,name:id,author:'Test',purpose:'Shared config test',adapter:'surface'});
   const first=s.liveApps.author({appId:'first-study'});let job=first.start('Add a notes model');assert.equal((await wait(()=>first.get(job.id))).phase,'ready');s.modelSettings.configure({profile:'development',key:'unit-replaced-key'});

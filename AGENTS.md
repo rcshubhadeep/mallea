@@ -39,3 +39,6 @@ Before replacing dependencies stop only identified project previews/builds/nativ
 Scaffolding uses a user-chosen new folder, refuses existing-target collisions, and produces portable relative runtime references. Do not overwrite unrelated work or delete user data for cleanup. No credential migration or filesystem reorganization without concrete need. Test scaffolds use ignored/temporary folders with checked paths.
 
 Prioritize a convincing real three-minute demo, substantive Meta use and runnable delivery. Do not substitute scripted outputs for generation, invent OS metrics/catalogue adoption, or claim production security/offline/remote interoperability. Design independently; do not inspect/copy unrelated private application code.
+
+
+November 6 user direction: C001 Core hardening is authorized on codex/core-authoring-hardening directly from main, parallel to installer/macOS work. For C001, arbitrary user-configured OpenAI-compatible text model IDs/endpoints supersede the hackathon Meta-only catalogue rule. External-app integration is parked. See docs/SLICE_C001.md. Main remains protected through November 9 inclusive.

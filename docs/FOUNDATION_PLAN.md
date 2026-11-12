@@ -1,6 +1,6 @@
 # Engine foundation: implementation guide
 
-Follow PROJECT_PLAN.v025.md. This is the target architecture; STATUS.md alone records completion.
+Follow PROJECT_PLAN.v027.md. This is the target architecture; STATUS.md alone records completion.
 
 ## Keep and change
 
@@ -9,7 +9,7 @@ Follow PROJECT_PLAN.v025.md. This is the target architecture; STATUS.md alone re
 | Desktop host | Existing working Tauri shell/build and React renderer | Generic app identity/manifest startup, native Parcel and dashboard roles; no hardcoded scratchpad-only entry |
 | App model | SDK 0.3 nodes, bindings, styles and targeted edits | Separately identified Surfaces, app-defined models, event/action registrations and declared lifetime |
 | Persistence | SQLite, versions, atomic activation and local field storage | Central app/Surface/model registry, durable links/subscriptions/Automation records; clear session cleanup |
-| Agent service | Generic inference adapter and bounded author/repair/preview flow | Shared Meta-only model catalogue/settings and full registered Surface/model/action tools for blank apps |
+| Agent service | Generic inference adapter and bounded author/repair/preview flow | Provider-neutral session model endpoint/identity/key settings and full registered Surface/model/action tools for blank apps |
 | Communication | Official MCP SDK, registry and owner sockets | App-specific MCP endpoints/discovery, app/Surface-scoped grants, approved automatic subscriptions |
 | App behavior | Fabric adapter, saved revisions and review/feedback | Register domain adapters behind the same Surface/data API; no separate application UI path |
 | Project creation | Tauri CLI/toolchain | Portable template/runtime artifact, folder picker, safe scaffold/build/launch from dashboard |

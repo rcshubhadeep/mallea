@@ -1,6 +1,6 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v027.md](PROJECT_PLAN.v027.md).
+Active project plan: [PROJECT_PLAN.v028.md](PROJECT_PLAN.v028.md).
 
 Current Core slice: [SLICE_C001.md](SLICE_C001.md). Checks and user tests: [REHEARSAL_C001.md](REHEARSAL_C001.md).
 
@@ -10,6 +10,9 @@ Parked exploration: [External-app read-only integration](EXTERNAL_APP_READONLY.m
 
 ## Active guides
 
+- [SLICE_I001.md](SLICE_I001.md): installed-runtime units; macOS acceptance deferred by November 12 direction.
+- [INSTALLER.md](INSTALLER.md): installed preview, build commands, host boundary and platform limits.
+- [REHEARSAL_I001.md](REHEARSAL_I001.md): fresh Windows installer/runtime/native evidence and remaining acceptance gates.
 - [FOUNDATION.md](FOUNDATION.md): accepted product principles and boundaries.
 - [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md): registry, native host, agent, MCP, data and execution contracts.
 - [ARCHITECTURE.md](ARCHITECTURE.md): ownership and actual code gaps.

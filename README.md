@@ -14,6 +14,7 @@ Mallea is a desktop application framework built around **Surfaces**: editable in
 
 ## Contents
 
+- [Installed preview](#installed-preview)
 - [First-Time Setup](#first-time-setup): [prerequisites](#1-install-the-prerequisites), [download](#2-download-mallea), [model configuration](#3-configure-the-model), [install and build](#4-install-dependencies-and-build)
 - [Run Mallea Core](#run-mallea-core): [first launch](#first-launch), [subsequent launches](#subsequent-launches)
 - [Build Your First App](#build-your-first-app)
@@ -25,6 +26,12 @@ Mallea is a desktop application framework built around **Surfaces**: editable in
   - [Add an Automation](#6-add-an-automation)
   - [Share the result with another app](#7-share-the-result-with-another-app)
 - [Present and Future](#present-and-future)
+
+## Installed preview
+
+The source includes a Windows installer preview with the dashboard, Core, Fieldnote and Parcel. Installed users need no developer tools: open Mallea, then launch either app from the dashboard. Ordinary app functions work without a model; Shape and Muse processing require your own model access in **Model settings**. Configuration is session-only. New-app creation is unavailable in the installed edition.
+
+See [installer instructions and platform limits](docs/INSTALLER.md). This is a local development preview, not a published signed release. macOS installation and native verification are deferred for later testing. The source setup below remains available for developers, including project creation.
 
 ## First-Time Setup
 

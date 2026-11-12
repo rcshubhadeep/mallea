@@ -25,7 +25,7 @@ export async function createCollaborationServer(options={}){
   const models=engine?new ModelSettings(options.author??{}):null;
   store.icons=engine?new AppIcons({home:options.home,...options.icons}):null;
   const live=engine&&studio?new LiveApps(store,studio,engine,registry,{...options.author,config:()=>models.config()},{devMode:options.devMode===true}):null;
-  const dashboard=live?new Dashboard({engine,live,registry,models,home:options.home}):null;
+  const dashboard=live?new Dashboard({engine,live,registry,models,home:options.home,runtime:options.runtime}):null;
   store.dashboard=dashboard;
   const automations=live?new Automations({root:store,live,registry,engine,models,infer:options.author?.infer}):null;
   registry.onPresence=id=>{if(live&&!live.closed&&engine?.has(id)){live.presence(id);automations?.presence(id);}};
@@ -79,7 +79,7 @@ export async function createCollaborationServer(options={}){
         if(req.method==='GET'&&url.pathname==='/api/engine/apps'){if(!control){try{registry.require(req.headers['x-mallea-session']);}catch{return send(403,{error:'Core access required.'});}}return send(200,engine.list(registry));}
         if(!control)return send(403,{error:'Core control access required.'});
         if(req.method==='POST'&&url.pathname==='/api/engine/dashboard')return send(200,await dashboard.action(await body(req)));
-        if(req.method==='POST'&&url.pathname==='/api/engine/apps'){const input=await body(req);if(input.adapter==='core'||input.id==='mallea-core')throw new Error('Core identity is reserved.');const result=engine.register(input);return send(200,{...result,app:engine.describe(result.manifest.id)});}
+        if(req.method==='POST'&&url.pathname==='/api/engine/apps'){const input=await body(req);if(input.adapter==='core'||input.id==='mallea-core')throw new Error('Core identity is reserved.');if(options.runtime)throw new Error('New app creation is unavailable in the installed edition.');const result=engine.register(input);return send(200,{...result,app:engine.describe(result.manifest.id)});}
         if(req.method==='POST'&&url.pathname==='/api/engine/host'){const input=await body(req);return send(200,{appId:input.appId,credential:engine.issueCredential(input.appId)});}
       }
       if(req.method==='GET'&&url.pathname==='/api/bootstrap')return engine?send(403,{error:'Use a registered native host.'}):send(200,{token});
@@ -108,7 +108,7 @@ export async function createCollaborationServer(options={}){
       if(live&&url.pathname.startsWith('/api/live/')){
         if(req.method==='GET'&&url.pathname==='/api/live/state')return send(200,live.info(session));
         if(req.method==='POST'&&url.pathname==='/api/live/event')return send(200,live.event(session,await body(req)));
-        if(req.method==='POST'&&url.pathname==='/api/live/author'){const input=await body(req);return send(200,live.author(session,input.surfaceId??null,input.elementId??null,input.intent??'add').start(input.request));}
+        if(req.method==='POST'&&url.pathname==='/api/live/author'){if(options.runtime)models.config();const input=await body(req);return send(200,live.author(session,input.surfaceId??null,input.elementId??null,input.intent??'add').start(input.request));}
         const job=url.pathname.match(/^\/api\/live\/jobs\/([a-z0-9-]+)(\/cancel)?$/);if(job)return send(200,live.job(session,job[1],!!job[2]));
         if(req.method==='GET'&&url.pathname==='/api/live/draft')return send(200,live.draft(session,url.searchParams.get('id')).artifact);
         if(req.method==='POST'&&url.pathname==='/api/live/install'){const input=await body(req);return send(200,live.install(session,input.draftId,input.approved));}

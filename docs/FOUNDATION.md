@@ -1,10 +1,10 @@
 # Mallea foundation
 
-Active plan: [PROJECT_PLAN.v027.md](PROJECT_PLAN.v027.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
+Active plan: [PROJECT_PLAN.v028.md](PROJECT_PLAN.v028.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
 
 Mallea is a framework for software that users can reshape at the point of use, with shared model assistance in every app. It also gives apps a shared way to discover each other and exchange permitted data/state/actions on one machine. These are the two inseparable foundations.
 
-The product consists of a local Core engine, independently running Tauri desktop apps and a dashboard. React is the Surface renderer. Core supplies registry, typed data, agent tools, permissions, persistence, MCP routing and Automation execution. The dashboard inspects apps, configures the common model endpoint/identity/key, displays an illustrative catalogue and scaffolds projects; it does not embed app interfaces.
+The product consists of a local Core engine, independently running desktop apps and a dashboard. Tauri is the initial replaceable platform host; Core receives explicit host/resource paths through a versioned runtime contract. React is the Surface renderer. Core supplies registry, typed data, agent tools, permissions, persistence, MCP routing and Automations. The installed preview bundles Fieldnote/Parcel, accepts user-supplied session model access and disables app creation. The developer dashboard retains project scaffolding. Neither edition embeds other apps' interfaces. Installer/platform evidence: INSTALLER.md and STATUS.md.
 
 Every app-owned visual element and its events, bindings and actions belongs to the Surface API. A Surface has identity, owner, schema references, placement, version and persistent/session lifetime. Built-in and user-authored Surfaces use the same mechanism. Framework panels are system-owned Surfaces; OS window chrome and primitive internals remain native implementation details. Full access to the authorized API does not mean arbitrary host code or access to model credentials.
 

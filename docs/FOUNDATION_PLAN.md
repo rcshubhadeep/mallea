@@ -1,6 +1,6 @@
 # Engine foundation: implementation guide
 
-Follow PROJECT_PLAN.v027.md. This is the target architecture; STATUS.md alone records completion.
+Follow PROJECT_PLAN.v028.md. This is the target architecture; STATUS.md alone records completion.
 
 ## Keep and change
 
@@ -42,7 +42,7 @@ Automation records reuse these same inputs/events/operations. Runtime supports o
 
 ## Shared model configuration
 
-The trusted engine owns one active Meta profile used by every app. The dashboard configures model/key and exposes readiness; apps receive no credential values. Only registered Meta model identities can be selected. Keep profile selection explicit and development/demo budgets separate. Do not silently fall back to production or permit arbitrary non-Meta models through a free-form label.
+The trusted engine owns one active model profile used by every app. The dashboard configures an HTTPS Chat Completions endpoint, exact model ID, authoring mode and session key; apps receive public readiness/model metadata, never credential values. The merged C001/I001 settings accept user-configured model IDs without an allowlist. Installed sessions begin without environment profiles or keys. Keep selection explicit and development/demo budgets separate; no automatic model/provider fallback.
 
 Session-only key storage is acceptable first. Persist credentials only through an established native credential facility, never plaintext in shared registry records or generated projects. Existing ignored environment configuration remains a developer bootstrap until dashboard settings work; no credential migration is performed in the planning rebase.
 

@@ -1,5 +1,7 @@
 # Core hardening checks and user acceptance
 
+November 12 integration: C001 is merged on main and is being combined with I001 under PROJECT_PLAN.v028.md. The branch-separation statements below describe the original evidence. Installed builds now use the same provider-neutral settings and bounded authoring; existing installed previews need rebuilding/reinstallation. macOS checks are deferred by explicit user direction. Real-provider and native user checks below remain pending; combined automated evidence is in STATUS.md and installer steps are in INSTALLER.md.
+
 This branch advances E2 Surface isolation and E3 shared model access. It starts from main, not the installer branch. The existing installed app does not acquire these changes. External-app integration remains parked.
 
 ## Fresh automated and agent-operated evidence

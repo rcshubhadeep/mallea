@@ -6,6 +6,8 @@ Current Core slice: [SLICE_C001.md](SLICE_C001.md). Checks and user tests: [REHE
 
 The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 
+Parked exploration: [External-app read-only integration](EXTERNAL_APP_READONLY.md), a design proposal without runtime support.
+
 ## Active guides
 
 - [FOUNDATION.md](FOUNDATION.md): accepted product principles and boundaries.

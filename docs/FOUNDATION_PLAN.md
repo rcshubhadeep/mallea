@@ -1,6 +1,6 @@
 # Engine foundation: implementation guide
 
-Follow PROJECT_PLAN.v025.md. This is the target architecture; STATUS.md alone records completion.
+Follow PROJECT_PLAN.v028.md. This is the target architecture; STATUS.md alone records completion.
 
 ## Keep and change
 
@@ -9,7 +9,7 @@ Follow PROJECT_PLAN.v025.md. This is the target architecture; STATUS.md alone re
 | Desktop host | Existing working Tauri shell/build and React renderer | Generic app identity/manifest startup, native Parcel and dashboard roles; no hardcoded scratchpad-only entry |
 | App model | SDK 0.3 nodes, bindings, styles and targeted edits | Separately identified Surfaces, app-defined models, event/action registrations and declared lifetime |
 | Persistence | SQLite, versions, atomic activation and local field storage | Central app/Surface/model registry, durable links/subscriptions/Automation records; clear session cleanup |
-| Agent service | Generic inference adapter and bounded author/repair/preview flow | Shared Meta-only model catalogue/settings and full registered Surface/model/action tools for blank apps |
+| Agent service | Generic inference adapter and bounded author/repair/preview flow | Provider-neutral session model endpoint/identity/key settings and full registered Surface/model/action tools for blank apps |
 | Communication | Official MCP SDK, registry and owner sockets | App-specific MCP endpoints/discovery, app/Surface-scoped grants, approved automatic subscriptions |
 | App behavior | Fabric adapter, saved revisions and review/feedback | Register domain adapters behind the same Surface/data API; no separate application UI path |
 | Project creation | Tauri CLI/toolchain | Portable template/runtime artifact, folder picker, safe scaffold/build/launch from dashboard |
@@ -42,7 +42,7 @@ Automation records reuse these same inputs/events/operations. Runtime supports o
 
 ## Shared model configuration
 
-The trusted engine owns one active Meta profile used by every app. The dashboard configures model/key and exposes readiness; apps receive no credential values. Only registered Meta model identities can be selected. Keep profile selection explicit and development/demo budgets separate. Do not silently fall back to production or permit arbitrary non-Meta models through a free-form label.
+The trusted engine owns one active model profile used by every app. The dashboard configures an HTTPS Chat Completions endpoint, exact model ID, authoring mode and session key; apps receive public readiness/model metadata, never credential values. The merged C001/I001 settings accept user-configured model IDs without an allowlist. Installed sessions begin without environment profiles or keys. Keep selection explicit and development/demo budgets separate; no automatic model/provider fallback.
 
 Session-only key storage is acceptable first. Persist credentials only through an established native credential facility, never plaintext in shared registry records or generated projects. Existing ignored environment configuration remains a developer bootstrap until dashboard settings work; no credential migration is performed in the planning rebase.
 

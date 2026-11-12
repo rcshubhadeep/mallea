@@ -2,6 +2,8 @@
 
 Authorized November 4, 2026; advances post-hackathon installable delivery, extending E1/E3/E5. Active plan: PROJECT_PLAN.v026.md. Development branch: codex/installable-runtime; main protected through November 9 inclusive.
 
+November 12 integration direction: merge with C001 now and test macOS later. Provider-neutral endpoint/model/mode settings supersede the original Meta-only installed selector. Installed Core starts with no environment profiles or keys; configuration remains session-only. macOS acceptance is deferred and no longer blocks merging or subsequent work. Active combined plan: PROJECT_PLAN.v028.md.
+
 ## Bounded units
 
 | Unit | Scope | Acceptance |
@@ -9,9 +11,9 @@ Authorized November 4, 2026; advances post-hackathon installable delivery, exten
 | I1 | Versioned installed-runtime/host boundary | Core takes explicit installed host/resource paths; app definitions and data do not depend on Tauri. Developer defaults remain. |
 | I2 | Packaged Core and private Node 24 runtime | Allowlisted distribution runs outside checkout with no external Node, secrets, private configuration or source paths. |
 | I3 | Native launcher and Core lifecycle | Shortcut launches dashboard; authenticated readiness, bounded startup, duplicate-start handling, actionable recovery; apps survive dashboard closure. |
-| I4 | Installed dashboard and model setup | Fieldnote/Parcel open independently; creator denied in Core and disabled through Surface; user enters HTTPS endpoint, registered Meta identity and session key; LLM requests gated before execution. |
+| I4 | Installed dashboard and model setup | Fieldnote/Parcel open independently; creator denied in Core and disabled through Surface; user enters HTTPS endpoint, exact model ID and session key; LLM requests gated before execution. |
 | I5 | Windows installer and verification | Per-user installer, runtime prerequisite handling, restart/upgrade/data retention; clean-machine and native evidence distinguished. |
-| I6 | Mandatory macOS follow-up | App bundle/runtime paths, packaging, independent windows, persistence, model setup and upgrade checks on macOS before any feature work beyond this slice. |
+| I6 | Deferred macOS follow-up | App bundle/runtime paths, packaging, independent windows, persistence, model setup and upgrade checks on macOS later; not a merge or subsequent-work prerequisite under November 12 direction. |
 
 ## Contract and boundaries
 

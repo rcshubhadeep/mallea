@@ -1,13 +1,13 @@
 import {z}from'zod';
 import{validateSurface}from'./surface.mjs';
 const id=z.string().regex(/^[a-z][\w-]{0,50}$/),index=z.number().int().min(0).max(20);
-const operation=z.discriminatedUnion('op',[
+export const surfaceOperation=z.discriminatedUnion('op',[
  z.object({op:z.literal('set'),id,props:z.record(z.string(),z.unknown()).refine(v=>Object.keys(v).length>0)}).strict(),
  z.object({op:z.literal('insert'),parentId:id,index,node:z.unknown()}).strict(),
  z.object({op:z.literal('move'),id,parentId:id,index}).strict(),
  z.object({op:z.literal('remove'),id}).strict(),
 ]);
-const proposal=z.object({changes:z.array(operation).min(1).max(20),title:z.string().min(1).max(80).optional(),state:z.record(z.string(),z.unknown()).optional(),permissions:z.array(z.string()).max(20).optional()}).strict();
+const proposal=z.object({changes:z.array(surfaceOperation).min(1).max(20),title:z.string().min(1).max(80).optional(),state:z.record(z.string(),z.unknown()).optional(),permissions:z.array(z.string()).max(20).optional()}).strict();
 const layouts=['stack','split','grid','row','details'];
 function locate(root,id,parent=null){if(root.id===id)return {node:root,parent};for(const child of root.children??[]){const found=locate(child,id,root);if(found)return found;}return null;}
 function requireNode(root,id){const found=locate(root,id);if(!found)throw new Error(`Unknown target node: ${id}`);return found;}

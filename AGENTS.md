@@ -2,7 +2,7 @@
 
 Hackathon judging protection: through November 9, 2026 inclusive, perform all new work on a development branch, never on `main`. Do not merge into or push changes to `main` during this period. The post-hackathon installer work starts on `codex/installable-runtime`. After this period, merging still requires user direction.
 
-Post-hackathon slice I001: installable dashboard/Core with bundled Fieldnote/Parcel, replaceable Tauri host boundary, user-supplied session model access and no installed app creation. Preserve source/developer creation. Windows first, then mandatory macOS packaging/native verification before work beyond this installer slice. See docs/SLICE_I001.md and docs/INSTALLER.md. The old submission freeze does not prohibit this user-authorized branch work.
+Post-hackathon slice I001: installable dashboard/Core with bundled Fieldnote/Parcel, replaceable Tauri host boundary, user-supplied session model access and no installed app creation. Preserve source/developer creation. November 12 user direction authorizes merging the installer/Core integration now; macOS packaging/native verification is deferred until later and does not block this merge or subsequent work. See docs/SLICE_I001.md and docs/INSTALLER.md. The old submission freeze does not prohibit this user-authorized branch work.
 
 Active product direction: desktop Core engine, independently running Tauri apps, Surface-defined interfaces/data/events/actions, shared Meta-powered authoring, app-specific MCP interfaces, app/Surface grants, executable Automations, dashboard/catalogue and portable blank-project creation. Web product delivery and Observer are parked. Read docs/README.md, its active plan, docs/FOUNDATION.md and detailed slice before implementation.
 
@@ -43,3 +43,6 @@ Before replacing dependencies stop only identified project previews/builds/nativ
 Scaffolding uses a user-chosen new folder, refuses existing-target collisions, and produces portable relative runtime references. Do not overwrite unrelated work or delete user data for cleanup. No credential migration or filesystem reorganization without concrete need. Test scaffolds use ignored/temporary folders with checked paths.
 
 Prioritize a convincing real three-minute demo, substantive Meta use and runnable delivery. Do not substitute scripted outputs for generation, invent OS metrics/catalogue adoption, or claim production security/offline/remote interoperability. Design independently; do not inspect/copy unrelated private application code.
+
+
+November 6 user direction: C001 Core hardening is authorized on codex/core-authoring-hardening directly from main, parallel to installer/macOS work. For C001, arbitrary user-configured OpenAI-compatible text model IDs/endpoints supersede the hackathon Meta-only catalogue rule. External-app integration is parked. See docs/SLICE_C001.md. Main remains protected through November 9 inclusive.

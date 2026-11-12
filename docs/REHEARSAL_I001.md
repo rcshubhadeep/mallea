@@ -1,3 +1,5 @@
+November 12, 2026: user authorizes merging the installer/Core integration with macOS testing deferred until later. Earlier mandatory-next-gate statements below record the original slice; they no longer block this merge or subsequent work. Fresh integration checks are recorded in STATUS.md. Existing installed previews require a rebuild to receive merged behavior.
+
 # I001 Windows preview evidence — November 4, 2026
 
 Branch: codex/installable-runtime. Main retained at 2fe8c1f4195856b93840eb81bb52282e4430f586. Milestone advanced: post-hackathon installable delivery (E1/E3/E5 extension). Slice remains open for clean-machine/platform acceptance; macOS is the mandatory next target before other feature work.

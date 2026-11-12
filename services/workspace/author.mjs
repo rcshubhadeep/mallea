@@ -48,7 +48,7 @@ export function createAuthor(store, { production = false, infer = chat, config, 
           if (artifact.manifest.id !== id || artifact.manifest.version !== version) throw new Error('Use the exact supplied package id and version.');
           await (store.definition?.verify ?? verifyReview)(artifact);
           job.controller.signal.throwIfAborted();
-          store.saveDraft(job.id, artifact, job.base, job.request);
+          store.saveDraft(job.id, artifact, job.base, job.request, {policy:store.definition?.policy,changes:generated.changes});
           job.phase = 'ready'; return;
         } catch (error) {
           job.controller.signal.throwIfAborted();

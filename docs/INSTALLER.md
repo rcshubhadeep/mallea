@@ -1,12 +1,12 @@
 # Installed Mallea preview
 
-Development branch: `codex/installable-runtime`. Windows x64 preview first; macOS packaging and native verification are the mandatory next gate before work beyond this installer slice. Linux installers are excluded. No public release, Windows signing or macOS notarization is claimed.
+Installer/Core integration is authorized for main on November 12. Windows x64 remains an unsigned preview; macOS packaging and native verification are deferred for later testing and do not block this merge. Linux installers are excluded. No public release, Windows signing or macOS notarization is claimed.
 
 ## Use the Windows preview
 
 1. Run Mallea_0.1.0_x64-setup.exe. The per-user installer includes Core, private Node, the desktop host, Fieldnote and Parcel. It installs WebView2 if missing; that prerequisite download needs internet. No Git, Node installation, npm, Rust or compiler is needed to use the installed edition.
 2. Open Mallea from its shortcut. Core starts automatically; the dashboard opens Fieldnote/Parcel in independent windows. Drawing, saved revisions, review feedback and deterministic operations work without an LLM. Sharing still requires explicit owner-approved grants.
-3. For Shape/Muse processing, open dashboard Model settings, enter your HTTPS API base URL, choose a registered Meta model and enter your API key. The provider must support compatible chat completions. Configuration is held in Core memory for this session; re-enter it after Core restarts. A supplied key does not verify provider access; the first request may report an account/model/endpoint error. No model access or credits are included.
+3. For Shape/Muse processing, open dashboard Model settings, choose Custom endpoint and model, enter your HTTPS API base URL, exact model ID and session API key. Choose Agent tools for function-calling models, or explicitly select Basic JSON. The provider must support compatible Chat Completions; there is no automatic fallback. Configuration is held in Core memory for this session; re-enter it after Core restarts. A supplied key does not verify provider access; the first request may report an account/model/endpoint error. No model access or credits are included.
 4. New-app creation is unavailable in the installed edition. Source/developer project creation remains available.
 5. Closing the dashboard leaves other apps and Core running. To stop Core, close Fieldnote/Parcel, reopen the dashboard, then Model settings -> Quit Mallea. Active apps prevent Core shutdown.
 
@@ -20,13 +20,13 @@ Builder requirements: official Node 24.19.0 binaries, locked dependencies, Rust 
 
 PowerShell, repository root:
 
-    git switch codex/installable-runtime
+    git switch main
     npm.cmd ci --script-shell=cmd.exe
     npm.cmd --script-shell=cmd.exe run installer
 
-macOS Bash/Zsh, on the Mac's own architecture (mandatory next gate; not verified by a Windows build):
+macOS Bash/Zsh, on the Mac's own architecture (deferred; not verified by a Windows build):
 
-    git switch codex/installable-runtime
+    git switch main
     npm ci
     npm run installer
 

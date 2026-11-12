@@ -1,6 +1,6 @@
 # Desktop engine architecture: target and current gaps
 
-Governed by PROJECT_PLAN.v026.md. This guide describes implementation boundaries; it is not a completed-system claim.
+Governed by PROJECT_PLAN.v028.md. This guide describes implementation boundaries; it is not a completed-system claim.
 
 ## Runtime roles
 
@@ -25,7 +25,7 @@ Dynamic behavior comes from typed events and bounded registered operations, opti
 
 ## Native project delivery
 
-Installed delivery is separate from developer project builds. I001 bundles private Node, Core, the shared Tauri host and Fieldnote/Parcel. A versioned runtime contract supplies trusted host/resource paths to Core; a narrow platform adapter starts or reconnects to detached Core and opens the dashboard. Installed data lives outside program files and developer data. Installed project creation is denied in Core and disabled in Surface presentation. User-entered model endpoint, registered Meta identity and key are session-only; Shape and Muse execution are gated before inference. Source project creation remains supported. Windows and macOS release gates, startup/shutdown, installer commands and verification limits: INSTALLER.md and STATUS.md.
+Installed delivery is separate from developer project builds. I001 bundles private Node, Core, the shared Tauri host and Fieldnote/Parcel. A versioned runtime contract supplies trusted host/resource paths to Core; a narrow platform adapter starts or reconnects to detached Core and opens the dashboard. Installed data lives outside program files and developer data. Installed project creation is denied in Core and disabled in Surface presentation. User-entered model endpoint, exact model ID and key are session-only; Shape and Muse execution are gated before inference. Source project creation remains supported. Windows and macOS release gates, startup/shutdown, installer commands and verification limits: INSTALLER.md and STATUS.md.
 
 A project contains an app manifest, pinned Mallea runtime/SDK artifact, Tauri shell/template, app-owned metadata and normal build scripts/locks. It builds without an absolute link into the creator's checkout. The initial default definition is empty except framework Shape. Subsequent model/schema/Surface revisions load from Core without native recompilation. The E001 format copies the built frontend and native sources/lock into each project, with its own pinned Tauri CLI dependency and private local host configuration. It compiled outside the original checkout.
 

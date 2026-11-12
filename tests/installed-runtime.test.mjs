@@ -13,11 +13,14 @@ test('installed model setup starts empty, validates user access and keeps keys s
   const settings = new ModelSettings({installed: true, config: {model: 'muse-spark-open', key: 'ignored-developer-key'}});
   assert.equal(settings.public().ready, false);
   assert.throws(() => settings.config());
-  const input = {profile: 'user', model: 'muse-spark-open', endpoint: 'https://example.com/v1/', key: 'synthetic-session-key'};
+  const input = {profile: 'custom', model: 'muse-spark-open', endpoint: 'https://example.com/v1/', key: 'synthetic-session-key'};
   for (const endpoint of ['http://example.com', 'https://user:pass@example.com', 'https://example.com/?key=secret']) {
     assert.throws(() => settings.configure({...input, endpoint}));
   }
-  assert.throws(() => settings.configure({...input, model: 'unregistered-model'}));
+  settings.configure({...input, model: 'provider/custom-text-model', mode: 'json'});
+  assert.equal(settings.config().model, 'provider/custom-text-model');
+  assert.equal(settings.config().mode, 'json');
+  assert.throws(() => settings.configure({...input, model: ''}));
   assert.throws(() => settings.configure({...input, key: 'bad\nheader'}));
   settings.configure(input);
   assert.equal(settings.config().endpoint.href, 'https://example.com/v1/chat/completions');
@@ -56,8 +59,23 @@ test('installed edition preserves ordinary data, denies creation and gates Shape
     await assert.rejects(() => server.dashboard.action({action: 'project', args: {}}), /unavailable/);
     const registration = await request('/api/engine/apps', {version: 1, id: 'another-app', name: 'Another', author: 'Test', purpose: 'Denied', adapter: 'surface'}, {'X-Mallea-Control': core.controlToken});
     assert.equal(registration.status, 400); assert.equal(server.engineApps.has('another-app'), false);
-    server.modelSettings.configure({profile: 'user', endpoint: 'https://example.com/v1', model: 'muse-spark-open', key: 'not-persisted-session-key'});
+    server.modelSettings.configure({profile: 'custom', endpoint: 'https://example.com/v1', model: 'muse-spark-open', key: 'not-persisted-session-key'});
     assert.equal(server.liveApps.info(session).inferenceReady, true);
+    let authorContext;
+    server.liveApps.authorOptions.infer = async (_settings, messages) => {
+      authorContext = JSON.parse(messages[1].content);
+      return {choice: {finish_reason: 'tool_calls', message: {tool_calls: [{id: 'unsupported-installed', type: 'function', function: {name: 'unsupported', arguments: JSON.stringify({reason: 'Synthetic integration check', alternative: 'No live provider used'})}}]}}, usage: {}};
+    };
+    const generated = await request('/api/live/author', {request: 'Synthetic app-wide check', intent: 'app'}, {'X-Mallea-Session': session.id});
+    assert.equal(generated.status, 200);
+    const job = await generated.json();
+    await new Promise(done => setImmediate(done));
+    assert.equal(authorContext.policy.intent, 'app');
+    assert.equal(server.liveApps.job(session, job.id).phase, 'unsupported');
+    assert(!JSON.stringify(authorContext).includes('not-persisted-session-key'));
+    const settingsNodes = server.dashboard.state().panels.settings.ui.children;
+    assert(settingsNodes.some(n => n.bind === 'control.mode'));
+    assert(settingsNodes.some(n => n.action === 'control.quit'));
     assert(!JSON.stringify(server.dashboard.state()).includes('not-persisted-session-key'));
     const app = server.liveApps.read('scratchpad-main'); app.models.personal = {fields: {note: {type: 'text', initial: ''}}, values: {note: 'Keep my work'}};
     server.liveApps.save('scratchpad-main', app, 0);

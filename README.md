@@ -1,6 +1,6 @@
 # Mallea
 
-**Software that takes your shape. Powered By Meta Muse**
+**Software that takes your shape.**
 
 Mallea’s vision is software that adapts to the person using it. Describe what you need, reshape an interface while you work, and let your apps cooperate through explicit permissions.
 
@@ -10,7 +10,7 @@ In 1913, Henry Ford’s moving assembly line changed how cars were built and who
 
 **No more 'Connectors', 'Agents', 'Computer Use Permission'. Yet, all the good things of having a powerful AI model by your side.**
 
-Mallea is a desktop application framework built around **Surfaces**: editable interfaces with their own data bindings, events and actions. **Mallea Core** runs locally and supplies shared Meta Muse-powered authoring, persistence and communication. Each app runs in its own native window. Start with a blank app, then use **Shape this app** to build it in plain English.
+Mallea is a desktop application framework built around **Surfaces**: editable interfaces with their own data bindings, events and actions. **Mallea Core** runs locally and supplies shared model-powered authoring, persistence and communication. Each app runs in its own native window. Start with a blank app, then use **Shape this app** to build it in plain English.
 
 ## Contents
 
@@ -29,13 +29,13 @@ Mallea is a desktop application framework built around **Surfaces**: editable in
 
 ## Installed preview
 
-The development branch includes a Windows installer preview with the dashboard, Core, Fieldnote and Parcel. Installed users need no developer tools: open Mallea, then launch either app from the dashboard. Ordinary app functions work without a model; Shape and Muse processing require your own model access in **Model settings**. Configuration is session-only. New-app creation is unavailable in the installed edition.
+The source includes a Windows installer preview with the dashboard, Core, Fieldnote and Parcel. Installed users need no developer tools: open Mallea, then launch either app from the dashboard. Ordinary app functions work without a model; Shape and Muse processing require your own model access in **Model settings**. Configuration is session-only. New-app creation is unavailable in the installed edition.
 
-See [installer instructions and platform limits](docs/INSTALLER.md). This is a local development preview, not a published signed release. macOS installation and native verification are the required next gate. The source setup below remains available for developers, including project creation.
+See [installer instructions and platform limits](docs/INSTALLER.md). This is a local development preview, not a published signed release. macOS installation and native verification are deferred for later testing. The source setup below remains available for developers, including project creation.
 
 ## First-Time Setup
 
-Windows and macOS have been tested. Use PowerShell on Windows and Terminal with Bash or Zsh on macOS. Linux is untested; the Bash commands below also apply after installing its platform prerequisites.
+Earlier runtime flows have been tested on Windows and macOS. The new model/tool authoring flow has automated and browser checks; native Windows/macOS and real-provider compatibility checks are pending. Use PowerShell on Windows and Terminal with Bash or Zsh on macOS. Linux is untested; the Bash commands below also apply after installing its platform prerequisites.
 
 ### 1. Install the prerequisites
 
@@ -84,13 +84,13 @@ if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 if [ ! -f .env ]; then cp .env.example .env; fi
 ```
 
-Open `.env` in a text editor and fill in these three settings for a Meta model supported by Mallea:
+Open `.env` in a text editor and fill in these settings for an OpenAI-compatible Chat Completions endpoint:
 
 | Setting | What to enter |
 | --- | --- |
-| `DEV_BASE_URL` | The API End Point, such as `https://api.meta.ai/v1/responses` |
+| `DEV_BASE_URL` | The HTTPS API root or full Chat Completions endpoint; for OpenRouter, use `https://openrouter.ai/api/v1` |
 | `DEV_API_KEY` | Your API key. |
-| `DEV_MODEL` | The exact identifier for a supported Muse model, such as  `muse-spark-1.3` or `muse-wonder-1.0`. If using Muse Spark Open then check with the provider |
+| `DEV_MODEL` | The exact model ID listed by your provider; no model allowlist is imposed |
 
 You need access to that model through your provider; inference may incur usage charges. Keep `.env` private. It is ignored by Git, and no model key belongs in a generated app project. The optional `PROD_` settings can remain empty for this setup.
 
@@ -136,7 +136,11 @@ Wait for `Mallea Core: http://127.0.0.1:4318`. Leave this terminal open; Engine 
 node scripts/launch-app.mjs mallea-core
 ```
 
-These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the configured model profile. You can open the included Fieldnote and Parcel apps using **Open app** on their cards. The **Mallea App Store** section shows planned example apps; they are previews only and cannot be installed yet.
+These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the configured model profile.
+
+Choose **Custom endpoint and model** to enter an HTTPS API URL, exact model ID and API key for this Core session. **Agent tools** requires function-call support; choose **Basic JSON** explicitly for models without it. Changing a custom endpoint or model requires entering its key again. Keys and custom settings disappear when Core restarts.
+
+You can open the included Fieldnote and Parcel apps using **Open app** on their cards. The **Mallea App Store** section shows planned example apps; they are previews only and cannot be installed yet.
 
 ### Subsequent launches
 
@@ -174,7 +178,7 @@ Mallea creates a new `my-notes` subfolder inside your chosen folder. If that fol
 
 ### 2. Describe the interface
 
-In the new app, click **Shape this app** and enter:
+In the new app, click **Shape this app**, select **Edit the whole app** under **Change scope** for this two-column design, and enter:
 
 > Create a simple notes app with two persistent Surfaces side by side. On the left, add a multiline text editor labelled New note and a Save note button. Clicking Save note should append the editor text to a saved notes collection. On the right, display that collection as a list. Keep the notes when I close and reopen the app.
 
@@ -188,6 +192,8 @@ Click **Build changes** and wait for **Ready to preview**. Generation may take t
 
 The interface updates in the running app. You do not need to rebuild its native executable for Surface changes.
 
+Shape defaults to **Add independent Surfaces**: new content appears below the existing app and uses new models. Existing Surfaces, layout and state stay intact. Use **Modify this surface** for a focused edit, or explicitly select **Edit the whole app** to share existing state or rearrange the app. The agent can look up the API and current definitions, edit a private draft and validate it; only your approved **Install changes** updates the app.
+
 ### 4. Use and reshape it
 
 Type a note and click **Save note**. It should appear in the saved list. Save a second note and check that both are present.
@@ -198,7 +204,7 @@ To change the list’s appearance, right-click its text and choose **Modify this
 
 Build, review and install the change as before. The notes should remain intact.
 
-To restyle the whole app, open **Shape this app** and ask:
+To restyle the whole app, open **Shape this app**, select **Edit the whole app** under **Change scope**, and ask:
 
 > Make the whole app dark with a teal accent.
 
@@ -219,14 +225,14 @@ Build, preview, approve and install the change. Then connect the editor to the n
 
 1. Right-click the **New note** editor and choose **Set Automation**.
 2. Under **When should it run?**, select **When I type**, then click **Next**.
-3. Under **Which data should it read?**, select the **New note** editor in My Notes. Under **What should happen?**, select **Ask Meta Muse**.
-4. In **Describe the transformation for Muse**, enter: “Extract the key ideas and constraints from this note as short list items.” Click **Next**.
+3. Under **Which data should it read?**, select the **New note** editor in My Notes. Under **What should happen?**, select **Ask the shared model**.
+4. In **Describe the transformation**, enter: “Extract the key ideas and constraints from this note as short list items.” Click **Next**.
 5. Under **Where should the result go?**, select the list in **My Notes / Ideas**. Choose **Replace the current value or list** and name the Automation **Note to ideas**.
 6. Review the summary, select the approval checkbox and click **Enable Automation**.
 
 Type a note such as “Plan a community garden poster with monochrome colors and no photographs.” Pause briefly. Ideas should fill with model-generated items. Change the note to request bright colors and photographs; after another pause, the list should reflect the new constraints.
 
-Open **Sharing & Automations** to see the latest outcome. **Pause / resume** controls whether the Automation runs, and **Run now** starts it manually. Typing waits for a short pause rather than making a request for every keypress. Muse requests use your configured model and may incur usage charges; pause the Automation when you finish experimenting.
+Open **Sharing & Automations** to see the latest outcome. **Pause / resume** controls whether the Automation runs, and **Run now** starts it manually. Typing waits for a short pause rather than making a request for every keypress. Model requests use your configured model and may incur usage charges; pause the Automation when you finish experimenting.
 
 ### 7. Share the result with another app
 
@@ -257,7 +263,7 @@ Sharing makes the Surface available for access requests. It does not grant anoth
 2. Return to the wizard in **My Notes**. Once access is available, name the Automation **Send ideas to inbox**, review the summary, select the approval checkbox and click **Enable Automation**.
 3. In My Notes’ **Sharing & Automations**, click **Run now** for this copy Automation. The ideas should appear in Notes Inbox.
 
-Later changes to Ideas should copy automatically while both apps are running. Copying unchanged data runs locally and makes no model request; generating new Ideas through Muse still uses the model.
+Later changes to Ideas should copy automatically while both apps are running. Copying unchanged data runs locally and makes no model request; generating new Ideas still uses the selected model.
 
 To stop the connection, open **Notes Inbox → Sharing & Automations** and click **Deny / revoke** on that grant. A subsequent Run now in My Notes should report blocked access. Previously copied ideas remain in Notes Inbox.
 

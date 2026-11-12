@@ -1,3 +1,8 @@
+export function chatEndpoint(value){
+ let endpoint;try{endpoint=new URL(value);}catch{throw new Error('Invalid API base URL.');}
+ if(endpoint.protocol!=='https:'||endpoint.username||endpoint.password||endpoint.search||endpoint.hash)throw new Error('Use an HTTPS API base URL without credentials, query, or fragment.');
+ const root=endpoint.pathname.replace(/\/+$/,'').replace(/\/(?:responses|chat\/completions)$/,'');endpoint.pathname=root+'/chat/completions';return endpoint;
+}
 export function inferenceConfig(production = false, {allowMissingKey=false} = {}) {
   const names = production
     ? { key: 'PROD_LLM_KEY', base: 'PROD_BASE_URL', model: 'PROD_MODEL' }
@@ -5,15 +10,7 @@ export function inferenceConfig(production = false, {allowMissingKey=false} = {}
   for (const name of Object.values(names)) {
     if ((!allowMissingKey||name!==names.key)&&!process.env[name]?.trim()) throw new Error(`Missing configuration: ${name}`);
   }
-  let endpoint;
-  try { endpoint = new URL(process.env[names.base]); }
-  catch { throw new Error('Invalid API base URL.'); }
-  if (endpoint.protocol !== 'https:' || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
-    throw new Error('Use an HTTPS API base URL without credentials, query, or fragment.');
-  }
-  // Accept either an API root or a full endpoint copied from a working example.
-  const root = endpoint.pathname.replace(/\/+$/, '').replace(/\/(?:responses|chat\/completions)$/, '');
-  endpoint.pathname = `${root}/chat/completions`;
+  const endpoint=chatEndpoint(process.env[names.base]);
   return { endpoint, key: process.env[names.key]??'', model: process.env[names.model] };
 }
 
@@ -51,7 +48,11 @@ export async function chat(config, messages, options = {}, signal) {
     throw new InferenceError([401,403].includes(status) ? 'authentication' : status===402 ? 'quota' : status===429 ? 'rate_limit' : status>=500 ? 'unavailable' : 'request', status);
   }
   let result;
-  try { result = await response.json(); }
+  try {
+    const reader=response.body?.getReader();if(!reader)throw new Error('Missing response body.');
+    const chunks=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>2_000_000){await reader.cancel();throw new Error('Response limit exceeded.');}chunks.push(value);}}finally{reader.releaseLock();}
+    result=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  }
   catch { throw new InferenceError(signal?.aborted ? 'cancelled' : requestSignal.aborted ? 'timeout' : 'response'); }
   if (!result.choices?.[0]?.message) throw new InferenceError('response');
   const usage = {};

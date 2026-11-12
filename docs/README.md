@@ -1,12 +1,16 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v026.md](PROJECT_PLAN.v026.md).
+Active project plan: [PROJECT_PLAN.v028.md](PROJECT_PLAN.v028.md).
+
+Current Core slice: [SLICE_C001.md](SLICE_C001.md). Checks and user tests: [REHEARSAL_C001.md](REHEARSAL_C001.md).
 
 The October 30 desktop-engine vision supersedes the earlier browser/Observer-first plans. Features in plans are targets; STATUS.md records working implementation. No product implementation is implied by this documentation rebase.
 
+Parked exploration: [External-app read-only integration](EXTERNAL_APP_READONLY.md), a design proposal without runtime support.
+
 ## Active guides
 
-- [SLICE_I001.md](SLICE_I001.md): post-hackathon installed-runtime units and mandatory Windows-to-macOS acceptance.
+- [SLICE_I001.md](SLICE_I001.md): installed-runtime units; macOS acceptance deferred by November 12 direction.
 - [INSTALLER.md](INSTALLER.md): installed preview, build commands, host boundary and platform limits.
 - [REHEARSAL_I001.md](REHEARSAL_I001.md): fresh Windows installer/runtime/native evidence and remaining acceptance gates.
 - [FOUNDATION.md](FOUNDATION.md): accepted product principles and boundaries.

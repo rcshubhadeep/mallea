@@ -1,6 +1,6 @@
 # Mallea foundation
 
-Active plan: [PROJECT_PLAN.v028.md](PROJECT_PLAN.v028.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
+Active plan: [PROJECT_PLAN.v029.md](PROJECT_PLAN.v029.md). Accepted desktop-engine vision, October 30, 2026. Earlier browser/Observer-first plans are historical.
 
 Mallea is a framework for software that users can reshape at the point of use, with shared model assistance in every app. It also gives apps a shared way to discover each other and exchange permitted data/state/actions on one machine. These are the two inseparable foundations.
 
@@ -16,6 +16,6 @@ An Automation is an executable, permissioned event-to-operation definition with 
 
 A newly scaffolded project compiles to a real blank Tauri app with only Shape access. The user builds it incrementally using Surfaces and models. Blank creation and app-specific schema/action composition are essential proof of a framework rather than two fixed demos.
 
-Web product support and Observer are parked. Remote P2P/encrypted routing, marketplace distribution, OS implementation and RL training are future directions. The original designer apps and existing targeted-edit tests are reusable evidence, not a limit on the new framework model or proof the new vision already works.
+Web product support and Observer are parked. Reviewed GitHub-backed app distribution and authoring improvements are authorized planned work in CORE_ECOSYSTEM_ROADMAP.md; they are not implemented by that plan. Remote P2P/encrypted routing, OS implementation and RL training remain future directions. The original designer apps and existing targeted-edit tests are reusable evidence, not a limit on the new framework model or proof the new vision already works.
 
 Implementation scope and status: [FOUNDATION_PLAN.md](FOUNDATION_PLAN.md), [STATUS.md](STATUS.md). Demo and Automation choices: [DEMO_PLAN.md](DEMO_PLAN.md), [AUTOMATION_IDEAS.md](AUTOMATION_IDEAS.md).

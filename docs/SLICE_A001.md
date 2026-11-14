@@ -1,6 +1,6 @@
 # A001: interactive Shape clarification
 
-Planned first implementation PR in CORE_ECOSYSTEM_ROADMAP.md, authorized as Core direction November 13, 2026. Advances E2/E3. This document defines scope; no implementation is implied. Start from current main and record a fresh focused baseline before editing source.
+First implementation PR in CORE_ECOSYSTEM_ROADMAP.md, authorized as Core direction November 13, 2026 and started November 14. Advances E2/E3. Source implementation and deterministic/browser checks are recorded in REHEARSAL_A001.md; real-provider/native/user acceptance remains pending. Branch codex/shape-clarification is stacked on roadmap PR #4, based on main 3d54f14; neither PR is merged by this slice.
 
 ## Numbered units
 
@@ -23,4 +23,6 @@ No A2UI dependency/protocol migration, free-form model-authored system panels, d
 2. Choose answers and Submit. Expect generation to continue, then a normal proposal preview. Existing app data/layout remains unchanged until explicit approval/install.
 3. Repeat and Cancel while questions are pending; expect no installable late result. An answer submitted after another definition edit must be rejected as stale. Restart Core while waiting; expect no resumed job or persisted private answers.
 
-Provider discretion means a model may reasonably proceed without a question. Automated scripted tool calls establish protocol behavior; only a real-provider rehearsal establishes actual clarification quality. This test is planned, not evidence of a working feature.
+Provider discretion means a model may reasonably proceed without a question. Automated scripted tool calls establish protocol behavior; only a real-provider rehearsal establishes actual clarification quality. The steps above remain pending user acceptance, not evidence that a particular provider asks useful questions.
+
+Implementation limits: each batch has up to three questions; choice questions offer two to six unique values. Labels are bounded; text answers are trimmed and limited to 1,000 characters. At most two batches per job. Question definitions are inspectable system-owned session Surfaces, held in memory and exposed only to the owning app. Unsubmitted answers remain local to the question panel and are lost on renderer reload. Pending questions can recover on reload within the same live Core/owner session; after the last owner stays disconnected for the existing three-second grace, they are cancelled. Core restart discards them. Waiting has its own 30-minute expiry and pauses, rather than resets, the cumulative 180-second active authoring budget. Other turn/call/error/context limits remain cumulative.

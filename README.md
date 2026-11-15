@@ -184,6 +184,8 @@ In the new app, click **Shape this app**, select **Edit the whole app** under **
 
 Click **Build changes** and wait for **Ready to preview**. Generation may take time. If it fails, expand **Validation details** to see the reason; no failed proposal is installed.
 
+In **Agent tools** mode, Shape may first ask a few questions. Answer them and choose **Continue building**, or **Cancel generation**. Answers go to the model selected for that request; answering does not install anything. Questions expire after 30 minutes and are discarded when Core restarts.
+
 ### 3. Preview and install
 
 1. Review the proposed editor, button and saved list in the preview.

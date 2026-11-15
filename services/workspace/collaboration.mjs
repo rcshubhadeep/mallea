@@ -109,7 +109,12 @@ export async function createCollaborationServer(options={}){
         if(req.method==='GET'&&url.pathname==='/api/live/state')return send(200,live.info(session));
         if(req.method==='POST'&&url.pathname==='/api/live/event')return send(200,live.event(session,await body(req)));
         if(req.method==='POST'&&url.pathname==='/api/live/author'){if(options.runtime)models.config();const input=await body(req);return send(200,live.author(session,input.surfaceId??null,input.elementId??null,input.intent??'add').start(input.request));}
-        const job=url.pathname.match(/^\/api\/live\/jobs\/([a-z0-9-]+)(\/cancel)?$/);if(job)return send(200,live.job(session,job[1],!!job[2]));
+        const job=url.pathname.match(/^\/api\/live\/jobs\/([a-z0-9-]+)(?:\/(cancel|answers))?$/);if(job){
+          if(req.method==='GET'&&!job[2])return send(200,live.job(session,job[1]));
+          if(req.method==='POST'&&job[2]==='cancel')return send(200,live.job(session,job[1],true));
+          if(req.method==='POST'&&job[2]==='answers')return send(200,live.answer(session,job[1],await body(req)));
+          return send(405,{error:'Use GET to inspect a job and POST to answer or cancel.'});
+        }
         if(req.method==='GET'&&url.pathname==='/api/live/draft')return send(200,live.draft(session,url.searchParams.get('id')).artifact);
         if(req.method==='POST'&&url.pathname==='/api/live/install'){const input=await body(req);return send(200,live.install(session,input.draftId,input.approved));}
         if(req.method==='POST'&&url.pathname==='/api/live/undo')return send(200,live.undo(session));

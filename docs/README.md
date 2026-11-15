@@ -10,6 +10,8 @@ Parked exploration: [External-app read-only integration](EXTERNAL_APP_READONLY.m
 
 ## Active guides
 
+- [SLICE_B001.md](SLICE_B001.md): one-command source build/launch and verification limits.
+
 - [SLICE_I001.md](SLICE_I001.md): installed-runtime units; macOS acceptance deferred by November 12 direction.
 - [INSTALLER.md](INSTALLER.md): installed preview, build commands, host boundary and platform limits.
 - [REHEARSAL_I001.md](REHEARSAL_I001.md): fresh Windows installer/runtime/native evidence and remaining acceptance gates.

@@ -15,6 +15,7 @@ Mallea is a desktop application framework built around **Surfaces**: editable in
 ## Contents
 
 - [Installed preview](#installed-preview)
+- [Build and launch from source](#build-and-launch-from-source)
 - [First-Time Setup](#first-time-setup): [prerequisites](#1-install-the-prerequisites), [download](#2-download-mallea), [model configuration](#3-configure-the-model), [install and build](#4-install-dependencies-and-build)
 - [Run Mallea Core](#run-mallea-core): [first launch](#first-launch), [subsequent launches](#subsequent-launches)
 - [Build Your First App](#build-your-first-app)
@@ -32,6 +33,32 @@ Mallea is a desktop application framework built around **Surfaces**: editable in
 The source includes a Windows installer preview with the dashboard, Core, Fieldnote and Parcel. Installed users need no developer tools: open Mallea, then launch either app from the dashboard. Ordinary app functions work without a model; Shape and Muse processing require your own model access in **Model settings**. Configuration is session-only. New-app creation is unavailable in the installed edition.
 
 See [installer instructions and platform limits](docs/INSTALLER.md). This is a local development preview, not a published signed release. macOS installation and native verification are deferred for later testing. The source setup below remains available for developers, including project creation.
+
+## Build and launch from source
+
+With [Node 24, Rust and the platform prerequisites](#1-install-the-prerequisites) installed, run these from the repository root. Close existing Mallea windows and stop Core before rebuilding. Install dependencies once:
+
+**Windows — PowerShell**
+
+```powershell
+npm.cmd ci --script-shell=cmd.exe
+node scripts/mallea.mjs
+```
+
+**macOS / Linux — Bash or Zsh**
+
+```sh
+npm ci
+node scripts/mallea.mjs
+```
+
+The second command checks types, builds the frontends and native host, starts Core and opens the dashboard in one terminal. Keep it open. Close the app windows and press **Ctrl+C** to stop that Core. An occupied Core port produces a refusal; the helper never stops an existing source or installed Core.
+
+For later launches use `node scripts/mallea.mjs run` to skip rebuilding. For build only use `node scripts/mallea.mjs build`; it does not create an installer. `node scripts/mallea.mjs --help` lists options, including `--dev` and `--production` for explicitly selected runtime modes. An optional repository `.env` is loaded into Core only; without one, configure session model access through the dashboard. Ordinary app use needs no model key.
+
+For a clean native rebuild, first close Mallea windows and stop Core, then run `node scripts/mallea.mjs clean`. This aliases Cargo clean for this checkout's native target; it retains `.env`, saved apps and Core data. The next build will take longer. The npm alias is `npm run clean` (PowerShell: `npm.cmd --script-shell=cmd.exe run clean`). No clean is needed for normal launches.
+
+The helper uses the existing Node/Vite/Tauri tools; no CMake is required. Windows verification is recorded in [SLICE_B001.md](docs/SLICE_B001.md). The same commands are provided for macOS/Linux, but the new helper has not been freshly verified there. Existing generated projects still need their own documented runtime sync/rebuild. The manual setup and separate-terminal commands below remain available; skip their build/first-launch steps if the helper has already opened your dashboard.
 
 ## First-Time Setup
 

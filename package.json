@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node scripts/mallea.mjs",
     "build:desktop": "node scripts/mallea.mjs build",
+    "clean": "node scripts/mallea.mjs clean",
     "test": "node --test tests/*.test.mjs",
     "check": "tsc --noEmit",
     "build": "npm run check && vite build --config apps/web/vite.config.ts && vite build --config apps/desktop/vite.config.ts",

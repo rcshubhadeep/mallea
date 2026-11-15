@@ -56,6 +56,8 @@ The second command checks types, builds the frontends and native host, starts Co
 
 For later launches use `node scripts/mallea.mjs run` to skip rebuilding. For build only use `node scripts/mallea.mjs build`; it does not create an installer. `node scripts/mallea.mjs --help` lists options, including `--dev` and `--production` for explicitly selected runtime modes. An optional repository `.env` is loaded into Core only; without one, configure session model access through the dashboard. Ordinary app use needs no model key.
 
+For a clean native rebuild, first close Mallea windows and stop Core, then run `node scripts/mallea.mjs clean`. This aliases Cargo clean for this checkout's native target; it retains `.env`, saved apps and Core data. The next build will take longer. The npm alias is `npm run clean` (PowerShell: `npm.cmd --script-shell=cmd.exe run clean`). No clean is needed for normal launches.
+
 The helper uses the existing Node/Vite/Tauri tools; no CMake is required. Windows verification is recorded in [SLICE_B001.md](docs/SLICE_B001.md). The same commands are provided for macOS/Linux, but the new helper has not been freshly verified there. Existing generated projects still need their own documented runtime sync/rebuild. The manual setup and separate-terminal commands below remain available; skip their build/first-launch steps if the helper has already opened your dashboard.
 
 ## First-Time Setup

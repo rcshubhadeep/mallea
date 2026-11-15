@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,mkdir,writeFile,readFile,rm} from 'node:fs/promises';
+import {mkdtemp,mkdir,writeFile,readFile,rm,symlink,realpath} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,dirname,resolve} from 'node:path';
 import {createServer} from 'node:net';
-import {parseSourceArgs,buildSource,buildSteps,startSource,requireFreePort} from '../scripts/mallea.mjs';
+import {parseSourceArgs,buildSource,buildSteps,startSource,requireFreePort,cleanSource} from '../scripts/mallea.mjs';
 
 async function temporary(t){const path=await mkdtemp(join(tmpdir(),'mallea-source-launch-'));assert.equal(dirname(path),resolve(tmpdir()));t.after(()=>rm(path,{recursive:true,force:true}));return path;}
 
@@ -12,7 +12,21 @@ test('source CLI accepts explicit modes and rejects ambiguous or unsupported arg
  assert.deepEqual(parseSourceArgs([]),{command:'start',devMode:false,production:false});
  assert.deepEqual(parseSourceArgs(['run','--production','--dev']),{command:'run',production:true,devMode:true});
  assert.equal(parseSourceArgs(['build']).command,'build');assert.equal(parseSourceArgs(['--help']).command,'help');
+ assert.equal(parseSourceArgs(['clean']).command,'clean');assert.throws(()=>parseSourceArgs(['clean','--dev']));
  for(const args of [['install'],['run','--dev','--dev'],['build','--production'],['run','build'],['--unknown']])assert.throws(()=>parseSourceArgs(args));
+});
+
+test('clean invokes cargo only for the checked native target and refuses redirected cleanup',async t=>{
+ const base=await temporary(t),parent=join(base,'apps/desktop/src-tauri'),target=join(parent,'target');
+ await mkdir(parent,{recursive:true});await writeFile(join(parent,'Cargo.toml'),'[package]\nname="clean-test"\nversion="0.1.0"\n');
+ let calls=0;
+ await cleanSource({base,runStep:async step=>{calls++;assert.equal(step.command,'cargo');assert.deepEqual(step.args,['clean','--manifest-path',join(parent,'Cargo.toml'),'--target-dir',target]);}});
+ assert.equal(calls,1);
+ const elsewhere=join(base,'retained-data');await mkdir(elsewhere);await writeFile(join(elsewhere,'keep.txt'),'retained');
+ await symlink(elsewhere,target,process.platform==='win32'?'junction':'dir');
+ await assert.rejects(()=>cleanSource({base,runStep:async()=>{calls++;}}),/redirected/);
+ assert.equal(await readFile(join(elsewhere,'keep.txt'),'utf8'),'retained');assert.equal(calls,1);
+ assert.equal(await realpath(target),await realpath(elsewhere));
 });
 
 test('build fails before running tools when dependencies are absent and stops on the first failed step',async t=>{

@@ -1,7 +1,7 @@
 import {spawn} from 'node:child_process';
-import {access,stat} from 'node:fs/promises';
+import {access,stat,realpath} from 'node:fs/promises';
 import {createServer} from 'node:net';
-import {join,resolve} from 'node:path';
+import {join,resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {launchNative,projectEnvironment} from './lib/native-launch.mjs';
 
@@ -11,6 +11,7 @@ export const help=`Mallea source build and launch
   node scripts/mallea.mjs                 Build, start Core and open the dashboard
   node scripts/mallea.mjs run             Open the current build without rebuilding
   node scripts/mallea.mjs build           Build only (no installer)
+  node scripts/mallea.mjs clean           Cargo clean for this checkout's native build
   node scripts/mallea.mjs [start|run] --dev         Enable developer exports
   node scripts/mallea.mjs [start|run] --production  Select the configured production profile
 
@@ -24,7 +25,7 @@ Keep this terminal open. Ctrl+C stops the Core started by this command.
 export function parseSourceArgs(args){
  if(args.length===1&&['--help','-h'].includes(args[0]))return{command:'help'};
  const rest=[...args],command=rest[0]&&!rest[0].startsWith('-')?rest.shift():'start';
- if(!['start','run','build'].includes(command)||new Set(rest).size!==rest.length||rest.some(v=>!['--dev','--production'].includes(v))||(command==='build'&&rest.length))throw new Error('Use start, run or build. Run with --help for options.');
+ if(!['start','run','build','clean'].includes(command)||new Set(rest).size!==rest.length||rest.some(v=>!['--dev','--production'].includes(v))||(['build','clean'].includes(command)&&rest.length))throw new Error('Use start, run, build or clean. Run with --help for options.');
  return{command,devMode:rest.includes('--dev'),production:rest.includes('--production')};
 }
 
@@ -48,9 +49,22 @@ export async function buildSource({base=root,runStep=runBuildStep}={}){
  if(process.env.CARGO_BUILD_TARGET)throw new Error('Unset CARGO_BUILD_TARGET for this local build. Use the desktop build command for cross-compilation.');
  for(const step of buildSteps(base)){console.log(step.label+'…');await runStep(step);}
 }
+export async function cleanSource({base=root,runStep=runBuildStep}={}){
+ const manifest=join(base,'apps/desktop/src-tauri/Cargo.toml'),target=resolve(base,'apps/desktop/src-tauri/target');
+ await requireFile(manifest,'Native project manifest is missing. Run this command from a Mallea checkout.');
+ const canonicalRoot=await realpath(base),expected=join(canonicalRoot,'apps/desktop/src-tauri/target');
+ const same=(a,b)=>process.platform==='win32'?a.toLowerCase()===b.toLowerCase():a===b;
+ // cargo clean removes build artifacts recursively. Refuse redirected parent/target
+ // paths so a junction cannot redirect cleanup into user data or another checkout.
+ if(!same(await realpath(dirname(target)),dirname(expected)))throw new Error('Refusing to clean a redirected native build directory.');
+ let actual;try{actual=await realpath(target);}catch(error){if(error.code!=='ENOENT')throw error;actual=target;}
+ if(!same(actual,expected))throw new Error('Refusing to clean a redirected native build directory.');
+ console.log('Cleaning native build artifacts (saved apps, .env and Core data are retained)…');
+ await runStep({label:'Cleaning the native build',command:'cargo',args:['clean','--manifest-path',manifest,'--target-dir',target],cwd:base});
+}
 function runBuildStep(step){
  return new Promise((done,fail)=>{
-  const child=spawn(process.execPath,step.args,{cwd:step.cwd,stdio:'inherit',windowsHide:true,env:{...projectEnvironment(),CARGO_TARGET_DIR:join(root,'apps/desktop/src-tauri/target')}});
+  const child=spawn(step.command??process.execPath,step.args,{cwd:step.cwd,stdio:'inherit',windowsHide:true,env:{...projectEnvironment(),CARGO_TARGET_DIR:join(root,'apps/desktop/src-tauri/target')}});
   child.once('error',()=>fail(new Error('Could not start a build step. Check Node, Cargo and the platform prerequisites.')));
   child.once('exit',(code,signal)=>code===0?done():fail(new Error(step.label+' failed'+(signal?' ('+signal+')':'')+'. Launch skipped; close Mallea windows before rebuilding.')));
  });
@@ -71,6 +85,7 @@ export async function main(args=process.argv.slice(2)){
  if(Number(process.versions.node.split('.')[0])!==24)throw new Error('Mallea requires Node 24. Check node --version.');
  // A probe does not authenticate with, modify or stop an existing Core.
  await requireFreePort();
+ if(options.command==='clean'){await cleanSource();console.log('Native clean complete. The next build will take longer.');return;}
  if(options.command!=='run')await buildSource();
  if(options.command==='build'){console.log('Build complete. Open it with node scripts/mallea.mjs run.');return;}
  const envFile=join(root,'.env');

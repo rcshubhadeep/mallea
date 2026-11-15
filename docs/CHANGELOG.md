@@ -225,3 +225,12 @@ User authorizes resolving and merging I001 and testing macOS later. Copied v027 
 Previous SHA-256: 368dc67ab472d90b7e2a0b1376c6749da8856a68fc42bf1da2b8d06b8e31c1b3
 
 New SHA-256: 8a22da9e2384655da65298555d59405affde35e1faf727f533340581f6d9970d
+
+
+## v029 - 2026-11-13: authoring and app ecosystem programme
+
+User accepts A2UI-inspired Core improvements followed by GitHub-backed publishing, reviewer Actions, independent updates and the Windows/Mac return proof. Copied v028 byte-for-byte and appended section 13 only. Verified previous hash and every unaffected prefix byte; earlier snapshots are unchanged. Detailed PR scope and staged demo retirement: CORE_ECOSYSTEM_ROADMAP.md. First planned slice: SLICE_A001.md. No feature implementation is implied.
+
+Previous SHA-256: 8a22da9e2384655da65298555d59405affde35e1faf727f533340581f6d9970d
+
+New SHA-256: e75197492fb4d1badd2da23e707581ac58b06894dfa6f1c5ff99ede114dbdfdd

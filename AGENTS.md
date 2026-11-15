@@ -46,3 +46,6 @@ Prioritize a convincing real three-minute demo, substantive Meta use and runnabl
 
 
 November 6 user direction: C001 Core hardening is authorized on codex/core-authoring-hardening directly from main, parallel to installer/macOS work. For C001, arbitrary user-configured OpenAI-compatible text model IDs/endpoints supersede the hackathon Meta-only catalogue rule. External-app integration is parked. See docs/SLICE_C001.md. Main remains protected through November 9 inclusive.
+
+
+November 13 user direction: execute the A2UI-inspired Core PRs followed by the five GitHub-backed app ecosystem PRs, staged demo de-bundling, researched showcase apps and installed-Mallea Windows/macOS publishing proof. See docs/CORE_ECOSYSTEM_ROADMAP.md and active plan v029; first planned slice is docs/SLICE_A001.md. This supersedes old hackathon restrictions on marketplace/showcase scope only for that programme. External integrations, WebRTC and an operated submission/marketplace service remain parked. Preserve existing data and demo regression fixtures; no consumer compiler/source checkout. Runtime features are not implemented merely by recording this direction.

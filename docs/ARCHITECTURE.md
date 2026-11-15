@@ -1,6 +1,6 @@
 # Desktop engine architecture: target and current gaps
 
-Governed by PROJECT_PLAN.v028.md. This guide describes implementation boundaries; it is not a completed-system claim.
+Governed by PROJECT_PLAN.v029.md. This guide describes implementation boundaries; it is not a completed-system claim.
 
 ## Runtime roles
 

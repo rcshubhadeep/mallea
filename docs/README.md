@@ -10,6 +10,8 @@ Parked exploration: [External-app read-only integration](EXTERNAL_APP_READONLY.m
 
 ## Active guides
 
+- [SLICE_C002.md](SLICE_C002.md): whole-app collection fields, saved-note preservation and regression tests.
+
 - [SLICE_M001.md](SLICE_M001.md): single Core model configuration and stock icons.
 
 - [SLICE_B001.md](SLICE_B001.md): one-command source build/launch and verification limits.

@@ -6,6 +6,11 @@ export function authoringPolicy(scope, intent='add') {
  if(!['add','app'].includes(intent))throw new Error('Choose independent addition or app-wide editing.');
  return {scope:scope??null,intent:scope?'surface':intent};
 }
+export function authoringInstructions(policy){
+ if(policy?.intent==='app')return 'The active mode is whole-app editing. You may extend existing models with extendModel and add fields to existing collection items with extendCollection, then update their editors/actions using ordinary Surface edits. Preserve existing fields, types and saved data. Do not claim this request is Surface-scoped or ask the user to select whole-app editing again.';
+ if(policy?.intent==='surface')return 'The active mode edits only the selected Surface. You may create a new model but cannot extend existing models or collection item schemas. Whole-app editing must be selected explicitly for shared schema changes.';
+ return 'The active mode adds independent Surfaces. Use new models; Core places additions below existing content. Preserve every existing Surface and model. Select whole-app editing explicitly to extend existing models or collection item schemas.';
+}
 const strings=value=>typeof value==='string'?[value]:Array.isArray(value)?value.flatMap(strings):value&&typeof value==='object'?Object.values(value).flatMap(strings):[];
 export function enforceAuthoringPolicy(before,after,policy){
  if(!policy||policy.intent==='app')return;

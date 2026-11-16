@@ -10,7 +10,7 @@ In 1913, Henry Ford’s moving assembly line changed how cars were built and who
 
 **No more 'Connectors', 'Agents', 'Computer Use Permission'. Yet, all the good things of having a powerful AI model by your side.**
 
-Mallea is a desktop application framework built around **Surfaces**: editable interfaces with their own data bindings, events and actions. **Mallea Core** runs locally and supplies shared model-powered authoring, persistence and communication. Each app runs in its own native window. Start with a blank app, then use **Shape this app** to build it in plain English.
+Mallea is a desktop application framework built around **Surfaces**: editable interfaces with their own data bindings, events and actions. **Mallea Core** runs locally and supplies shared model-powered authoring, persistence and communication. Each app runs in its own native window. Start with a blank app, then use **Shape this app** to build it in plain English. Choose **Edit the whole app** to add fields such as tags to an existing collection; saved records retain their content and receive the new defaults only after you approve the proposal.
 
 ## Contents
 

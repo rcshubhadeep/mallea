@@ -10,10 +10,10 @@ import { installedRuntime } from '../services/workspace/runtime-contract.mjs';
 import { AppLauncher } from '../services/workspace/app-launcher.mjs';
 
 test('installed model setup starts empty, validates user access and keeps keys session-only', () => {
-  const settings = new ModelSettings({installed: true, config: {model: 'muse-spark-open', key: 'ignored-developer-key'}});
+  const settings = new ModelSettings({installed: true, config: {model: 'test-text-model', key: 'ignored-developer-key'}});
   assert.equal(settings.public().ready, false);
   assert.throws(() => settings.config());
-  const input = {profile: 'custom', model: 'muse-spark-open', endpoint: 'https://example.com/v1/', key: 'synthetic-session-key'};
+  const input = {model: 'test-text-model', endpoint: 'https://example.com/v1/', key: 'synthetic-session-key'};
   for (const endpoint of ['http://example.com', 'https://user:pass@example.com', 'https://example.com/?key=secret']) {
     assert.throws(() => settings.configure({...input, endpoint}));
   }
@@ -59,7 +59,7 @@ test('installed edition preserves ordinary data, denies creation and gates Shape
     await assert.rejects(() => server.dashboard.action({action: 'project', args: {}}), /unavailable/);
     const registration = await request('/api/engine/apps', {version: 1, id: 'another-app', name: 'Another', author: 'Test', purpose: 'Denied', adapter: 'surface'}, {'X-Mallea-Control': core.controlToken});
     assert.equal(registration.status, 400); assert.equal(server.engineApps.has('another-app'), false);
-    server.modelSettings.configure({profile: 'custom', endpoint: 'https://example.com/v1', model: 'muse-spark-open', key: 'not-persisted-session-key'});
+    server.modelSettings.configure({endpoint: 'https://example.com/v1', model: 'test-text-model', key: 'not-persisted-session-key'});
     assert.equal(server.liveApps.info(session).inferenceReady, true);
     let authorContext;
     server.liveApps.authorOptions.infer = async (_settings, messages) => {

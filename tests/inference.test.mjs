@@ -26,3 +26,18 @@ test('compatible transport forwards exact model/tools, preserves calls and bound
   globalThis.fetch=async()=>new Response(' '.repeat(2_000_001));await assert.rejects(chat({endpoint:'https://example.invalid',key:'TEST_SECRET',model:'test'},[]),e=>e instanceof InferenceError&&e.kind==='response');
  }finally{globalThis.fetch=original;}
 });
+
+
+test('Core environment has one model, ignores old profiles and never falls back',async()=>{
+ const {inferenceConfig}=await import('../scripts/lib/inference.mjs');
+ const names=['MALLEA_BASE_URL','MALLEA_API_KEY','MALLEA_MODEL','DEV_BASE_URL','DEV_API_KEY','DEV_MODEL','PROD_BASE_URL','PROD_LLM_KEY','PROD_MODEL'];
+ const saved=Object.fromEntries(names.map(n=>[n,process.env[n]]));
+ try{
+  for(const n of names)delete process.env[n];
+  Object.assign(process.env,{DEV_BASE_URL:'https://old-dev.invalid/v1',DEV_API_KEY:'old-dev-key',DEV_MODEL:'old-dev-model',PROD_BASE_URL:'https://old-prod.invalid/v1',PROD_LLM_KEY:'old-prod-key',PROD_MODEL:'old-prod-model'});
+  assert.throws(()=>inferenceConfig(),/MALLEA_/);
+  Object.assign(process.env,{MALLEA_BASE_URL:'https://example.com/v1',MALLEA_API_KEY:'core-only-key',MALLEA_MODEL:'vendor/exact-model'});
+  const config=inferenceConfig();assert.equal(config.model,'vendor/exact-model');assert.equal(config.key,'core-only-key');assert.equal(config.endpoint.href,'https://example.com/v1/chat/completions');
+  delete process.env.MALLEA_MODEL;assert.throws(()=>inferenceConfig(),/MALLEA_MODEL/);
+ }finally{for(const n of names)if(saved[n]===undefined)delete process.env[n];else process.env[n]=saved[n];}
+});

@@ -30,7 +30,7 @@ Mallea is a desktop application framework built around **Surfaces**: editable in
 
 ## Installed preview
 
-The source includes a Windows installer preview with the dashboard, Core, Fieldnote and Parcel. Installed users need no developer tools: open Mallea, then launch either app from the dashboard. Ordinary app functions work without a model; Shape and Muse processing require your own model access in **Model settings**. Configuration is session-only. New-app creation is unavailable in the installed edition.
+The source includes a Windows installer preview with the dashboard, Core, Fieldnote and Parcel. Installed users need no developer tools: open Mallea, then launch either app from the dashboard. Ordinary app functions work without a model; Shape and model processing require your own model access in **Model settings**. Configuration is session-only. New-app creation is unavailable in the installed edition.
 
 See [installer instructions and platform limits](docs/INSTALLER.md). This is a local development preview, not a published signed release. macOS installation and native verification are deferred for later testing. The source setup below remains available for developers, including project creation.
 
@@ -54,7 +54,7 @@ node scripts/mallea.mjs
 
 The second command checks types, builds the frontends and native host, starts Core and opens the dashboard in one terminal. Keep it open. Close the app windows and press **Ctrl+C** to stop that Core. An occupied Core port produces a refusal; the helper never stops an existing source or installed Core.
 
-For later launches use `node scripts/mallea.mjs run` to skip rebuilding. For build only use `node scripts/mallea.mjs build`; it does not create an installer. `node scripts/mallea.mjs --help` lists options, including `--dev` and `--production` for explicitly selected runtime modes. An optional repository `.env` is loaded into Core only; without one, configure session model access through the dashboard. Ordinary app use needs no model key.
+For later launches use `node scripts/mallea.mjs run` to skip rebuilding. For build only use `node scripts/mallea.mjs build`; it does not create an installer. `node scripts/mallea.mjs --help` lists options, including `--dev` for developer exports. An optional repository `.env` is loaded into Core only; without one, configure session model access through the dashboard. Ordinary app use needs no model key.
 
 For a clean native rebuild, first close Mallea windows and stop Core, then run `node scripts/mallea.mjs clean`. This aliases Cargo clean for this checkout's native target; it retains `.env`, saved apps and Core data. The next build will take longer. The npm alias is `npm run clean` (PowerShell: `npm.cmd --script-shell=cmd.exe run clean`). No clean is needed for normal launches.
 
@@ -115,13 +115,13 @@ Open `.env` in a text editor and fill in these settings for an OpenAI-compatible
 
 | Setting | What to enter |
 | --- | --- |
-| `DEV_BASE_URL` | The HTTPS API root or full Chat Completions endpoint; for OpenRouter, use `https://openrouter.ai/api/v1` |
-| `DEV_API_KEY` | Your API key. |
-| `DEV_MODEL` | The exact model ID listed by your provider; no model allowlist is imposed |
+| `MALLEA_BASE_URL` | The HTTPS API root or full Chat Completions endpoint; for OpenRouter, use `https://openrouter.ai/api/v1` |
+| `MALLEA_API_KEY` | Your API key. |
+| `MALLEA_MODEL` | The exact model ID listed by your provider; no model allowlist is imposed |
 
-You need access to that model through your provider; inference may incur usage charges. Keep `.env` private. It is ignored by Git, and no model key belongs in a generated app project. The optional `PROD_` settings can remain empty for this setup.
+You need access to that model through your provider; inference may incur usage charges. Keep `.env` private. It is ignored by Git, and no model key belongs in a generated app project. Core uses only this model; there are no development/production model profiles or automatic provider fallbacks. Old `DEV_`/`PROD_` names are no longer read; enter the model in Core settings or use the names above.
 
-**Optional: generated app icons.** Each new app can get its own icon from Meta Muse Image. To turn this on, fill `PROD_BASE_URL` and `PROD_LLM_KEY` for the Meta API and set `PROD_IMAGE_MODEL` to an image model such as `muse-image-1.0`. Each icon is one paid image request, made when the app is created. Without these settings, new apps use the Mallea icon. To give an existing app an icon, run `node --env-file=.env scripts/generate-icons.mjs app <app-id>` with Core's app ID (shown in **Inspect app**).
+**App icons.** New apps receive a bundled stock icon without image generation or model requests. Existing saved custom icons are retained.
 
 ### 4. Install dependencies and build
 
@@ -163,7 +163,7 @@ Wait for `Mallea Core: http://127.0.0.1:4318`. Leave this terminal open; Engine 
 node scripts/launch-app.mjs mallea-core
 ```
 
-These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the configured model profile.
+These commands are the same on Windows, macOS and Linux. The native dashboard opens with local apps and a **Create an app** button. **Model settings** shows the one Core model configuration.
 
 Choose **Custom endpoint and model** to enter an HTTPS API URL, exact model ID and API key for this Core session. **Agent tools** requires function-call support; choose **Basic JSON** explicitly for models without it. Changing a custom endpoint or model requires entering its key again. Keys and custom settings disappear when Core restarts.
 

@@ -1,6 +1,6 @@
 # Engine foundation: implementation guide
 
-Follow PROJECT_PLAN.v029.md. This is the target architecture; STATUS.md alone records completion.
+Follow PROJECT_PLAN.v030.md. This is the target architecture; STATUS.md alone records completion.
 
 ## Keep and change
 
@@ -38,7 +38,7 @@ Treat data portability as a registered operation too: export approved text/JSON 
 
 Surface lifetime is explicit: persistent definitions/data survive app restarts; session definitions are discarded when the runtime session ends, including a bounded crash/reconnect grace. Do not erase persistent model data merely because a view disappears. Registry ownership and model references determine retention.
 
-Automation records reuse these same inputs/events/operations. Runtime supports one explicit run path first, then bounded data-change/app-ready triggers. Add a validated Muse-to-structured-output step for the live brief or review checklist. One in-flight request per Automation, idle gate, output cap and stale-source guard prevent per-keystroke generation or older output overwriting newer text. Pause/disable and last outcome must work.
+Automation records reuse these same inputs/events/operations. Runtime supports one explicit run path first, then bounded data-change/app-ready triggers. Add a validated shared model-to-structured-output step for the live brief or review checklist. One in-flight request per Automation, idle gate, output cap and stale-source guard prevent per-keystroke generation or older output overwriting newer text. Pause/disable and last outcome must work.
 
 ## Shared model configuration
 

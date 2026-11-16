@@ -1,7 +1,7 @@
 import assert from'node:assert/strict';import{mkdir,writeFile}from'node:fs/promises';
 import{createCollaborationServer}from'../services/workspace/collaboration.mjs';
-const flags=process.argv.slice(2);if(flags.some(f=>f!=='--production'))throw new Error('Usage: node scripts/verify-malleability.mjs [--production]');
-const server=await createCollaborationServer({studio:true,author:{production:flags.includes('--production')}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;let session='';
+const flags=process.argv.slice(2);if(flags.length)throw new Error('Usage: node scripts/verify-malleability.mjs');
+const server=await createCollaborationServer({studio:true,author:{}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;let session='';
 try{
  const token=(await(await fetch(base+'/api/bootstrap')).json()).token;
  async function call(path,body){const r=await fetch(base+'/api/'+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json','X-Mallea-Token':token,'X-Mallea-Session':session},...(body===undefined?{}:{body:JSON.stringify(body)})});const v=await r.json();if(!r.ok)throw new Error(v.error);return v;}

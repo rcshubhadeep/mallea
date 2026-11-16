@@ -1,6 +1,6 @@
 # Core authoring and app ecosystem delivery
 
-Accepted direction: November 13, 2026. Active plan: [PROJECT_PLAN.v029.md](PROJECT_PLAN.v029.md). This is planned work, not implemented behavior. Current evidence belongs in STATUS.md. The A2UI ideas inform Mallea's existing Surface architecture; adopting A2UI's wire protocol or replacing the renderer is not required.
+Accepted direction: November 13, 2026. Active plan: [PROJECT_PLAN.v030.md](PROJECT_PLAN.v030.md). This is planned work, not implemented behavior. Current evidence belongs in STATUS.md. The A2UI ideas inform Mallea's existing Surface architecture; adopting A2UI's wire protocol or replacing the renderer is not required.
 
 ## Goal and sequence
 

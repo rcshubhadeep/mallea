@@ -1,5 +1,5 @@
-// One bounded development-only request. No dependencies or automatic retries.
-const required = ['DEV_API_KEY', 'DEV_BASE_URL', 'DEV_MODEL'];
+// One bounded configured-model request. No dependencies or automatic retries.
+const required = ['MALLEA_API_KEY', 'MALLEA_BASE_URL', 'MALLEA_MODEL'];
 const missing = required.filter((name) => !process.env[name]?.trim());
 if (missing.length) {
   console.error(`Missing configuration: ${missing.join(', ')}`);
@@ -9,9 +9,9 @@ if (missing.length) {
 async function main() {
   let endpoint;
   try {
-    endpoint = new URL(`${process.env.DEV_BASE_URL.replace(/\/+$/, '')}/chat/completions`);
+    endpoint = new URL(`${process.env.MALLEA_BASE_URL.replace(/\/+$/, '')}/chat/completions`);
   } catch {
-    throw new Error('DEV_BASE_URL must be a valid API base URL.');
+    throw new Error('MALLEA_BASE_URL must be a valid API base URL.');
   }
   if (endpoint.protocol !== 'https:' || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
     throw new Error('Use an HTTPS API base URL without embedded credentials, query, or fragment.');
@@ -24,11 +24,11 @@ async function main() {
       redirect: 'error',
       signal: AbortSignal.timeout(60_000),
       headers: {
-        Authorization: `Bearer ${process.env.DEV_API_KEY}`,
+        Authorization: `Bearer ${process.env.MALLEA_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: process.env.DEV_MODEL,
+        model: process.env.MALLEA_MODEL,
         messages: [{ role: 'user', content: 'Reply with exactly MALLEA_OK and nothing else.' }],
         max_tokens: 512,
         stream: false,

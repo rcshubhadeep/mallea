@@ -13,7 +13,6 @@ export const help=`Mallea source build and launch
   node scripts/mallea.mjs build           Build only (no installer)
   node scripts/mallea.mjs clean           Cargo clean for this checkout's native build
   node scripts/mallea.mjs [start|run] --dev         Enable developer exports
-  node scripts/mallea.mjs [start|run] --production  Select the configured production profile
 
 Requires Node 24, installed npm dependencies, Rust and Tauri platform prerequisites.
 Run npm ci first (Windows: npm.cmd ci --script-shell=cmd.exe).
@@ -25,8 +24,8 @@ Keep this terminal open. Ctrl+C stops the Core started by this command.
 export function parseSourceArgs(args){
  if(args.length===1&&['--help','-h'].includes(args[0]))return{command:'help'};
  const rest=[...args],command=rest[0]&&!rest[0].startsWith('-')?rest.shift():'start';
- if(!['start','run','build','clean'].includes(command)||new Set(rest).size!==rest.length||rest.some(v=>!['--dev','--production'].includes(v))||(['build','clean'].includes(command)&&rest.length))throw new Error('Use start, run, build or clean. Run with --help for options.');
- return{command,devMode:rest.includes('--dev'),production:rest.includes('--production')};
+ if(!['start','run','build','clean'].includes(command)||new Set(rest).size!==rest.length||rest.some(v=>!['--dev'].includes(v))||(['build','clean'].includes(command)&&rest.length))throw new Error('Use start, run, build or clean. Run with --help for options.');
+ return{command,devMode:rest.includes('--dev')};
 }
 
 export async function requireFreePort(port=4318){
@@ -70,10 +69,10 @@ function runBuildStep(step){
  });
 }
 
-export async function startSource({home=join(root,'.mallea'),database,binary,production=false,devMode=false,port=4318,launch=launchNative}={}){
+export async function startSource({home=join(root,'.mallea'),database,binary,devMode=false,port=4318,launch=launchNative}={}){
  await requireFile(binary,'Native build missing. Run node scripts/mallea.mjs build first.');
  const {startEngine}=await import('./engine.mjs');
- const server=await startEngine({home,database:database??join(home,'workspace.sqlite'),production,devMode,port});
+ const server=await startEngine({home,database:database??join(home,'workspace.sqlite'),devMode,port});
  let stopped=false;
  const stop=async()=>{if(stopped)return;stopped=true;server.workspaceRegistry.close();server.closeAllConnections();await new Promise(done=>server.close(done));};
  try{await launch(binary,join(home,'hosts/mallea-core.json'));return{server,stop};}catch{await stop();throw new Error('The dashboard could not open. The Core started by this command has been stopped.');}

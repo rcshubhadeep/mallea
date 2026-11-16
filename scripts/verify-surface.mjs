@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { createCollaborationServer } from '../services/workspace/collaboration.mjs';
 import { validateSurface } from '../packages/sdk/surface.mjs';
 import { scratchContract } from '../apps/definitions/studio.mjs';
-const production=process.argv.includes('--production');
-if(process.argv.slice(2).some(a=>a!=='--production'))throw new Error('Usage: node scripts/verify-surface.mjs [--production]');
-const server=await createCollaborationServer({studio:true,author:{production}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;const usage=[];
+
+if(process.argv.slice(2).length)throw new Error('Usage: node scripts/verify-surface.mjs');
+const server=await createCollaborationServer({studio:true,author:{}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;const usage=[];
 try{
  const token=(await(await fetch(base+'/api/bootstrap')).json()).token;let session='';
  async function call(path,body){const r=await fetch(base+'/api/'+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json','X-Mallea-Token':token,'X-Mallea-Session':session},...(body===undefined?{}:{body:JSON.stringify(body)})});const v=await r.json();if(!r.ok)throw new Error(v.error);return v;}
@@ -23,5 +23,5 @@ try{
   await call('studio/install',{draftId:job.id,grants:artifact.manifest.permissions});assert.deepEqual((await call('studio/state')).data,before);
   console.log(JSON.stringify({step:i===0?'initial':'refinement',phase:job.phase,attempt:job.attempt,elapsedMs:Date.now()-started,version:artifact.manifest.version,usage:job.usage}));
  }
- console.log(JSON.stringify({mode:production?'direct Meta milestone':'configured development',tokens:usage.reduce((s,u)=>s+(u.total_tokens??0),0),reportedCost:usage.some(u=>typeof u.cost==='number')?usage.reduce((s,u)=>s+(u.cost??0),0):null,scope:'Service authoring and persistence; not a native UI recording.'}));
+ console.log(JSON.stringify({mode:'configured-core',tokens:usage.reduce((s,u)=>s+(u.total_tokens??0),0),reportedCost:usage.some(u=>typeof u.cost==='number')?usage.reduce((s,u)=>s+(u.cost??0),0):null,scope:'Service authoring and persistence; not a native UI recording.'}));
 }finally{server.closeAllConnections();await new Promise(r=>server.close(r));}

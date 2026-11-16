@@ -2,8 +2,8 @@
 import assert from 'node:assert/strict';
 import { WebSocket } from 'ws';
 import { createCollaborationServer } from '../services/workspace/collaboration.mjs';
-const args=process.argv.slice(2);if(args.some(a=>a!=='--production')||args.length>1)throw new Error('Only --production is supported.');
-const production=args.includes('--production'),server=await createCollaborationServer({author:{production}});
+const args=process.argv.slice(2);if(args.length)throw new Error('No model-selection flags are supported. Configure the model at Core.');
+const server=await createCollaborationServer({author:{}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`,usage=[];let socket;
 try{
   const {token}=await(await fetch(base+'/api/bootstrap')).json();
@@ -40,5 +40,5 @@ try{
 }catch(error){console.error(error.message);process.exitCode=1;}
 finally{
   socket?.terminate();server.workspaceRegistry.close();server.closeAllConnections();await new Promise(r=>server.close(r));
-  console.log(JSON.stringify({environment:production?'production':'development',responses:usage.length,totalTokens:usage.reduce((n,u)=>n+(u.total_tokens??0),0),reportedCost:usage.length&&usage.every(u=>typeof u.cost==='number')?usage.reduce((n,u)=>n+u.cost,0):null}));
+  console.log(JSON.stringify({environment:'configured-core',responses:usage.length,totalTokens:usage.reduce((n,u)=>n+(u.total_tokens??0),0),reportedCost:usage.length&&usage.every(u=>typeof u.cost==='number')?usage.reduce((n,u)=>n+u.cost,0):null}));
 }

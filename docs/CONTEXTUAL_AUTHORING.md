@@ -42,7 +42,7 @@ The trigger and the data read are distinct records. A button click can read text
 
 ### 2. What should happen?
 
-Specify the input and transformer in user language. Examples: Extract the main ideas with Muse; Find email addresses locally; Look up the available times for this date. The transformer can be a bounded registered local operation, shared Meta inference, or an approved app capability. A direct copy is a valid unchanged transformation.
+Specify the input and transformer in user language. Examples: Extract the main ideas with shared model; Find email addresses locally; Look up the available times for this date. The transformer can be a bounded registered local operation, shared configured inference, or an approved app capability. A direct copy is a valid unchanged transformation.
 
 Explain who receives input: Runs on this machine for a local operation, or This text is sent to the configured Meta model for semantic processing. This is part of the readable Automation summary and permissions. No key or secret is sent in model context or copied to an app model. Start with one transformer per Automation; a general pipeline editor is unnecessary.
 
@@ -58,7 +58,7 @@ Choose whether output replaces the current value/list or appends supported items
 
 Before activation show a concise summary, for example:
 
-After you pause typing in Brief, send that text to Meta Muse to extract key concepts. Replace the Concepts list in this app. No other fields are read or changed.
+After you pause typing in Brief, send that text to shared model to extract key concepts. Replace the Concepts list in this app. No other fields are read or changed.
 
 Another example:
 

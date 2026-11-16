@@ -16,9 +16,9 @@ export function sanitizeApp(app){const copy=structuredClone(app);for(const m of 
 
 // No filesystem, native execution, network, install or permission-widening tool exists here.
 class ClarificationEnded extends Error{}
-export function createLiveAuthor(store,{config,infer=chat,production=false,contract,policy,focus=null,isBusy=()=>false,...options}={}){
+export function createLiveAuthor(store,{config,infer=chat,contract,policy,focus=null,isBusy=()=>false,...options}={}){
  const jobs=new Map(),waiting=new Map();let running=null,basicId=null,closed=false;
- const basic=createAuthor(store,{...options,config,infer,production,context:async()=>({currentWorkspace:sanitizeApp(store.active()),contract,scope:policy,focusedElementId:focus})});
+ const basic=createAuthor(store,{...options,config,infer,context:async()=>({currentWorkspace:sanitizeApp(store.active()),contract,scope:policy,focusedElementId:focus})});
  const publicJob=job=>{const {controller,...safe}=job;return structuredClone(safe);};
  async function execute(job,settings){
   let remaining=180_000,started=performance.now(),timer;
@@ -90,7 +90,7 @@ export function createLiveAuthor(store,{config,infer=chat,production=false,contr
    if(closed)throw new Error('Authoring session is closed. Reopen the app.');
    if(typeof request!=='string'||!request.trim()||request.length>1500)throw new Error('Describe the change in 1–1500 characters.');
    if(running||isBusy()||(basicId&&!['ready','failed','unsupported','cancelled'].includes(basic.get(basicId).phase)))throw new Error('Authoring is already running for this app. Cancel or wait.');
-   const selected=typeof config==='function'?config():config??inferenceConfig(production),settings={...selected,endpoint:new URL(selected.endpoint)};
+   const selected=typeof config==='function'?config():config??inferenceConfig(),settings={...selected,endpoint:new URL(selected.endpoint)};
    if(settings.mode==='json'){const job=basic.start(request);basicId=job.id;return job;}
    const job={id:randomUUID(),base:store.state().active,request,policy:structuredClone(policy),focus,phase:'queued',attempt:0,maxAttempts:12,mode:'tools',model:settings.model,diagnostics:[],trace:[],usage:[],controller:new AbortController()};
    if(jobs.size>=20)jobs.delete(jobs.keys().next().value);jobs.set(job.id,job);running=job.id;void execute(job,settings);return publicJob(job);

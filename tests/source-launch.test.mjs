@@ -9,8 +9,8 @@ import {parseSourceArgs,buildSource,buildSteps,startSource,requireFreePort,clean
 async function temporary(t){const path=await mkdtemp(join(tmpdir(),'mallea-source-launch-'));assert.equal(dirname(path),resolve(tmpdir()));t.after(()=>rm(path,{recursive:true,force:true}));return path;}
 
 test('source CLI accepts explicit modes and rejects ambiguous or unsupported arguments',()=>{
- assert.deepEqual(parseSourceArgs([]),{command:'start',devMode:false,production:false});
- assert.deepEqual(parseSourceArgs(['run','--production','--dev']),{command:'run',production:true,devMode:true});
+ assert.deepEqual(parseSourceArgs([]),{command:'start',devMode:false});
+ assert.deepEqual(parseSourceArgs(['run','--dev']),{command:'run',devMode:true});
  assert.equal(parseSourceArgs(['build']).command,'build');assert.equal(parseSourceArgs(['--help']).command,'help');
  assert.equal(parseSourceArgs(['clean']).command,'clean');assert.throws(()=>parseSourceArgs(['clean','--dev']));
  for(const args of [['install'],['run','--dev','--dev'],['build','--production'],['run','build'],['--unknown']])assert.throws(()=>parseSourceArgs(args));

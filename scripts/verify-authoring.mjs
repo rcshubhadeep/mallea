@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { WorkspaceStore } from '../services/workspace/store.mjs';
 import { createAuthor } from '../services/workspace/author.mjs';
 import { runReview } from '../packages/runner/index.mjs';
-const production=process.argv.includes('--production');
-if(process.argv.slice(2).some(a=>a!=='--production'))throw new Error('Only --production is supported.');
+
+if(process.argv.slice(2).length)throw new Error('No model-selection flags are supported. Configure the model at Core.');
 const store=new WorkspaceStore(':memory:');
-const author=createAuthor(store,{production});
+const author=createAuthor(store,{});
 const usage=[];
 try{
   const requests=['Create an evidence panel showing screenshot, observation, acknowledgement action. Block every unreviewed task.',
@@ -23,4 +23,4 @@ try{
   assert.equal(store.state().tasks[0].reviewedRevision,1);
   const ordinary=store.state().tasks[1];assert.equal((await runReview(store.active(),ordinary,ordinary.observation)).status,'warning');
   console.log('PASS: real authoring, follow-up revision, activation, and retained acknowledgement.');
-}catch(error){console.error(error.message);process.exitCode=1;}finally{author.close();store.close();console.log(JSON.stringify({environment:production?'production':'development',responses:usage.length,totalTokens:usage.reduce((n,u)=>n+(u.total_tokens??0),0),reportedCost:usage.every(u=>typeof u.cost==='number')&&usage.length?usage.reduce((n,u)=>n+u.cost,0):null}));}
+}catch(error){console.error(error.message);process.exitCode=1;}finally{author.close();store.close();console.log(JSON.stringify({environment:'configured-core',responses:usage.length,totalTokens:usage.reduce((n,u)=>n+(u.total_tokens??0),0),reportedCost:usage.every(u=>typeof u.cost==='number')&&usage.length?usage.reduce((n,u)=>n+u.cost,0):null}));}

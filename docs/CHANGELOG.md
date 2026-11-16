@@ -234,3 +234,7 @@ User accepts A2UI-inspired Core improvements followed by GitHub-backed publishin
 Previous SHA-256: 8a22da9e2384655da65298555d59405affde35e1faf727f533340581f6d9970d
 
 New SHA-256: e75197492fb4d1badd2da23e707581ac58b06894dfa6f1c5ff99ede114dbdfdd
+
+## November 16, 2026 — v030 single Core model
+
+User direction removes development/production model profiles and Meta model dependencies; every model task uses the user-supplied Core endpoint/key/model. Stock icons need no image inference. v029 was copied byte-for-byte before localized changes to provider terminology and section 6 model settings; unchanged spans are retained. Previous SHA-256: e75197492fb4d1badd2da23e707581ac58b06894dfa6f1c5ff99ede114dbdfdd. New SHA-256: a796363e7149a09647ad72fec482022c3dc01c6a3588469b4e3e10260a705082. Routine acceptance evidence belongs in STATUS.md; historical plans/evidence remain unchanged.

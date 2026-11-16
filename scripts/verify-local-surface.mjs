@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { mkdir,writeFile } from 'node:fs/promises';
 import { createCollaborationServer } from '../services/workspace/collaboration.mjs';
 import { localKey } from '../packages/sdk/surface.mjs';
-const flags=process.argv.slice(2);if(flags.some(f=>!['--production','--desktop','--refine'].includes(f)))throw new Error('Options: --production --desktop --refine');
-const production=flags.includes('--production'),kind=flags.includes('--desktop')?'scratchpad':'review-board';
-const server=await createCollaborationServer({studio:true,author:{production}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;let session='';const records=[];
+const flags=process.argv.slice(2);if(flags.some(f=>!['--desktop','--refine'].includes(f)))throw new Error('Options: --desktop --refine');
+const kind=flags.includes('--desktop')?'scratchpad':'review-board';
+const server=await createCollaborationServer({studio:true,author:{}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`;let session='';const records=[];
 try{
  const token=(await(await fetch(base+'/api/bootstrap')).json()).token;
  async function call(path,body){const r=await fetch(base+'/api/'+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json','X-Mallea-Token':token,'X-Mallea-Session':session},...(body===undefined?{}:{body:JSON.stringify(body)})});const value=await r.json();if(!r.ok)throw new Error(value.error);return value;}

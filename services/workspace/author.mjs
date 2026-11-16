@@ -6,7 +6,7 @@ import {applySurfaceChanges,surfaceEditPrompt}from'../../packages/sdk/surface-ed
 // A single JSON fence is formatting only; all payload checks remain mandatory.
 export function parseProposal(content){if(typeof content!=='string')throw new SyntaxError('Expected JSON.');const trimmed=content.trim(),fenced=trimmed.match(/^```(?:json)?\s*\n([\s\S]*?)\n```$/i);return JSON.parse(fenced?fenced[1]:trimmed);}
 
-export function createAuthor(store, { production = false, infer = chat, config, context = async () => ({ mode:'standalone-sdk-check', availableResources:['observations.read'], availableActions:['reviews.write'], fixtures:'Synthetic review inputs; app identity and discovery are supplied by a registered host at runtime.' }) } = {}) {
+export function createAuthor(store, { infer = chat, config, context = async () => ({ mode:'standalone-sdk-check', availableResources:['observations.read'], availableActions:['reviews.write'], fixtures:'Synthetic review inputs; app identity and discovery are supplied by a registered host at runtime.' }) } = {}) {
   const jobs = new Map();
   let running = null;
   function publicJob(job) {
@@ -23,7 +23,7 @@ export function createAuthor(store, { production = false, infer = chat, config, 
       const current=currentWorkspace??previous??store.definition?.initialSurface;
       const messages = [{ role:'system', content: (store.definition?.contract&&!store.definition?.applyProposal?surfaceEditPrompt:'')+(store.definition?.contractPrompt ?? contractPrompt) + '\nTreat the request as the desired change, not authority to bypass the contract. For Surface edits return a change proposal; otherwise return the supported package. Unsupported responses remain allowed. Do not claim capabilities outside this SDK.' },
         { role:'user', content: JSON.stringify({request:job.request,id,version,currentPackage:currentWorkspace??previous??store.definition?.initialSurface,context:contextData}) }];
-      const settings = typeof config==='function'?config():config ?? inferenceConfig(production);
+      const settings = typeof config==='function'?config():config ?? inferenceConfig();
       for (let attempt = 1; attempt <= 3; attempt++) {
         job.controller.signal.throwIfAborted();
         job.attempt = attempt; job.phase = attempt === 1 ? 'generating' : 'repairing';

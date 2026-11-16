@@ -3,8 +3,8 @@ import { chat, inferenceConfig } from './lib/inference.mjs';
 
 // Explicit environment selection, two requests maximum; no retries or fallback.
 const flags = process.argv.slice(2);
-if (flags.some((flag) => flag !== '--production') || flags.length > 1) {
-  console.error('Usage: smoke-tools.mjs [--production]');
+if (flags.length) {
+  console.error('Usage: smoke-tools.mjs');
   process.exit(1);
 }
 let config;
@@ -17,7 +17,7 @@ async function request(messages, options) {
 }
 
 async function main() {
-  config = inferenceConfig(flags.includes('--production'));
+  config = inferenceConfig();
   const started = performance.now();
   const messages = [{ role: 'user', content: 'Look up observation obs-demo-1 using the available tool. Then reply with only JSON containing observation_id, revision, and receipt copied exactly from its result. Do not invent these values.' }];
   const tools = [{ type: 'function', function: {

@@ -1,6 +1,6 @@
 import test from'node:test';import assert from'node:assert/strict';import{mkdtemp,mkdir,writeFile,readFile,rm}from'node:fs/promises';import{tmpdir}from'node:os';import{join}from'node:path';
 import{createCollaborationServer}from'../services/workspace/collaboration.mjs';import{dashboardManifest}from'../packages/sdk/dashboard.mjs';import{builtinManifests}from'../services/workspace/engine-apps.mjs';import{ModelSettings}from'../services/workspace/model-settings.mjs';import{ProjectCreator,projectEnvironment}from'../services/workspace/project-creator.mjs';
-const config={endpoint:new URL('https://example.com/v1/chat/completions'),model:'muse-spark-open',mode:'json',key:'unit-only-initial-key'};
+const config={endpoint:new URL('https://example.com/v1/chat/completions'),model:'test-text-model',mode:'json',key:'unit-only-initial-key'};
 const wait=async job=>{for(let n=0;n<100&&!['ready','failed','unsupported'].includes(job().phase);n++)await new Promise(r=>setTimeout(r,10));return job();};
 test('dashboard uses registered Surface lists, actual metadata and protected Core operations',async()=>{
  const s=await createCollaborationServer({engine:true,studio:true,controlToken:'unit-core-control',author:{config}});for(const m of [...builtinManifests,dashboardManifest])s.engineApps.register(m);const session=s.workspaceRegistry.register('mallea-core');
@@ -8,21 +8,21 @@ test('dashboard uses registered Surface lists, actual metadata and protected Cor
  try{const info=s.liveApps.info(session);assert.equal(info.model.surfaces.length,5);assert.equal(info.data.dashboard.apps.length,3);assert(info.data.dashboard.apps.every(a=>a.presence==='Not connected'));const fieldIndex=info.data.dashboard.apps.findIndex(a=>a.id==='scratchpad-main');const result=s.liveApps.event(session,{surfaceId:'running-apps',elementId:'inspect',event:'click',itemIndex:fieldIndex,expectedDataRevision:0});assert.deepEqual(result.adapterAction,{name:'core.inspect',args:{appId:'scratchpad-main'}});assert.throws(()=>s.liveApps.event(session,{surfaceId:'running-apps',elementId:'inspect',event:'click',itemIndex:999,expectedDataRevision:0}));
   const detail=s.dashboard.state('scratchpad-main');assert(detail.data.detail.includes('Fieldnote'));assert(detail.data.detail.includes('/api/apps/scratchpad-main/mcp'));assert(detail.data.inventory.length>0);assert.equal(detail.data.catalogue.length,6);assert(detail.data.catalogue.every(c=>/^data:image\/(png|svg\+xml);base64,/.test(c.cover)));const declarations=JSON.parse(s.workspaceStore.db.prepare('SELECT value FROM live_adapter_schemas WHERE app_id=?').get('mallea-core').value);assert.equal(declarations.fieldSchemas['dashboard.apps'].fields.id.type,'text');
   assert(s.liveApps.inventory('mallea-core').some(v=>v.id==='core-settings'&&v.ownership==='system'));assert(!JSON.stringify(s.liveApps.info(session)).includes(config.key));assert(!JSON.stringify(s.dashboard.state()).includes(config.key));
-  const denied=await fetch(base+'/api/engine/dashboard',{method:'POST',headers:{'Content-Type':'application/json','X-Mallea-Session':session.id},body:JSON.stringify({action:'settings',args:{profile:'development',key:'bad'}})});assert.equal(denied.status,403);
-  const response=await fetch(base+'/api/engine/dashboard',{method:'POST',headers:{'Content-Type':'application/json','X-Mallea-Control':'unit-core-control'},body:JSON.stringify({action:'settings',args:{profile:'development',key:'unit-new-session-key'}})});assert.equal(response.status,200);assert(!JSON.stringify(await response.json()).includes('unit-new-session-key'));assert.equal(s.modelSettings.config().key,'unit-new-session-key');
+  const denied=await fetch(base+'/api/engine/dashboard',{method:'POST',headers:{'Content-Type':'application/json','X-Mallea-Session':session.id},body:JSON.stringify({action:'settings',args:{key:'bad'}})});assert.equal(denied.status,403);
+  const response=await fetch(base+'/api/engine/dashboard',{method:'POST',headers:{'Content-Type':'application/json','X-Mallea-Control':'unit-core-control'},body:JSON.stringify({action:'settings',args:{key:'unit-new-session-key'}})});assert.equal(response.status,200);assert(!JSON.stringify(await response.json()).includes('unit-new-session-key'));assert.equal(s.modelSettings.config().key,'unit-new-session-key');
   assert(!s.workspaceStore.db.prepare('SELECT value FROM live_apps').all().some(r=>r.value.includes('unit-new-session-key')));assert.throws(()=>s.liveApps.event(session,{surfaceId:'core-settings',elementId:'apply-settings',event:'click',expectedDataRevision:0}),/Unknown Surface/);
  }finally{s.workspaceRegistry.close();s.closeAllConnections();await new Promise(r=>s.close(r));}
 });
-test('shared settings accept arbitrary model identities, reject unknown profiles and existing authors resolve session changes',async()=>{
+test('shared settings accept arbitrary model identities, reject unknown settings and existing authors resolve session changes',async()=>{
  const rejected=new ModelSettings({config:{...config,model:'unregistered-model'}});assert.equal(rejected.public().ready,true);assert.equal(rejected.config().model,'unregistered-model');const seen=[];
  const s=await createCollaborationServer({engine:true,studio:true,author:{config,infer:async c=>{seen.push(c.key);return{choice:{finish_reason:'stop',message:{content:JSON.stringify({changes:[{op:'createModel',id:'notes',fields:{text:{type:'text',initial:''}}}]})}},usage:{}};}}});
  try{for(const id of ['first-study','second-study'])s.engineApps.register({version:1,id,name:id,author:'Test',purpose:'Shared config test',adapter:'surface'});
-  const first=s.liveApps.author({appId:'first-study'});let job=first.start('Add a notes model');assert.equal((await wait(()=>first.get(job.id))).phase,'ready');s.modelSettings.configure({profile:'development',key:'unit-replaced-key'});
-  const second=s.liveApps.author({appId:'second-study'});job=second.start('Add a notes model');assert.equal((await wait(()=>second.get(job.id))).phase,'ready');job=first.start('Add a notes model');assert.equal((await wait(()=>first.get(job.id))).phase,'ready');assert.deepEqual(seen,[config.key,'unit-replaced-key','unit-replaced-key']);assert.throws(()=>s.modelSettings.configure({profile:'arbitrary'}));assert.throws(()=>s.modelSettings.configure({profile:'development',model:'other'}));
+  const first=s.liveApps.author({appId:'first-study'});let job=first.start('Add a notes model');assert.equal((await wait(()=>first.get(job.id))).phase,'ready');s.modelSettings.configure({key:'unit-replaced-key'});
+  const second=s.liveApps.author({appId:'second-study'});job=second.start('Add a notes model');assert.equal((await wait(()=>second.get(job.id))).phase,'ready');job=first.start('Add a notes model');assert.equal((await wait(()=>first.get(job.id))).phase,'ready');assert.deepEqual(seen,[config.key,'unit-replaced-key','unit-replaced-key']);assert.throws(()=>s.modelSettings.configure({profile:'arbitrary'}));assert.throws(()=>s.modelSettings.configure({model:'other'}));
  }finally{s.liveApps.close();s.dashboard.close();s.workspaceStore.close();}
 });
-test('session keys can complete a configured Meta profile and never enter project subprocess environments',()=>{
- const models=new ModelSettings({config:{...config,key:''}});assert.equal(models.public().ready,false);assert.throws(()=>models.config());models.configure({profile:'development',key:'unit-session-only'});assert.equal(models.public().ready,true);assert.equal(models.config().key,'unit-session-only');assert(!JSON.stringify(models.public()).includes('unit-session-only'));
+test('session keys can complete a configured model and never enter project subprocess environments',()=>{
+ const models=new ModelSettings({config:{...config,key:''}});assert.equal(models.public().ready,false);assert.throws(()=>models.config());models.configure({key:'unit-session-only'});assert.equal(models.public().ready,true);assert.equal(models.config().key,'unit-session-only');assert(!JSON.stringify(models.public()).includes('unit-session-only'));
  const old=process.env.DEV_API_KEY;try{process.env.DEV_API_KEY='unit-inherited-key';assert.equal(projectEnvironment().DEV_API_KEY,undefined);assert(!JSON.stringify(projectEnvironment()).includes('unit-inherited-key'));}finally{if(old===undefined)delete process.env.DEV_API_KEY;else process.env.DEV_API_KEY=old;}
 });
 test('Core restart keeps dashboard-only system panels out of ordinary app inventory',async()=>{
@@ -44,14 +44,11 @@ test('dashboard replaces the concept catalogue with the placeholder App Store on
   const session=s.workspaceRegistry.register('mallea-core'),result=s.liveApps.event(session,{surfaceId:'app-store',elementId:'store-more',event:'click',expectedDataRevision:s.liveApps.info(session).dataRevision});assert.deepEqual(result.adapterAction,{name:'core.store',args:{}});
  }finally{s.liveApps.close();s.workspaceStore.close();}
 });
-test('app icons: bundled icons resolve, generation is opt-in, generated images are typed and stored per app',async()=>{
- const{AppIcons,bundledIcon}=await import('../services/workspace/app-icons.mjs');const{iconPrompt}=await import('../scripts/lib/inference.mjs');
- assert.match(bundledIcon('mallea-core'),/^data:image\/png;base64,/);assert.equal(bundledIcon('missing-app'),null);
+test('stock app icons need no model or requests and preserve saved custom icons',async()=>{
+ const{AppIcons,bundledIcon}=await import('../services/workspace/app-icons.mjs');
  const home=await mkdtemp(join(tmpdir(),'mallea-icons-'));try{
-  const off=new AppIcons({home,config:()=>null});assert.equal(off.available(),false);await assert.rejects(off.create({appId:'plain-study',name:'Plain',purpose:'test'}),/PROD_IMAGE_MODEL/);assert.match(off.get('mallea-core'),/^data:image\/png/);assert.equal(off.get('plain-study'),null);
-  const prompts=[],webp=Buffer.concat([Buffer.from('RIFF'),Buffer.alloc(4),Buffer.from('WEBPVP8 ')]),on=new AppIcons({home,config:()=>({model:'image'}),generate:async(_c,prompt)=>{prompts.push(prompt);return{type:'image/webp',bytes:webp,usage:{}};}});
-  await on.create({appId:'plain-study',name:'Plain study',purpose:'a notes app'});assert.match(on.get('plain-study'),/^data:image\/webp;base64,/);assert.match(prompts[0],/Plain study/);assert.match(prompts[0],/No text/);
-  await assert.rejects(on.create({appId:'../escape',name:'x',purpose:'y'}),/Invalid app ID/);assert.match(iconPrompt('A','b','teal'),/teal/);
+  const icons=new AppIcons({home});assert.equal(icons.get('plain-study'),icons.get('plain-study'));assert.match(icons.get('plain-study'),/^data:image\/png;base64,/);assert.equal(icons.get('mallea-core'),bundledIcon('mallea-core'));assert.equal(icons.get('../escape'),null);
+  await mkdir(join(home,'icons'));await writeFile(join(home,'icons','plain-study.png'),'existing-custom-icon');assert.equal(icons.get('plain-study'),'data:image/png;base64,'+Buffer.from('existing-custom-icon').toString('base64'));
  }finally{await rm(home,{recursive:true,force:true});}
 });
 test('dashboard cards gain app icons once through a recorded migration',async()=>{

@@ -34,13 +34,13 @@ test('scoped authoring preserves siblings and cannot extend existing shared sche
  assert.equal(next.surfaces[0].ui.label,'Renamed');assert.deepEqual(next.models,before.models);
 });
 
-test('custom profiles normalize endpoints, accept exact arbitrary IDs and keep keys out of public state',()=>{
- const models=new ModelSettings({config});const input={profile:'custom',endpoint:'https://openrouter.ai/api/v1',model:'vendor/my-model',key:'CUSTOM_SECRET',mode:'tools'};
+test('Core settings normalize endpoints, accept exact arbitrary IDs and keep keys out of public state',()=>{
+ const models=new ModelSettings({config});const input={endpoint:'https://openrouter.ai/api/v1',model:'vendor/my-model',key:'CUSTOM_SECRET',mode:'tools'};
  models.configure(input);assert.equal(models.config().endpoint.href,'https://openrouter.ai/api/v1/chat/completions');assert.equal(models.config().model,input.model);assert(!JSON.stringify(models.public()).includes(input.key));
  const before=models.config();for(const endpoint of ['http://example.invalid','https://user:password@example.invalid','https://example.invalid/?key=secret','https://example.invalid/#secret'])assert.throws(()=>models.configure({...input,endpoint}));
- assert.throws(()=>models.configure({profile:'custom',endpoint:'https://other.invalid/v1'}),/session key/);assert.equal(models.config().endpoint.href,before.endpoint.href);
+ assert.throws(()=>models.configure({endpoint:'https://other.invalid/v1'}),/session key/);assert.equal(models.config().endpoint.href,before.endpoint.href);
  assert.throws(()=>models.configure({...input,mode:'automatic-fallback'}));assert.throws(()=>models.configure({...input,key:'bad\nheader'}));assert.throws(()=>models.configure({...input,model:{}}));
- models.configure({profile:'custom',mode:'json'});assert.equal(models.config().mode,'json');
+ models.configure({mode:'json'});assert.equal(models.config().mode,'json');
 });
 
 test('tool agent looks up authoritative APIs, inspects sanitized state, repairs a draft and finishes without installing',async()=>{

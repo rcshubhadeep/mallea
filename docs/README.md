@@ -1,6 +1,6 @@
 # Mallea documentation
 
-Active project plan: [PROJECT_PLAN.v029.md](PROJECT_PLAN.v029.md).
+Active project plan: [PROJECT_PLAN.v030.md](PROJECT_PLAN.v030.md).
 
 Current Core slice: [SLICE_A001.md](SLICE_A001.md). Clarification checks/user tests: [REHEARSAL_A001.md](REHEARSAL_A001.md). Accepted PR sequence and cross-machine proof: [CORE_ECOSYSTEM_ROADMAP.md](CORE_ECOSYSTEM_ROADMAP.md). Earlier Core checks: [REHEARSAL_C001.md](REHEARSAL_C001.md).
 
@@ -9,6 +9,8 @@ The October 30 desktop-engine vision supersedes the earlier browser/Observer-fir
 Parked exploration: [External-app read-only integration](EXTERNAL_APP_READONLY.md), a design proposal without runtime support.
 
 ## Active guides
+
+- [SLICE_M001.md](SLICE_M001.md): single Core model configuration and stock icons.
 
 - [SLICE_B001.md](SLICE_B001.md): one-command source build/launch and verification limits.
 

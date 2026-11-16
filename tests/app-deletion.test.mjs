@@ -7,7 +7,7 @@ import {createCollaborationServer} from '../services/workspace/collaboration.mjs
 import {builtinManifests} from '../services/workspace/engine-apps.mjs';
 import {dashboardManifest,dashboardApp,upgradeDashboardDelete} from '../packages/sdk/dashboard.mjs';
 import {applyLiveChanges} from '../packages/sdk/live-model.mjs';
-const config={endpoint:new URL('https://example.com/v1/chat/completions'),model:'muse-spark-open',key:'test-only-key'};
+const config={endpoint:new URL('https://example.com/v1/chat/completions'),model:'test-text-model',key:'test-only-key'};
 async function fixture(options={}){
  const s=await createCollaborationServer({engine:true,studio:true,controlToken:'test-delete-control',author:{config},...options});
  for(const m of [...builtinManifests,dashboardManifest])s.engineApps.register(m);

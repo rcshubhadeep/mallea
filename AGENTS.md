@@ -1,6 +1,6 @@
 # Mallea project guidance
 
-Hackathon judging protection: through November 9, 2026 inclusive, perform all new work on a development branch, never on `main`. Do not merge into or push changes to `main` during this period. The post-hackathon installer work starts on `codex/installable-runtime`. After this period, merging still requires user direction.
+Hackathon judging protection: through November 9, 2026 inclusive, perform all new work on a development branch, never on `main`. Do not merge into or push changes to `main` during this period. The post-hackathon installer work starts on `codex/installable-runtime`. This historical protection expired after November 9. November 16 user direction now authorizes direct work and pushes on main by default; create a separate branch only when requested or necessary for isolation.
 
 Post-hackathon slice I001: installable dashboard/Core with bundled Fieldnote/Parcel, replaceable Tauri host boundary, user-supplied session model access and no installed app creation. Preserve source/developer creation. November 12 user direction authorizes merging the installer/Core integration now; macOS packaging/native verification is deferred until later and does not block this merge or subsequent work. See docs/SLICE_I001.md and docs/INSTALLER.md. The old submission freeze does not prohibit this user-authorized branch work.
 
@@ -51,3 +51,5 @@ November 6 user direction: C001 Core hardening is authorized on codex/core-autho
 November 13 user direction: execute the A2UI-inspired Core PRs followed by the five GitHub-backed app ecosystem PRs, staged demo de-bundling, researched showcase apps and installed-Mallea Windows/macOS publishing proof. See docs/CORE_ECOSYSTEM_ROADMAP.md and active plan v030; first planned slice is docs/SLICE_A001.md. This supersedes old hackathon restrictions on marketplace/showcase scope only for that programme. External integrations, WebRTC and an operated submission/marketplace service remain parked. Preserve existing data and demo regression fixtures; no consumer compiler/source checkout. Runtime features are not implemented merely by recording this direction.
 
 November 16 user direction: one provider-neutral Core model configuration is authoritative for every model task. Remove development/production model profiles and Meta-specific model dependencies. Use bundled stock app icons without separate image inference; retain existing saved icons and Automation data. See docs/SLICE_M001.md.
+
+November 16 workflow direction: the hackathon is over and the user is the sole contributor. Work directly on main and push completed, verified changes there by default; no routine branch or PR is required. The user explicitly authorizes integrating the single-Core-model changes into main now.

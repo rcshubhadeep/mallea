@@ -209,7 +209,7 @@ In the new app, click **Shape this app**, select **Edit the whole app** under **
 
 > Create a simple notes app with two persistent Surfaces side by side. On the left, add a multiline text editor labelled New note and a Save note button. Clicking Save note should append the editor text to a saved notes collection. On the right, display that collection as a list. Keep the notes when I close and reopen the app.
 
-Click **Build changes** and wait for **Ready to preview**. Generation may take time. If it fails, expand **Validation details** to see the reason; no failed proposal is installed.
+Click **Build changes**. In **Agent tools** mode, completed valid edits can appear as a **Building preview** while generation continues. These snapshots are separate copies and cannot be installed. Wait for **Ready to preview** before approving the final proposal. Generation may take time. If it fails, expand **Validation details** to see the reason; no failed proposal is installed.
 
 In **Agent tools** mode, Shape may first ask a few questions. Answer them and choose **Continue building**, or **Cancel generation**. Answers go to the model selected for that request; answering does not install anything. Questions expire after 30 minutes and are discarded when Core restarts.
 

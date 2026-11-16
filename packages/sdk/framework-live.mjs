@@ -1,4 +1,9 @@
 const text=(id,text,appearance)=>({id,type:'text',text,...(appearance?{appearance}:{})}),bound=(id,bind,appearance)=>({id,type:'text',bind,...(appearance?{appearance}:{})}),button=(id,label,action,props={})=>({id,type:'button',label,action,...props});
+export function acceptsShapeJobUpdate(current,next){
+ if(!current||!next||current.id!==next.id||current.base!==next.base||(next.previewSequence??0)<(current.previewSequence??0))return false;
+ if(['failed','unsupported','cancelled'].includes(current.phase)&&next.phase!==current.phase)return false;
+ return current.phase!=='ready'||['ready','failed'].includes(next.phase);
+}
 const surface=(id,title,children)=>({id,title,ownership:'system',ui:{id:id+'-root',type:'stack',children}});
 export const systemSurfaces={
  recovery:surface('system-recovery','Mallea controls',[{id:'recovery-row',type:'row',appearance:'toolbar',children:[{id:'app-icon',type:'image',bind:'system.appIcon',label:'App icon',hiddenBind:'system.noIcon'},bound('app-name','system.appName','title'),bound('save-outcome','system.saveStatus','muted'),button('undo-change','Undo last change','shape.undo',{appearance:'ghost',disabledBind:'system.cannotUndo'}),button('open-automations','Sharing & Automations','automations.open',{appearance:'ghost'}),button('open-shape','✧ Shape this app','shape.open',{appearance:'primary'})]}]),
@@ -8,8 +13,9 @@ export const systemSurfaces={
   bound('builder-scope','system.scope','eyebrow'),{id:'builder-intent',type:'choice',label:'Change scope',bind:'system.intent',hiddenBind:'system.scoped',disabledBind:'system.running',options:[{label:'Add independent Surfaces',value:'add'},{label:'Edit the whole app',value:'app'}]},button('widen-scope','Edit the whole app instead','shape.widen',{appearance:'ghost',hiddenBind:'system.notScoped',disabledBind:'system.running'}),{id:'builder-steps',type:'component',component:'shape-steps'},{id:'builder-request',type:'textarea',label:'What would you like to change?',bind:'system.prompt',disabledBind:'system.running'},
   {id:'builder-actions',type:'row',children:[button('build','Build changes','shape.build',{appearance:'primary',disabledBind:'system.running'}),button('cancel','Cancel generation','shape.cancel',{disabledBind:'system.notRunning'})]},
   bound('builder-outcome','system.outcome','muted'),{id:'validation-details',type:'details',label:'Validation details',children:[{id:'validation-attempts',type:'repeat',bind:'system.diagnostics'}]},{id:'changes',type:'repeat',bind:'system.changes'},
-  text('preview-heading','Preview · a separate copy; changes here are not saved.','eyebrow'),
-  {id:'preview',type:'component',component:'app-preview',hiddenBind:'system.noPreview'},
+  {...text('preview-heading','Preview · a separate copy; changes here are not saved.','eyebrow'),hiddenBind:'system.hasBuildingPreview'},
+  {...bound('building-preview-heading','system.previewHeading','eyebrow'),hiddenBind:'system.noBuildingPreview'},
+  {id:'preview',type:'component',component:'app-preview',hiddenBind:'system.noAnyPreview'},
   {id:'approve',type:'checkbox',label:'Allow these Surface definitions and declared data operations',bind:'system.approved',disabledBind:'system.noPreview'},
   button('install','Install changes','shape.install',{disabledBind:'system.cannotInstall',appearance:'primary'}),
   text('builder-rule','Preview changes before installing. Existing app data stays separate from presentation changes. Undo last change restores the previous definitions.','muted')]),

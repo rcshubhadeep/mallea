@@ -91,3 +91,11 @@ Vocabulary and registered operations are intentionally small. No arbitrary nativ
 ## Additive collection fields
 
 Whole-app Shape can propose extendCollection with model id, collection field and new scalar fields. It preserves existing field names/types and fills existing rows with declared defaults only after approved replay/install. Surface-scoped and independent-add modes cannot extend an existing collection. New editors and append/update actions remain ordinary inspectable Surface elements. Blank individual fields are allowed; an entirely blank submitted item is rejected. See SLICE_C002.md for the operation shape, bounds and user checks.
+
+## Action invocation rules
+
+Action-bearing nodes may declare invocation:{callers:["user","agent","automation"],requiresUserGesture:false}. A user-interaction-only action uses callers:["user"],requiresUserGesture:true. Unknown/duplicate callers, forged gesture context and policies without an action are rejected. Registered action contracts may impose the same declaration as a ceiling; an element cannot widen it. Effective policies are inspectable in Core inventory, resource discovery and dashboard app details.
+
+Core assigns user identity to the authenticated user-event route, agent identity to MCP action tools, and automation identity to internal Automation action calls. Caller/gesture values are never accepted from event, MCP or owner-request payloads. Core checks policy before action effects and rechecks policy/grants at owner execution and on return. This local trusted-host user-event boundary is not OS/hardware gesture attestation.
+
+Absent declarations preserve frozen historical access: data.set, collection.append and collection.clear retain approved non-user invocation; other actions remain user-only. No migration grants extra callers. Explicit action-policy changes invalidate old action grants, and restoring an earlier policy does not automatically revive those grants. Existing typed resource reads/writes remain separate capabilities with their own app/Surface permissions; a button policy is not a blanket data-access restriction. See SLICE_A003.md for scope, tests and limits.

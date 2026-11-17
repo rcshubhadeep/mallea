@@ -221,7 +221,7 @@ In **Agent tools** mode, Shape may first ask a few questions. Answer them and ch
 
 The interface updates in the running app. You do not need to rebuild its native executable for Surface changes.
 
-Shape defaults to **Add independent Surfaces**: new content appears below the existing app and uses new models. Existing Surfaces, layout and state stay intact. Use **Modify this surface** for a focused edit, or explicitly select **Edit the whole app** to share existing state or rearrange the app. The agent can look up the API and current definitions, edit a private draft and validate it; only your approved **Install changes** updates the app.
+Shape defaults to **Add independent Surfaces**: new content appears below the existing app and uses new models. Existing Surfaces, layout and state stay intact. Use **Modify this surface** for a focused edit, or explicitly select **Edit the whole app** to share existing state or rearrange the app. The agent can look up the API and current definitions, edit a private draft and validate it; only your approved **Install changes** updates the app. Actions can declare whether people, tools or Automations may invoke them, and whether they require a direct interaction. **Inspect app** shows these rules. Existing sharing permissions still apply.
 
 ### 4. Use and reshape it
 

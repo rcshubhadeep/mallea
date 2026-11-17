@@ -1,9 +1,10 @@
 import type { ReactNode,CSSProperties } from 'react';
 import { readBinding,dispatchSurfaceAction,localKey,validateLocalValues } from '../../sdk/surface.mjs';
 import { ColorControl } from './ColorControl';
-export type ViewNode={id:string;type:string;label?:string;text?:string;bind?:string;action?:string;argument?:string;value?:string;args?:Record<string,unknown>;disabledBind?:string;hiddenBind?:string;template?:ViewNode;appearance?:string;options?:{label:string;value:string}[];optionsBind?:string;selectionBind?:string;component?:string;style?:CSSProperties;children?:ViewNode[]};
+export type ActionInvocation={callers:('user'|'agent'|'automation')[];requiresUserGesture:boolean};
+export type ViewNode={id:string;type:string;label?:string;text?:string;bind?:string;action?:string;invocation?:ActionInvocation;argument?:string;value?:string;args?:Record<string,unknown>;disabledBind?:string;hiddenBind?:string;template?:ViewNode;appearance?:string;options?:{label:string;value:string}[];optionsBind?:string;selectionBind?:string;component?:string;style?:CSSProperties;children?:ViewNode[]};
 export type SurfaceDefinition={manifest:{id:string;title:string;version:string;sdkVersion:string;permissions:string[]};state?:Record<string,{type:'text'|'color';initial:string}>;ui:ViewNode};
-export type SurfaceContract={live?:boolean;primitives?:Record<string,any>;fields:Record<string,string>;actions:Record<string,{argument?:string;binding?:string;values?:string[]}>};
+export type SurfaceContract={live?:boolean;primitives?:Record<string,any>;fields:Record<string,string>;actions:Record<string,{argument?:string;binding?:string;values?:string[];invocation?:ActionInvocation}>};
 export type LiveEvent=(node:ViewNode,event:'change'|'click'|'blur',value?:unknown,itemIndex?:number)=>void;
 export function Surface({model,contract,data,components,invoke,onLocalChange,onLocalCommit,onElementEvent}:{model:SurfaceDefinition;contract:SurfaceContract;data:unknown;components:Record<string,ReactNode>;invoke:(action:string,args:Record<string,string>)=>void;onLocalChange?:(key:string,value:string)=>void;onLocalCommit?:()=>void;onElementEvent?:LiveEvent}){
  if(contract.live)return <LiveSurface node={model.ui} data={data} components={components} onEvent={onElementEvent??(()=>{})}/>;
